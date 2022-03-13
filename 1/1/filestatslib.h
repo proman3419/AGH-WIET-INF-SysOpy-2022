@@ -1,5 +1,5 @@
-#ifndef LIBRARY_H
-#define LIBRARY_H
+#ifndef FILESTATSLIB
+#define FILESTATSLIB
 
 #include <stdlib.h>
 #include <stdio.h>
