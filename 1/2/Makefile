@@ -1,20 +1,32 @@
 CC=gcc
 CFLAGS=-c -Wall
-LIB_O=lib.o
+LIB=filestatslib
+MAIN=main
+OUTPUT=output
+STATIC_LIB=$(addsuffix -static, $(LIB)).a
+SHARED_LIB=$(addsuffix -shared, $(LIB)).so
+STATIC_OUTPUT=$(addsuffix -static, $(OUTPUT))
+SHARED_OUTPUT=$(addsuffix -shared, $(OUTPUT))
 
-output: main.o library.o
-	$(CC) main.o library.o -o output
+all: 
+	make static_output
+	make shared_output
 
-static: 
-	$(CC) -c library.c
-	ar cr liblibrary.a liblibrary.o
-	$(CC) main.c -o main -L . -l liblibrary
+static: $(LIB).c
+	$(CC) $(CFLAGS) $(LIB).c
+	ar cr $(STATIC_LIB) $(LIB).o
 
-main.o: main.c
-	$(CC) $(CFLAGS) main.c
+shared: $(LIB).c
+	$(CC) $(CFLAGS) -fPIC $(LIB).c
+	$(CC) -shared -fPIC -o $(SHARED_LIB) $(LIB).o
 
-library.o: library.c library.h
-	$(CC) $(CFLAGS) library.c library.h
+static_output: $(MAIN).c
+	make static
+	$(CC) $(MAIN).c -o $(STATIC_OUTPUT) -L . $(STATIC_LIB)
+
+shared_output: $(MAIN).c
+	make shared
+	$(CC) $(MAIN).c -o $(SHARED_OUTPUT) -L . $(SHARED_LIB)
 
 clean:
-	rm *.o output *.gch
+	rm *.o *.gch *.a *.so $(OUTPUT)*

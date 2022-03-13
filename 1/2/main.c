@@ -1,3 +1,5 @@
+#include "filestatslib.h"
+
 int main(int argc, char** argv)
 {
     createBlocks(512);
