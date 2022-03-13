@@ -10,6 +10,6 @@ int loadFileToMemory(char* filePath);
 void freeBlock(int blockId);
 long getFileSize(FILE* filePointer);
 void printBlock(int blockId);
-void freeAll();
+void freeAllBlocks();
 
 #endif

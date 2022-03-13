@@ -9,6 +9,8 @@ int BLOCKS_COUNT;
 
 void createBlocks(int blocksCount)
 {
+    if (BLOCKS != NULL)
+        freeAllBlocks();
     BLOCKS = calloc(blocksCount, sizeof(char*));
     BLOCKS_COUNT = blocksCount;
     printf("[INFO] Created %d blocks\n", BLOCKS_COUNT);
@@ -95,7 +97,9 @@ long getFileSize(FILE* filePointer)
 
 void printBlock(int blockId)
 {
-    if (blockId < 0 || BLOCKS_COUNT <= blockId)
+    if (BLOCKS == NULL)
+        printf("[ERROR] The BLOCKS array is NULL, call createBlocks first\n");
+    else if (blockId < 0 || BLOCKS_COUNT <= blockId)
         printf("[ERROR] Block id should be from range [0, %d], was %d\n", BLOCKS_COUNT, blockId);
     else if (BLOCKS[blockId] == NULL)
         printf("[INFO] The block with id %d is empty\n", blockId);
@@ -103,11 +107,11 @@ void printBlock(int blockId)
         printf("[INFO] Content of the block with id %d:\n%s", blockId, BLOCKS[blockId]);
 }
 
-void freeAll()
+void freeAllBlocks()
 {
     for (int i = 0; i < BLOCKS_COUNT; i++)
         free(BLOCKS[i]);
     free(BLOCKS);
 
-    printf("[INFO] Freed the dynamically allocated memory\n");
+    printf("[INFO] Removed %d blocks\n", BLOCKS_COUNT);
 }
