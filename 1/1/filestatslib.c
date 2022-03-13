@@ -11,6 +11,7 @@ void createBlocks(int blocksCount)
 {
     BLOCKS = calloc(blocksCount, sizeof(char*));
     BLOCKS_COUNT = blocksCount;
+    printf("[INFO] Created %d blocks\n", BLOCKS_COUNT);
 }
 
 void gatherStats(char** filePaths, int filesCount, char* tempFilePath)
