@@ -8,26 +8,6 @@
 #define MIN_PARAMETERS 1
 const char* TEMP_FILE_PATH = "temp.tmp";
 
-struct MeasuredTime
-{
-    struct TimeType usewc;
-    struct TimeType loadFilesToMemory;
-    struct TimeType freeAllBlocks;
-    struct TimeType createFreeBlocks;
-};
-
-void printMeasuredTime(struct MeasuredTime mt)
-{
-    printf("wc: ");
-    printTimeType(mt.usewc);
-    printf("Loading to memory blocks: ");
-    printTimeType(mt.loadFilesToMemory);
-    printf("Removing all blocks: ");
-    printTimeType(mt.freeAllBlocks);
-    printf("Adding/removing blocks: ");
-    printTimeType(mt.createFreeBlocks);
-}
-
 int isCommand(char* str)
 {
     return (strcmp(str, "create_table") == 0 ||
