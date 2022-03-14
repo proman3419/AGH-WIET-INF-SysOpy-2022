@@ -8,9 +8,9 @@ SHARED_LIB=$(addsuffix -shared, $(LIB)).so
 STATIC_OUTPUT=$(addsuffix -static, $(OUTPUT))
 SHARED_OUTPUT=$(addsuffix -shared, $(OUTPUT))
 
-all: 
-	make output_static
-	make output_shared
+run_all:
+	make run_static
+	make run_shared
 
 static: $(LIB).c
 	$(CC) $(CFLAGS) $(LIB).c
@@ -18,7 +18,7 @@ static: $(LIB).c
 
 shared: $(LIB).c
 	$(CC) $(CFLAGS) -fPIC $(LIB).c
-	$(CC) -shared -fPIC -o $(SHARED_LIB) $(LIB).o
+	$(CC) -shared -o $(SHARED_LIB) $(LIB).o
 
 output_static: $(MAIN).c
 	make static
@@ -27,6 +27,16 @@ output_static: $(MAIN).c
 output_shared: $(MAIN).c
 	make shared
 	$(CC) $(MAIN).c -o $(SHARED_OUTPUT) -L . $(SHARED_LIB)
+
+run_static:
+	make output_static
+	LD_LIBRARY_PATH=.
+	./$(STATIC_OUTPUT)
+
+run_shared:
+	make output_shared
+	LD_LIBRARY_PATH=.
+	./$(SHARED_OUTPUT)
 
 clean:
 	rm *.o *.gch *.a *.so $(OUTPUT)* *.tmp
