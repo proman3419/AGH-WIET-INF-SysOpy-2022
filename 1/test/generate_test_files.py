@@ -13,6 +13,8 @@ try:
     file_length = int(sys.argv[2])
     file_name_base = sys.argv[3]
 
+    print(f'Generating {files_count} files with length {file_length}, saving as {file_name_base}.txt')
+
     for i in range(files_count):
         file_name = f'{file_name_base}{i}.txt'
         with open(file_name, 'w+') as f:
