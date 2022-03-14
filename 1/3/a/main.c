@@ -1,10 +1,32 @@
 #include "filestatslib.h"
+#include "timemeaslib.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/times.h>
 
 #define MIN_PARAMETERS 1
+const char* TEMP_FILE_PATH = "temp.tmp";
+
+struct MeasuredTime
+{
+    struct TimeType usewc;
+    struct TimeType loadFilesToMemory;
+    struct TimeType freeAllBlocks;
+    struct TimeType createFreeBlocks;
+};
+
+void printMeasuredTime(struct MeasuredTime mt)
+{
+    printf("wc: ");
+    printTimeType(mt.usewc);
+    printf("Loading to memory blocks: ");
+    printTimeType(mt.loadFilesToMemory);
+    printf("Removing all blocks: ");
+    printTimeType(mt.freeAllBlocks);
+    printf("Adding/removing blocks: ");
+    printTimeType(mt.createFreeBlocks);
+}
 
 int isCommand(char* str)
 {
@@ -35,8 +57,8 @@ void moveToArray(char** arrFrom, char** arrTo, int iFrom, int length)
 
 int main(int argc, char** argv)
 {
-    struct ExecutionTime et = {0};
-    struct ExecutionTime* etPtr = &et;
+    struct MeasuredTime mt = {0};
+    struct MeasuredTime* mtPtr = &mt;
     clock_t clockStart, clockEnd;
     struct tms tmsStart, tmsEnd;
 
@@ -56,7 +78,7 @@ int main(int argc, char** argv)
                 clockStart = times(&tmsStart);
                 createBlocks(blocksCount);
                 clockEnd = times(&tmsEnd);
-                saveTimes(&etPtr->createFreeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
+                saveTimes(&mtPtr->createFreeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
             }
         }
         else if (strcmp(argv[i], "wc_files") == 0)
@@ -66,7 +88,20 @@ int main(int argc, char** argv)
             char** filePaths = calloc(filesCount, sizeof(char *));
             moveToArray(argv, filePaths, i, filesCount);
 
-            gatherStats(filePaths, filesCount, "temp.tmp", etPtr);
+            for (int j = 0; j < filesCount; j++)
+            {
+                printf("[INFO] Processing the file %s\n", filePaths[j]);
+
+                clockStart = times(&tmsStart);
+                usewc(filePaths[j], TEMP_FILE_PATH);
+                clockEnd = times(&tmsEnd);
+                saveTimes(&mtPtr->usewc, tmsStart, tmsEnd, clockStart, clockEnd);
+
+                clockStart = times(&tmsStart);
+                loadFileToMemory(TEMP_FILE_PATH);
+                clockEnd = times(&tmsEnd);
+                saveTimes(&mtPtr->loadFilesToMemory, tmsStart, tmsEnd, clockStart, clockEnd);
+            }
 
             free(filePaths);
             i = i + filesCount - 1;
@@ -80,7 +115,7 @@ int main(int argc, char** argv)
                 clockStart = times(&tmsStart);
                 freeBlock(blockId);
                 clockEnd = times(&tmsEnd);
-                saveTimes(&etPtr->createFreeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
+                saveTimes(&mtPtr->createFreeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
             }
         }
         else if (strcmp(argv[i], "print_block") == 0)
@@ -96,9 +131,9 @@ int main(int argc, char** argv)
     clockStart = times(&tmsStart);
     freeAllBlocks();
     clockEnd = times(&tmsEnd);
-    saveTimes(&etPtr->freeAllBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
+    saveTimes(&mtPtr->freeAllBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
 
-    printExecutionTime(et);
+    printMeasuredTime(mt);
 
     return 0;
 }

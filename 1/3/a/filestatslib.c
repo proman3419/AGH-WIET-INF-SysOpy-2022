@@ -18,28 +18,16 @@ void createBlocks(int blocksCount)
     printf("[INFO] Created %d blocks\n", BLOCKS_COUNT);
 }
 
-void gatherStats(char** filePaths, int filesCount, char* tempFilePath, struct ExecutionTime* etPtr)
+void gatherStats(char** filePaths, int filesCount, const char* tempFilePath)
 {
-    clock_t clockStart, clockEnd;
-    struct tms tmsStart, tmsEnd;
-
     for (int i = 0; i < filesCount; i++)
     {
-        printf("[INFO] Processing the file %s\n", filePaths[i]);
-
-        clockStart = times(&tmsStart);
         usewc(filePaths[i], tempFilePath);
-        clockEnd = times(&tmsEnd);
-        saveTimes(&etPtr->usewc, tmsStart, tmsEnd, clockStart, clockEnd);
-
-        clockStart = times(&tmsStart);
         loadFileToMemory(tempFilePath);
-        clockEnd = times(&tmsEnd);
-        saveTimes(&etPtr->loadFilesToMemory, tmsStart, tmsEnd, clockStart, clockEnd);
     }
 }
 
-void usewc(char* filePath, char* tempFilePath)
+void usewc(char* filePath, const char* tempFilePath)
 {
     char* command = calloc(MAX_COMMAND_LENGTH, sizeof(char));
     int status, commandLength;
@@ -63,7 +51,7 @@ void usewc(char* filePath, char* tempFilePath)
     free(command);
 }
 
-int loadFileToMemory(char* filePath)
+int loadFileToMemory(const char* filePath)
 {
     FILE* filePointer = fopen(filePath, "r");
     if (filePointer == NULL) 
@@ -130,36 +118,4 @@ void freeAllBlocks()
     free(BLOCKS);
 
     printf("[INFO] Removed %d blocks\n", BLOCKS_COUNT);
-}
-
-double timeElapsedInSeconds(clock_t clockStart, clock_t clockEnd) 
-{
-    clock_t clockDiff = clockEnd - clockStart;
-    return (double)clockDiff / CLOCKS_PER_SEC;
-}
-
-void saveTimes(struct TimeType* ttPtr, struct tms tmsStart, struct tms tmsEnd, clock_t clockStart, clock_t clockEnd)
-{
-    ttPtr->real += timeElapsedInSeconds(clockStart, clockEnd);
-    ttPtr->user += timeElapsedInSeconds(tmsStart.tms_utime, tmsEnd.tms_utime);
-    ttPtr->sys += timeElapsedInSeconds(tmsStart.tms_stime, tmsEnd.tms_stime);
-}
-
-void printTimeType(struct TimeType tt)
-{
-    printf("real %fs | ", tt.real);
-    printf("user %fs | ", tt.user);
-    printf("sys  %fs\n", tt.sys);
-}
-
-void printExecutionTime(struct ExecutionTime et)
-{
-    printf("wc: ");
-    printTimeType(et.usewc);
-    printf("Loading to memory blocks: ");
-    printTimeType(et.loadFilesToMemory);
-    printf("Removing all blocks: ");
-    printTimeType(et.freeAllBlocks);
-    printf("Adding/removing blocks: ");
-    printTimeType(et.createFreeBlocks);
 }
