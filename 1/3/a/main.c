@@ -1,5 +1,6 @@
 #include "filestatslib.h"
 #include "timemeaslib.h"
+#include "loglib.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -90,7 +91,8 @@ int main(int argc, char** argv)
 
             for (int j = 0; j < filesCount; j++)
             {
-                printf("[INFO] Processing the file %s\n", filePaths[j]);
+                if (logInfoH())
+                    printf("Processing the file %s\n", filePaths[j]);
 
                 clockStart = times(&tmsStart);
                 usewc(filePaths[j], TEMP_FILE_PATH);

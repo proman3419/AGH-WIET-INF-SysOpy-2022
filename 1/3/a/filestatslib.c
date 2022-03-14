@@ -1,4 +1,5 @@
 #include "filestatslib.h"
+#include "loglib.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/times.h>
@@ -15,7 +16,8 @@ void createBlocks(int blocksCount)
         freeAllBlocks();
     BLOCKS = calloc(blocksCount, sizeof(char*));
     BLOCKS_COUNT = blocksCount;
-    printf("[INFO] Created %d blocks\n", BLOCKS_COUNT);
+    if (logInfoH()) 
+        printf("Created %d blocks\n", BLOCKS_COUNT);
 }
 
 void gatherStats(char** filePaths, int filesCount, const char* tempFilePath)
@@ -37,15 +39,16 @@ void usewc(char* filePath, const char* tempFilePath)
                              filePath, tempFilePath);
 
     if (commandLength < 0)
-        printf("[ERROR] Encoding error occurred for the command\n");
+        logError("Encoding error occurred for the command\n");
     else if (commandLength > MAX_COMMAND_LENGTH)
-        printf("[ERROR] The command is too long\n");
+        logError("The command is too long\n");
     else
     {
         status = system(command);
 
         if (status == -1)
-            printf("[ERROR] Failed to execute the command '%s'\n", command);
+            if (logErrorH())
+                printf("Failed to execute the command '%s'\n", command);
     }
 
     free(command);
@@ -56,7 +59,8 @@ int loadFileToMemory(const char* filePath)
     FILE* filePointer = fopen(filePath, "r");
     if (filePointer == NULL) 
     {
-        printf("[ERROR] Couldn't open the file %s\n", filePath);
+        if (logErrorH()) 
+            printf("Couldn't open the file %s\n", filePath);
         return -1;
     }
 
@@ -71,13 +75,13 @@ int loadFileToMemory(const char* filePath)
         if (BLOCKS[i] == NULL)
         {
             BLOCKS[i] = result;
-            printf("[SUCCESS] Content of %s loaded at the block with id %d\n", 
-                   filePath, i);
+            if (logSuccessH()) 
+                printf("Content of %s loaded at the block with id %d\n", filePath, i);
             return i;
         }
     }
 
-    printf("[ERROR] No free space in the BLOCKS array\n");
+    logError("No free space in the BLOCKS array\n");
 
     return -1;
 }
@@ -86,7 +90,8 @@ void freeBlock(int blockId)
 {
     free(BLOCKS[blockId]);
     BLOCKS[blockId] = NULL;
-    printf("[INFO] Removed the block with id %d\n", blockId);
+    if (logInfoH()) 
+        printf("Removed the block with id %d\n", blockId);
 }
 
 long getFileSize(FILE* filePointer)
@@ -94,7 +99,8 @@ long getFileSize(FILE* filePointer)
     if (fseek(filePointer, 0, SEEK_END) == 0)
         return ftell(filePointer);
 
-    printf("[ERROR] Couldn't get the file size for %p\n", filePointer);
+    if (logErrorH()) 
+        printf("Couldn't get the file size for %p\n", filePointer);
 
     return -1;
 }
@@ -102,13 +108,22 @@ long getFileSize(FILE* filePointer)
 void printBlock(int blockId)
 {
     if (BLOCKS == NULL)
-        printf("[ERROR] The BLOCKS array is NULL, call createBlocks first\n");
+        logError("The BLOCKS array is NULL, call createBlocks first\n");
     else if (blockId < 0 || BLOCKS_COUNT <= blockId)
-        printf("[ERROR] Block id should be from range [0, %d], was %d\n", BLOCKS_COUNT, blockId);
+    {
+        if (logErrorH()) 
+            printf("Block id should be from range [0, %d], was %d\n", BLOCKS_COUNT, blockId);
+    }
     else if (BLOCKS[blockId] == NULL)
-        printf("[INFO] The block with id %d is empty\n", blockId);
+    {
+        if (logInfoH()) 
+            printf("The block with id %d is empty\n", blockId);
+    }
     else
-        printf("[INFO] Content of the block with id %d:\n%s", blockId, BLOCKS[blockId]);
+    {
+        if (logInfoH()) 
+            printf("Content of the block with id %d:\n%s", blockId, BLOCKS[blockId]);
+    }
 }
 
 void freeAllBlocks()
@@ -117,5 +132,6 @@ void freeAllBlocks()
         free(BLOCKS[i]);
     free(BLOCKS);
 
-    printf("[INFO] Removed %d blocks\n", BLOCKS_COUNT);
+    if (logInfoH()) 
+        printf("Removed %d blocks\n", BLOCKS_COUNT);
 }
