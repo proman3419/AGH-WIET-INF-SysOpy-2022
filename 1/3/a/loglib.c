@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#define LOGLIB_INFO_LOGGING 0
-#define LOGLIB_SUCCESS_LOGGING 0
+#define LOGLIB_INFO_LOGGING 1
+#define LOGLIB_SUCCESS_LOGGING 1
 #define LOGLIB_ERROR_LOGGING 1
 
 int logInfoH()
