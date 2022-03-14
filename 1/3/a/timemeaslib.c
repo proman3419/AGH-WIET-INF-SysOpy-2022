@@ -22,15 +22,3 @@ void printTimeType(struct TimeType tt)
     printf("user %fs | ", tt.user);
     printf("sys  %fs\n", tt.sys);
 }
-
-void printMeasuredTime(struct MeasuredTime mt)
-{
-    printf("wc: ");
-    printTimeType(mt.usewc);
-    printf("Loading to memory blocks: ");
-    printTimeType(mt.loadFilesToMemory);
-    printf("Removing all blocks: ");
-    printTimeType(mt.freeAllBlocks);
-    printf("Adding/removing blocks: ");
-    printTimeType(mt.createFreeBlocks);
-}

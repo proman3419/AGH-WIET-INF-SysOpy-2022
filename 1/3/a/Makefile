@@ -16,14 +16,12 @@ lib_shared: $(LIB).c
 output_static: $(MAIN).c
 	make lib_static LIB=filestatslib
 	make lib_static LIB=timemeaslib
-	make lib_static LIB=loglib
-	$(CC) $(MAIN).c -o $(OUTPUT_STATIC) -L . filestatslib.a timemeaslib.a loglib.a
+	$(CC) $(MAIN).c -o $(OUTPUT_STATIC) -L . filestatslib.a timemeaslib.a
 
 output_shared: $(MAIN).c
 	make lib_shared LIB=filestatslib
 	make lib_shared LIB=timemeaslib
-	make lib_shared LIB=loglib
-	$(CC) $(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so loglib.so
+	$(CC) $(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
 
 run_static:
 	make output_static

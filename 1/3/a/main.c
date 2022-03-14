@@ -1,6 +1,5 @@
 #include "filestatslib.h"
 #include "timemeaslib.h"
-#include "loglib.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,6 +7,26 @@
 
 #define MIN_PARAMETERS 1
 const char* TEMP_FILE_PATH = "temp.tmp";
+
+struct MeasuredTime
+{
+    struct TimeType usewc;
+    struct TimeType loadFilesToMemory;
+    struct TimeType freeAllBlocks;
+    struct TimeType createFreeBlocks;
+};
+
+void printMeasuredTime(struct MeasuredTime mt)
+{
+    printf("wc: ");
+    printTimeType(mt.usewc);
+    printf("Loading to memory blocks: ");
+    printTimeType(mt.loadFilesToMemory);
+    printf("Removing all blocks: ");
+    printTimeType(mt.freeAllBlocks);
+    printf("Adding/removing blocks: ");
+    printTimeType(mt.createFreeBlocks);
+}
 
 int isCommand(char* str)
 {
@@ -71,8 +90,7 @@ int main(int argc, char** argv)
 
             for (int j = 0; j < filesCount; j++)
             {
-                if (logInfoH())
-                    printf("Processing the file %s\n", filePaths[j]);
+                printf("[INFO] Processing the file %s\n", filePaths[j]);
 
                 clockStart = times(&tmsStart);
                 usewc(filePaths[j], TEMP_FILE_PATH);
