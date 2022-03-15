@@ -1,20 +1,18 @@
 CC=gcc
 CFLAGS=-c -Wall
 LIB=filestatslib
-STATIC_LIB=$(addsuffix -static, $(LIB)).a
-SHARED_LIB=$(addsuffix -shared, $(LIB)).so
 
-all: 
-	make static
-	make shared
+lib_all:
+	make lib_static
+	make lib_shared
 
-static: $(LIB).c
+lib_static: $(LIB).c
 	$(CC) $(CFLAGS) $(LIB).c
-	ar cr $(STATIC_LIB) $(LIB).o
+	ar cr $(LIB).a $(LIB).o
 
-shared: $(LIB).c
+lib_shared: $(LIB).c
 	$(CC) $(CFLAGS) -fPIC $(LIB).c
-	$(CC) -shared -fPIC -o $(SHARED_LIB) $(LIB).o
+	$(CC) -shared -o $(LIB).so $(LIB).o
 
 clean:
 	rm *.o *.gch *.a *.so
