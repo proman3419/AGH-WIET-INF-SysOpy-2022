@@ -1,13 +1,13 @@
 CC=gcc
-CFLAGS=-c -Wall
+CFLAGS=-Wall
 LIB=filestatslib
 
 lib_static: $(LIB).c
-	$(CC) $(CFLAGS) $(LIB).c
+	$(CC) $(CFLAGS) -c $(LIB).c
 	ar cr $(LIB).a $(LIB).o
 
 lib_shared: $(LIB).c
-	$(CC) $(CFLAGS) -fPIC $(LIB).c
+	$(CC) $(CFLAGS) -c -fPIC $(LIB).c
 	$(CC) -shared -o $(LIB).so $(LIB).o
 
 lib_all:

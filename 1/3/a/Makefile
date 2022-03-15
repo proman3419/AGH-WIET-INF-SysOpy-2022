@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall
+CFLAGS=-Wall
 MAIN=main
 OUTPUT=output
 OUTPUT_STATIC=$(addsuffix _static, $(OUTPUT))
@@ -8,12 +8,19 @@ REPORT_FILE="report3a.txt"
 REPORT_LINES_COUNT=11
 
 lib_static: $(LIB).c
-	$(CC) $(CFLAGS) $(LIB).c
+	$(CC) $(CFLAGS) -c $(LIB).c
 	ar cr $(LIB).a $(LIB).o
 
 lib_shared: $(LIB).c
-	$(CC) $(CFLAGS) -fPIC $(LIB).c
+	$(CC) $(CFLAGS) -c -fPIC $(LIB).c
 	$(CC) -shared -o $(LIB).so $(LIB).o
+
+lib_dynamic: $(LIB).c
+	$(CC) $(CFLAGS) -c $(LIB).c
+	$(CC) -shared -o $(LIB).dll -Wl,--out-implib,libtstdll.a test_dll.o
+	lib_shared
+	$(CC) $(CFLAGS) -c -fPIC $(LIB).c
+	$(CC) -shared -o $(LIB).so .o
 
 output_static: $(MAIN).c
 	make lib_static LIB=filestatslib

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall
+CFLAGS=-Wall
 MAIN=main
 OUTPUT=output
 OUTPUT_STATIC=$(addsuffix _static, $(OUTPUT))
@@ -8,22 +8,22 @@ REPORT_FILE="report2.txt"
 REPORT_LINES_COUNT=11
 
 lib_static: $(LIB).c
-	$(CC) $(CFLAGS) $(LIB).c
+	$(CC) $(CFLAGS) -c $(LIB).c
 	ar cr $(LIB).a $(LIB).o
 
 lib_shared: $(LIB).c
-	$(CC) $(CFLAGS) -fPIC $(LIB).c
+	$(CC) $(CFLAGS) -c -fPIC $(LIB).c
 	$(CC) -shared -o $(LIB).so $(LIB).o
 
 output_static: $(MAIN).c
 	make lib_static LIB=filestatslib
 	make lib_static LIB=timemeaslib
-	$(CC) $(MAIN).c -o $(OUTPUT_STATIC) -L . filestatslib.a timemeaslib.a
+	$(CC) $(CFLAGS) $(MAIN).c -o $(OUTPUT_STATIC) -L . filestatslib.a timemeaslib.a
 
 output_shared: $(MAIN).c
 	make lib_shared LIB=filestatslib
 	make lib_shared LIB=timemeaslib
-	$(CC) $(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
+	$(CC) $(CFLAGS) $(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
 
 run_static:
 	make output_static
