@@ -2,11 +2,12 @@
 #include <stdio.h>
 #include <sys/times.h>
 #include <time.h>
+#include <unistd.h>
 
 double timeElapsedInSeconds(clock_t clockStart, clock_t clockEnd) 
 {
     clock_t clockDiff = clockEnd - clockStart;
-    return (double)clockDiff / CLOCKS_PER_SEC;
+    return (double)clockDiff / sysconf(_SC_CLK_TCK);
 }
 
 void saveTimes(struct TimeType* ttPtr, struct tms tmsStart, struct tms tmsEnd, clock_t clockStart, clock_t clockEnd)
