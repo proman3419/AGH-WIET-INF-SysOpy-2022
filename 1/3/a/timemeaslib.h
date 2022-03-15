@@ -21,7 +21,8 @@ struct MeasuredTime
 
 double timeElapsedInSeconds(clock_t clockStart, clock_t clockEnd);
 void saveTimes(struct TimeType* tt, struct tms tmsStart, struct tms tmsEnd, clock_t clockStart, clock_t clockEnd);
-void printTimeType(struct TimeType tt);
+void printTimeType(char* taskName, struct TimeType tt);
 void printMeasuredTime(struct MeasuredTime mt);
+void printHorizontalLine(char repr, int width);
 
 #endif

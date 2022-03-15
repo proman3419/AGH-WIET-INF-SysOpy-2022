@@ -16,21 +16,28 @@ void saveTimes(struct TimeType* ttPtr, struct tms tmsStart, struct tms tmsEnd, c
     ttPtr->sys += timeElapsedInSeconds(tmsStart.tms_stime, tmsEnd.tms_stime);
 }
 
-void printTimeType(struct TimeType tt)
+void printTimeType(char* taskName, struct TimeType tt)
 {
-    printf("real %fs | ", tt.real);
-    printf("user %fs | ", tt.user);
-    printf("sys  %fs\n", tt.sys);
+    printf("|%25s |%15f |%15f |%15f |\n", taskName, tt.real, tt.user, tt.sys);
 }
 
 void printMeasuredTime(struct MeasuredTime mt)
 {
-    printf("wc: ");
-    printTimeType(mt.usewc);
-    printf("Loading to memory blocks: ");
-    printTimeType(mt.loadFilesToMemory);
-    printf("Removing all blocks: ");
-    printTimeType(mt.freeAllBlocks);
-    printf("Adding/removing blocks: ");
-    printTimeType(mt.createFreeBlocks);
+    int tableWidth = 79;
+    printHorizontalLine('-', tableWidth);
+    printf("|%25s |%15s |%15s |%15s |\n", "Task", "real [s]", "user [s]", "sys [s]");
+    printHorizontalLine('-', tableWidth);
+    printTimeType("Using the wc program", mt.usewc);
+    printTimeType("Loading to memory blocks", mt.loadFilesToMemory);
+    printTimeType("Removing all blocks", mt.freeAllBlocks);
+    printTimeType("Adding / removing blocks", mt.createFreeBlocks);
+    printHorizontalLine('-', tableWidth);
+    printf("\n");
+}
+
+void printHorizontalLine(char repr, int width)
+{
+    for (int i = 0; i < width; i++)
+        printf("%c", repr);
+    printf("\n");
 }
