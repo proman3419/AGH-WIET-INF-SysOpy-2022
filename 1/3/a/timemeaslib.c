@@ -25,7 +25,7 @@ void printMeasuredTime(struct MeasuredTime mt)
 {
     int tableWidth = 79;
     printHorizontalLine('-', tableWidth);
-    printf("|%25s |%15s |%15s |%15s |\n", "Task", "real [s]", "user [s]", "sys [s]");
+    printf("|%25s |%15s |%15s |%15s |\n", "Task", "real[s]", "user[s]", "sys[s]");
     printHorizontalLine('-', tableWidth);
     printTimeType("Using the wc program", mt.usewc);
     printTimeType("Loading to memory blocks", mt.loadFilesToMemory);

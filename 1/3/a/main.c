@@ -66,7 +66,7 @@ int main(int argc, char** argv)
                 saveTimes(&mtPtr->createBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
             }
         }
-        else if (strcmp(argv[i], "create_remove_blocks") == 0)
+        else if (strcmp(argv[i], "create_blocks") == 0)
         {
             int blocksCount = atoi(argv[++i]);
             int blockByteSize = atoi(argv[++i]);
@@ -75,13 +75,13 @@ int main(int argc, char** argv)
             for (int j = 0; j < n; j++)
             {
                 clockStart = times(&tmsStart);
-                clockEnd = times(&tmsEnd);
                 createBlocks(blocksCount, blockByteSize);
+                clockEnd = times(&tmsEnd);
                 saveTimes(&mtPtr->createBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
 
                 clockStart = times(&tmsStart);
+                removeAllBlocks();         
                 clockEnd = times(&tmsEnd);
-                removeAllBlocks();                
                 saveTimes(&mtPtr->removeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
             }
         }
