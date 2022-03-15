@@ -4,6 +4,7 @@ MAIN=main
 OUTPUT=output
 OUTPUT_STATIC=$(addsuffix _static, $(OUTPUT))
 OUTPUT_SHARED=$(addsuffix _shared, $(OUTPUT))
+REPORT_FILE="report2.txt"
 
 lib_static: $(LIB).c
 	$(CC) $(CFLAGS) $(LIB).c
@@ -38,27 +39,38 @@ run_all:
 generate_test_files: generate_test_files.py
 	./generate_test_files.py 10 1000 small
 	./generate_test_files.py 10 100000 medium
-	./generate_test_files.py 10 1000000 large
+# 	./generate_test_files.py 10 1000000 large
+
+test_general: $(OUTPUT_TEST)
+	echo "1 $(TEST_SIZE) file" >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 1 wc_files $(TEST_SIZE)0.txt | tail -n 9 >> $(REPORT_FILE)
+
+	echo "5 $(TEST_SIZE) files" >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 5 wc_files $(TEST_SIZE)0.txt $(TEST_SIZE)1.txt $(TEST_SIZE)2.txt $(TEST_SIZE)3.txt $(TEST_SIZE)4.txt | tail -n 9 >> $(REPORT_FILE)
+
+	echo "10 $(TEST_SIZE) files" >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 10 wc_files $(TEST_SIZE)0.txt $(TEST_SIZE)1.txt $(TEST_SIZE)2.txt $(TEST_SIZE)3.txt $(TEST_SIZE)4.txt $(TEST_SIZE)5.txt $(TEST_SIZE)6.txt $(TEST_SIZE)7.txt $(TEST_SIZE)8.txt $(TEST_SIZE)9.txt | tail -n 9 >> $(REPORT_FILE)
+
+test_allocation: $(OUTPUT_TEST)
+	echo "Allocate 10, free 10, allocate 100, free 100" >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_remove_blocks 1000 1000 1000 | tail -n 9 >> $(REPORT_FILE)
 
 test: $(OUTPUT_TEST)
 	make generate_test_files
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 1 wc_files small0.txt
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 5 wc_files small0.txt small1.txt small2.txt small3.txt small4.txt
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 10 wc_files small0.txt small1.txt small2.txt small3.txt small4.txt small5.txt small6.txt small7.txt small8.txt small9.txt
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 1 wc_files medium0.txt
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 5 wc_files medium0.txt medium1.txt medium2.txt medium3.txt medium4.txt
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 10 wc_files medium0.txt medium1.txt medium2.txt medium3.txt medium4.txt medium5.txt medium6.txt medium7.txt medium8.txt medium9.txt
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 1 wc_files large0.txt
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 5 wc_files large0.txt large1.txt large2.txt large3.txt large4.txt
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 10 wc_files large0.txt large1.txt large2.txt large3.txt large4.txt large5.txt large6.txt large7.txt large8.txt large9.txt
+	touch $(REPORT_FILE)
+	make test_general TEST_SIZE="small"
+	make test_general TEST_SIZE="medium"
+# 	make test_general TEST_SIZE="large"
+	make test_allocation 
+	cat $(REPORT_FILE)
 
 test_static:
 	make output_static
-	make test OUTPUT_TEST=$(OUTPUT_STATIC)
+	OUTPUT_TEST=$(OUTPUT_STATIC) make test
 
 test_shared:
 	make output_shared
-	make test OUTPUT_TEST=$(OUTPUT_SHARED)
+	OUTPUT_TEST=$(OUTPUT_SHARED) make test
 
 test_all:
 	make test_static

@@ -29,8 +29,8 @@ void printMeasuredTime(struct MeasuredTime mt)
     printHorizontalLine('-', tableWidth);
     printTimeType("Using the wc program", mt.usewc);
     printTimeType("Loading to memory blocks", mt.loadFilesToMemory);
-    printTimeType("Removing all blocks", mt.freeAllBlocks);
-    printTimeType("Adding / removing blocks", mt.createFreeBlocks);
+    printTimeType("Creating blocks", mt.createBlocks);
+    printTimeType("Removing blocks", mt.removeBlocks);
     printHorizontalLine('-', tableWidth);
     printf("\n");
 }

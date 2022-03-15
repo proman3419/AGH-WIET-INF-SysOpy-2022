@@ -15,8 +15,8 @@ struct MeasuredTime
 {
     struct TimeType usewc;
     struct TimeType loadFilesToMemory;
-    struct TimeType freeAllBlocks;
-    struct TimeType createFreeBlocks;
+    struct TimeType createBlocks;
+    struct TimeType removeBlocks;
 };
 
 double timeElapsedInSeconds(clock_t clockStart, clock_t clockEnd);

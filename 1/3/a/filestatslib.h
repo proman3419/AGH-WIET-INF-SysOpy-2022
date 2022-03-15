@@ -4,13 +4,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void createBlocks(int blocksCount);
+void createBlocksPlaceholders(int blocksCount);
+void createBlocks(int blocksCount, int blockByteSize);
 void gatherStats(char** filePaths, int filesCount, const char* tempFilePath);
 void usewc(char* filePath, const char* tempFilePath);
 int loadFileToMemory(const char* filePath);
-void freeBlock(int blockId);
+void removeBlock(int blockId);
 long getFileSize(FILE* filePointer);
 void printBlock(int blockId);
-void freeAllBlocks();
+void removeAllBlocks();
 
 #endif

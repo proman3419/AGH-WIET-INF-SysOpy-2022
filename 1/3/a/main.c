@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include <sys/times.h>
 
-#define MIN_PARAMETERS 1
 const char* TEMP_FILE_PATH = "temp.tmp";
 
 int isCommand(char* str)
 {
-    return (strcmp(str, "create_table") == 0 ||
+    return (strcmp(str, "remove_all_blocks") == 0 ||
+            strcmp(str, "create_table") == 0 ||
+            strcmp(str, "create_remove_blocks") == 0 ||
             strcmp(str, "wc_files") == 0 ||
             strcmp(str, "remove_block") == 0 ||
             strcmp(str, "print_block") == 0);
@@ -43,9 +44,13 @@ int main(int argc, char** argv)
     struct tms tmsStart, tmsEnd;
 
     int i = 0;
-    while (i < argc-MIN_PARAMETERS)
+    while (i < argc)
     {
-        if (i < argc-MIN_PARAMETERS && isCommand(argv[i+1]))
+        if (strcmp(argv[i], "remove_all_blocks") == 0)
+        {
+            removeAllBlocks();
+        }
+        else if (i < argc-1 && isCommand(argv[i+1]))
         {
             // Skip command 
         }
@@ -56,9 +61,28 @@ int main(int argc, char** argv)
             if (blocksCount >= 0)
             {
                 clockStart = times(&tmsStart);
-                createBlocks(blocksCount);
+                createBlocksPlaceholders(blocksCount);
                 clockEnd = times(&tmsEnd);
-                saveTimes(&mtPtr->createFreeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
+                saveTimes(&mtPtr->createBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
+            }
+        }
+        else if (strcmp(argv[i], "create_remove_blocks") == 0)
+        {
+            int blocksCount = atoi(argv[++i]);
+            int blockByteSize = atoi(argv[++i]);
+            int n = atoi(argv[++i]);
+
+            for (int j = 0; j < n; j++)
+            {
+                clockStart = times(&tmsStart);
+                clockEnd = times(&tmsEnd);
+                createBlocks(blocksCount, blockByteSize);
+                saveTimes(&mtPtr->createBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
+
+                clockStart = times(&tmsStart);
+                clockEnd = times(&tmsEnd);
+                removeAllBlocks();                
+                saveTimes(&mtPtr->removeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
             }
         }
         else if (strcmp(argv[i], "wc_files") == 0)
@@ -93,9 +117,9 @@ int main(int argc, char** argv)
             if (blockId >= 0)
             {
                 clockStart = times(&tmsStart);
-                freeBlock(blockId);
+                removeBlock(blockId);
                 clockEnd = times(&tmsEnd);
-                saveTimes(&mtPtr->createFreeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
+                saveTimes(&mtPtr->removeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
             }
         }
         else if (strcmp(argv[i], "print_block") == 0)
@@ -109,9 +133,9 @@ int main(int argc, char** argv)
     }
 
     clockStart = times(&tmsStart);
-    freeAllBlocks();
+    removeAllBlocks();
     clockEnd = times(&tmsEnd);
-    saveTimes(&mtPtr->freeAllBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
+    saveTimes(&mtPtr->removeBlocks, tmsStart, tmsEnd, clockStart, clockEnd);
 
     printMeasuredTime(mt);
 

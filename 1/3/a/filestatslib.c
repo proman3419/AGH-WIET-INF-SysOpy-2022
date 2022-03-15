@@ -9,13 +9,21 @@
 char** BLOCKS;
 int BLOCKS_COUNT;
 
-void createBlocks(int blocksCount)
+void createBlocksPlaceholders(int blocksCount)
 {
     if (BLOCKS != NULL)
-        freeAllBlocks();
+        removeAllBlocks();
     BLOCKS = calloc(blocksCount, sizeof(char*));
     BLOCKS_COUNT = blocksCount;
-    printf("[INFO] Created %d blocks\n", BLOCKS_COUNT);
+    printf("[INFO] Created %d blocks placeholders\n", BLOCKS_COUNT);
+}
+
+void createBlocks(int blocksCount, int blockByteSize)
+{
+    createBlocksPlaceholders(blocksCount);
+    for (int i = 0; i < BLOCKS_COUNT; i++)
+        BLOCKS[i] = calloc(BLOCKS_COUNT, blockByteSize);
+    printf("[INFO] Created %d blocks of size %dB\n", BLOCKS_COUNT, blockByteSize);
 }
 
 void gatherStats(char** filePaths, int filesCount, const char* tempFilePath)
@@ -71,8 +79,7 @@ int loadFileToMemory(const char* filePath)
         if (BLOCKS[i] == NULL)
         {
             BLOCKS[i] = result;
-            printf("[SUCCESS] Content of %s loaded at the block with id %d\n", 
-                   filePath, i);
+            printf("[SUCCESS] Content of %s loaded at the block with id %d\n", filePath, i);
             return i;
         }
     }
@@ -82,11 +89,16 @@ int loadFileToMemory(const char* filePath)
     return -1;
 }
 
-void freeBlock(int blockId)
+void removeBlock(int blockId)
 {
-    free(BLOCKS[blockId]);
-    BLOCKS[blockId] = NULL;
-    printf("[INFO] Removed the block with id %d\n", blockId);
+    if (BLOCKS[blockId] != NULL)
+    {
+        free(BLOCKS[blockId]);
+        BLOCKS[blockId] = NULL;
+        printf("[INFO] Removed the block with id %d\n", blockId);
+    }
+    else
+        printf("[INFO] The block with id %d was empty, didn't remove anything\n", blockId);
 }
 
 long getFileSize(FILE* filePointer)
@@ -111,11 +123,17 @@ void printBlock(int blockId)
         printf("[INFO] Content of the block with id %d:\n%s", blockId, BLOCKS[blockId]);
 }
 
-void freeAllBlocks()
+void removeAllBlocks()
 {
-    for (int i = 0; i < BLOCKS_COUNT; i++)
-        free(BLOCKS[i]);
-    free(BLOCKS);
+    if (BLOCKS != NULL)
+    {
+        for (int i = 0; i < BLOCKS_COUNT; i++)
+            free(BLOCKS[i]);
+        free(BLOCKS);
+        BLOCKS = NULL;
 
-    printf("[INFO] Removed %d blocks\n", BLOCKS_COUNT);
+        printf("[INFO] Removed %d blocks\n", BLOCKS_COUNT);
+    }
+    else
+        printf("[INFO] The BLOCKS array was empty, didn't remove anything\n");
 }
