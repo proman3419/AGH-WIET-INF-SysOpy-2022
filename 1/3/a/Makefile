@@ -4,7 +4,8 @@ MAIN=main
 OUTPUT=output
 OUTPUT_STATIC=$(addsuffix _static, $(OUTPUT))
 OUTPUT_SHARED=$(addsuffix _shared, $(OUTPUT))
-REPORT_FILE="report2.txt"
+REPORT_FILE="report3a.txt"
+REPORT_LINES_COUNT=11
 
 lib_static: $(LIB).c
 	$(CC) $(CFLAGS) $(LIB).c
@@ -43,21 +44,21 @@ test_general: $(OUTPUT_TEST)
 	make generate_test_files 
 
 	echo "1 $(FILE_SIZE)[MB] file" >> $(REPORT_FILE)
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 1 wc_files $(TEST_SIZE)0.txt | tail -n 9 >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 1 wc_files $(TEST_SIZE)0.txt | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
 	echo "5 $(FILE_SIZE)[MB] files" >> $(REPORT_FILE)
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 5 wc_files $(TEST_SIZE)0.txt $(TEST_SIZE)1.txt $(TEST_SIZE)2.txt $(TEST_SIZE)3.txt $(TEST_SIZE)4.txt | tail -n 9 >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 5 wc_files $(TEST_SIZE)0.txt $(TEST_SIZE)1.txt $(TEST_SIZE)2.txt $(TEST_SIZE)3.txt $(TEST_SIZE)4.txt | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
 	echo "10 $(FILE_SIZE)[MB] files" >> $(REPORT_FILE)
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 10 wc_files $(TEST_SIZE)0.txt $(TEST_SIZE)1.txt $(TEST_SIZE)2.txt $(TEST_SIZE)3.txt $(TEST_SIZE)4.txt $(TEST_SIZE)5.txt $(TEST_SIZE)6.txt $(TEST_SIZE)7.txt $(TEST_SIZE)8.txt $(TEST_SIZE)9.txt | tail -n 9 >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 10 wc_files $(TEST_SIZE)0.txt $(TEST_SIZE)1.txt $(TEST_SIZE)2.txt $(TEST_SIZE)3.txt $(TEST_SIZE)4.txt $(TEST_SIZE)5.txt $(TEST_SIZE)6.txt $(TEST_SIZE)7.txt $(TEST_SIZE)8.txt $(TEST_SIZE)9.txt | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
 test_allocation: $(OUTPUT_TEST)
 	echo "Create, remove 1000 1[kB] blocks, repeat 1000 times" >> $(REPORT_FILE)
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_blocks 1000 1000 1000 | tail -n 9 >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_blocks 1000 1000 1000 | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 	echo "Create, remove 100 10[kB] blocks, repeat 1000 times" >> $(REPORT_FILE)
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_blocks 100 10000 1000 | tail -n 9 >> $(REPORT_FILE)
-	echo "Create, remove 10 1[MB] blocks, repeat 1000 times" >> $(REPORT_FILE)
-	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_blocks 10 1000000 1000 | tail -n 9 >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_blocks 100 10000 1000 | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
+	echo "Create, remove 100 1[MB] blocks, repeat 1000 times" >> $(REPORT_FILE)
+	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_blocks 100 1000000 1000 | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
 test: $(OUTPUT_TEST)
 	touch $(REPORT_FILE)
@@ -65,7 +66,7 @@ test: $(OUTPUT_TEST)
 	make test_general TEST_SIZE="medium" FILES_COUNT=10 FILE_SIZE=10
 	make test_general TEST_SIZE="large" FILES_COUNT=10 FILE_SIZE=100
 	make test_allocation 
-	cat $(REPORT_FILE)
+	less $(REPORT_FILE)
 
 test_static:
 	make output_static
@@ -80,4 +81,4 @@ test_all:
 	make test_shared
 
 clean:
-	rm *.o *.gch *.a *.so $(OUTPUT)* *.tmp *.txt
+	rm *.o *.gch *.a *.so $(OUTPUT)* *.tmp small*.txt medium*.txt large*.txt

@@ -1,53 +1,65 @@
 #include "filestatslib.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/times.h>
+#include <time.h>
 
 #define MAX_COMMAND_LENGTH 1024
 
 char** BLOCKS;
 int BLOCKS_COUNT;
 
-void createBlocks(int blocksCount)
+void createBlocksPlaceholders(int blocksCount)
 {
     if (BLOCKS != NULL)
-        freeAllBlocks();
+        removeAllBlocks();
     BLOCKS = calloc(blocksCount, sizeof(char*));
     BLOCKS_COUNT = blocksCount;
-    printf("[INFO] Created %d blocks\n", BLOCKS_COUNT);
+    printf("[INFO] Created %d blocks placeholders\n", BLOCKS_COUNT);
 }
 
-void gatherStats(char** filePaths, int filesCount, char* tempFilePath)
+void createBlocks(int blocksCount, int blockByteSize)
+{
+    createBlocksPlaceholders(blocksCount);
+    for (int i = 0; i < BLOCKS_COUNT; i++)
+        BLOCKS[i] = calloc(BLOCKS_COUNT, blockByteSize);
+    printf("[INFO] Created %d blocks of size %dB\n", BLOCKS_COUNT, blockByteSize);
+}
+
+void gatherStats(char** filePaths, int filesCount, const char* tempFilePath)
+{
+    for (int i = 0; i < filesCount; i++)
+    {
+        usewc(filePaths[i], tempFilePath);
+        loadFileToMemory(tempFilePath);
+    }
+}
+
+void usewc(char* filePath, const char* tempFilePath)
 {
     char* command = calloc(MAX_COMMAND_LENGTH, sizeof(char));
     int status, commandLength;
 
-    for (int i = 0; i < filesCount; i++)
+    commandLength = snprintf(command, MAX_COMMAND_LENGTH,
+                             "wc --lines --words --chars %s > %s", 
+                             filePath, tempFilePath);
+
+    if (commandLength < 0)
+        printf("[ERROR] Encoding error occurred for the command\n");
+    else if (commandLength > MAX_COMMAND_LENGTH)
+        printf("[ERROR] The command is too long\n");
+    else
     {
-        printf("[INFO] Processing the file %s\n", filePaths[i]);
+        status = system(command);
 
-        commandLength = snprintf(command, MAX_COMMAND_LENGTH,
-                                     "wc --lines --words --chars %s > %s", 
-                                     filePaths[i], tempFilePath);
-
-        if (commandLength < 0)
-            printf("[ERROR] Encoding error occurred for the command\n");
-        else if (commandLength > MAX_COMMAND_LENGTH)
-            printf("[ERROR] The command is too long\n");
-        else
-        {
-            status = system(command);
-
-            if (status == -1)
-                printf("[ERROR] Failed to execute the command '%s'\n", command);
-        }
-
-        loadFileToMemory(tempFilePath);
+        if (status == -1)
+            printf("[ERROR] Failed to execute the command '%s'\n", command);
     }
 
     free(command);
 }
 
-int loadFileToMemory(char* filePath)
+int loadFileToMemory(const char* filePath)
 {
     FILE* filePointer = fopen(filePath, "r");
     if (filePointer == NULL) 
@@ -67,8 +79,7 @@ int loadFileToMemory(char* filePath)
         if (BLOCKS[i] == NULL)
         {
             BLOCKS[i] = result;
-            printf("[SUCCESS] Content of %s loaded at the block with id %d\n", 
-                   filePath, i);
+            printf("[SUCCESS] Content of %s loaded at the block with id %d\n", filePath, i);
             return i;
         }
     }
@@ -78,11 +89,16 @@ int loadFileToMemory(char* filePath)
     return -1;
 }
 
-void freeBlock(int blockId)
+void removeBlock(int blockId)
 {
-    free(BLOCKS[blockId]);
-    BLOCKS[blockId] = NULL;
-    printf("[INFO] Removed the block with id %d\n", blockId);
+    if (BLOCKS[blockId] != NULL)
+    {
+        free(BLOCKS[blockId]);
+        BLOCKS[blockId] = NULL;
+        printf("[INFO] Removed the block with id %d\n", blockId);
+    }
+    else
+        printf("[INFO] The block with id %d was empty, didn't remove anything\n", blockId);
 }
 
 long getFileSize(FILE* filePointer)
@@ -107,11 +123,17 @@ void printBlock(int blockId)
         printf("[INFO] Content of the block with id %d:\n%s", blockId, BLOCKS[blockId]);
 }
 
-void freeAllBlocks()
+void removeAllBlocks()
 {
-    for (int i = 0; i < BLOCKS_COUNT; i++)
-        free(BLOCKS[i]);
-    free(BLOCKS);
+    if (BLOCKS != NULL)
+    {
+        for (int i = 0; i < BLOCKS_COUNT; i++)
+            free(BLOCKS[i]);
+        free(BLOCKS);
+        BLOCKS = NULL;
 
-    printf("[INFO] Removed %d blocks\n", BLOCKS_COUNT);
+        printf("[INFO] Removed %d blocks\n", BLOCKS_COUNT);
+    }
+    else
+        printf("[INFO] The BLOCKS array was empty, didn't remove anything\n");
 }
