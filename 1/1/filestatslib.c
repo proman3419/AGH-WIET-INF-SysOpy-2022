@@ -74,6 +74,8 @@ int loadFileToMemory(const char* filePath)
     fread(result, 1, fileSize, filePointer);
     fclose(filePointer);
 
+    result[fileSize-1] = '\0';
+
     for (int i = 0; i < BLOCKS_COUNT; i++)
     {
         if (BLOCKS[i] == NULL)
@@ -91,7 +93,9 @@ int loadFileToMemory(const char* filePath)
 
 void removeBlock(int blockId)
 {
-    if (BLOCKS[blockId] != NULL)
+    if (BLOCKS == NULL)
+        printf("[ERROR] The BLOCKS array is NULL, call createBlocksPlaceholders first\n");
+    else if (BLOCKS[blockId] != NULL)
     {
         free(BLOCKS[blockId]);
         BLOCKS[blockId] = NULL;
@@ -114,7 +118,7 @@ long getFileSize(FILE* filePointer)
 void printBlock(int blockId)
 {
     if (BLOCKS == NULL)
-        printf("[ERROR] The BLOCKS array is NULL, call createBlocks first\n");
+        printf("[ERROR] The BLOCKS array is NULL, call createBlocksPlaceholders first\n");
     else if (blockId < 0 || BLOCKS_COUNT <= blockId)
         printf("[ERROR] Block id should be from range [0, %d], was %d\n", BLOCKS_COUNT, blockId);
     else if (BLOCKS[blockId] == NULL)
@@ -128,7 +132,10 @@ void removeAllBlocks()
     if (BLOCKS != NULL)
     {
         for (int i = 0; i < BLOCKS_COUNT; i++)
+        {
             free(BLOCKS[i]);
+            BLOCKS[i] = NULL;
+        }
         free(BLOCKS);
         BLOCKS = NULL;
 

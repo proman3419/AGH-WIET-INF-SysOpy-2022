@@ -1,29 +1,31 @@
 CC=gcc
 CFLAGS=-Wall
-MAIN=main
+MAIN_PATH=./
 OUTPUT=output
 OUTPUT_STATIC=$(addsuffix _static, $(OUTPUT))
 OUTPUT_SHARED=$(addsuffix _shared, $(OUTPUT))
-REPORT_FILE="report2.txt"
+FILESTATSLIB_PATH=../1/
+TIMEMEASLIB_PATH=./
+REPORT_FILE=report2.txt
 REPORT_LINES_COUNT=11
 
-lib_static: $(LIB).c
-	$(CC) $(CFLAGS) -c $(LIB).c
+lib_static: $(LIB_PATH)$(LIB).c
+	$(CC) $(CFLAGS) -c $(LIB_PATH)$(LIB).c
 	ar cr $(LIB).a $(LIB).o
 
-lib_shared: $(LIB).c
-	$(CC) $(CFLAGS) -c -fPIC $(LIB).c
+lib_shared: $(LIB_PATH)$(LIB).c
+	$(CC) $(CFLAGS) -c -fPIC $(LIB_PATH)$(LIB).c
 	$(CC) -shared -o $(LIB).so $(LIB).o
 
-output_static: $(MAIN).c
-	make lib_static LIB=filestatslib
-	make lib_static LIB=timemeaslib
-	$(CC) $(CFLAGS) $(MAIN).c -o $(OUTPUT_STATIC) -L . filestatslib.a timemeaslib.a
+output_static: $(MAIN_PATH)main.c
+	make lib_static LIB_PATH=$(FILESTATSLIB_PATH) LIB=filestatslib
+	make lib_static LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
+	$(CC) $(CFLAGS) $(MAIN_PATH)main.c -o $(OUTPUT_STATIC) -L . filestatslib.a timemeaslib.a
 
-output_shared: $(MAIN).c
-	make lib_shared LIB=filestatslib
-	make lib_shared LIB=timemeaslib
-	$(CC) $(CFLAGS) $(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
+output_shared: $(MAIN_PATH)main.c
+	make lib_shared LIB_PATH=$(FILESTATSLIB_PATH) LIB=filestatslib
+	make lib_shared LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
+	$(CC) $(CFLAGS) $(MAIN_PATH)main.c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
 
 run_static:
 	make output_static
