@@ -29,6 +29,42 @@ output_shared: $(MAIN_PATH)$(MAIN).c
 	make lib_shared LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
 	$(CC) $(CFLAGS) $(OPT_FLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
 
+output_static_O:
+	make output_static OPT_FLAGS=-O
+
+output_static_O1:
+	make output_static OPT_FLAGS=-O1
+
+output_static_O2:
+	make output_static OPT_FLAGS=-O2
+
+output_static_O3:
+	make output_static OPT_FLAGS=-O3	
+
+output_static_O0:
+	make output_static OPT_FLAGS=-O0
+
+output_static_Os:
+	make output_static OPT_FLAGS=-Os
+
+output_shared_O:
+	make output_shared OPT_FLAGS=-O
+
+output_shared_O1:
+	make output_shared OPT_FLAGS=-O1
+
+output_shared_O2:
+	make output_shared OPT_FLAGS=-O2
+
+output_shared_O3:
+	make output_shared OPT_FLAGS=-O3
+
+output_shared_O0:
+	make output_shared OPT_FLAGS=-O0
+
+output_shared_Os:
+	make output_shared OPT_FLAGS=-Os
+
 run_static:
 	make output_static
 	./$(OUTPUT_STATIC)
@@ -42,7 +78,9 @@ run_all:
 	make run_shared
 
 generate_test_files:
-	$(GENERATE_TEST_FILES_PATH)generate_test_files.sh $(TEST_SIZE) $(FILE_SIZE) $(FILES_COUNT)
+	$(GENERATE_TEST_FILES_PATH)generate_test_files.sh small 1 10
+	$(GENERATE_TEST_FILES_PATH)generate_test_files.sh medium 10 10
+	$(GENERATE_TEST_FILES_PATH)generate_test_files.sh large 100 10
 
 test_general: $(OUTPUT_TEST)
 	echo "1 $(FILE_SIZE)[MB] file" >> $(REPORT_FILE)
@@ -67,9 +105,9 @@ test: $(OUTPUT_TEST)
 	echo "Testing $(OUTPUT_TEST) with $(OPT_FLAGS) flags" >> $(REPORT_FILE)
 	echo "############################################" >> $(REPORT_FILE)
 	echo "" >> $(REPORT_FILE)
-	make test_general TEST_SIZE="small" FILES_COUNT=10 FILE_SIZE=1
-	make test_general TEST_SIZE="medium" FILES_COUNT=10 FILE_SIZE=10
-	make test_general TEST_SIZE="large" FILES_COUNT=10 FILE_SIZE=100
+	make test_general TEST_SIZE="small" FILE_SIZE=1 FILES_COUNT=10
+	make test_general TEST_SIZE="medium" FILE_SIZE=10 FILES_COUNT=10
+	make test_general TEST_SIZE="large" FILE_SIZE=100 FILES_COUNT=10
 	make test_allocation 
 
 test_static:
@@ -81,9 +119,7 @@ test_shared:
 	make test OUTPUT_TEST=$(OUTPUT_SHARED)
 
 test_all:
-	make generate_test_files TEST_SIZE="small" FILES_COUNT=10 FILE_SIZE=1
-	make generate_test_files TEST_SIZE="medium" FILES_COUNT=10 FILE_SIZE=10
-	make generate_test_files TEST_SIZE="large" FILES_COUNT=10 FILE_SIZE=100
+	make generate_test_files
 	rm -f $(REPORT_FILE)
 	make test_static OPT_FLAGS=-O
 	make test_static OPT_FLAGS=-O1
