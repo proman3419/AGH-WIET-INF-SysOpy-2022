@@ -1,22 +1,23 @@
 CC=gcc
 CFLAGS=-Wall
-MAIN_PATH=../2/
+MAIN_PATH=../zad2/
 MAIN=main
 OUTPUT=output
 OUTPUT_STATIC=$(addsuffix _static, $(OUTPUT))
 OUTPUT_SHARED=$(addsuffix _shared, $(OUTPUT))
-FILESTATSLIB_PATH=../1/
-TIMEMEASLIB_PATH=../2/
-GENERATE_TEST_FILES_PATH=../2/
+OUTPUT_DYNAMIC=$(addsuffix _dynamic, $(OUTPUT))
+FILESTATSLIB_PATH=../zad1/
+TIMEMEASLIB_PATH=../zad2/
+GENERATE_TEST_FILES_PATH=../zad2/
 REPORT_FILE=results3b.txt
 REPORT_LINES_COUNT=11
 
 lib_static: $(LIB_PATH)$(LIB).c
-	$(CC) $(CFLAGS) -c $(LIB_PATH)$(LIB).c
+	$(CC) $(CFLAGS) $(OPT_FLAGS) -c $(LIB_PATH)$(LIB).c
 	ar cr $(LIB).a $(LIB).o
 
 lib_shared: $(LIB_PATH)$(LIB).c
-	$(CC) $(CFLAGS) -c -fPIC $(LIB_PATH)$(LIB).c
+	$(CC) $(CFLAGS) $(OPT_FLAGS) -c -fPIC $(LIB_PATH)$(LIB).c
 	$(CC) -shared -o $(LIB).so $(LIB).o
 
 output_static: $(MAIN_PATH)$(MAIN).c
@@ -28,6 +29,11 @@ output_shared: $(MAIN_PATH)$(MAIN).c
 	make lib_shared LIB_PATH=$(FILESTATSLIB_PATH) LIB=filestatslib
 	make lib_shared LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
 	$(CC) $(CFLAGS) $(OPT_FLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
+
+output_dynamic:
+	make lib_shared LIB_PATH=$(FILESTATSLIB_PATH) LIB=filestatslib
+	make lib_shared LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
+	$(CC) $(CFLAGS) $(MAIN_PATH)$(MAIN).c $(FILESTATSLIB_PATH)filestatslib.c $(TIMEMEASLIB_PATH)timemeaslib.c -ldl -o $(OUTPUT_DYNAMIC) -I . -D DLL
 
 output_static_O:
 	make output_static OPT_FLAGS=-O
@@ -62,8 +68,23 @@ output_shared_O3:
 output_shared_O0:
 	make output_shared OPT_FLAGS=-O0
 
-output_shared_Os:
-	make output_shared OPT_FLAGS=-Os
+output_dynamic_O:
+	make output_dynamic OPT_FLAGS=-O
+
+output_dynamic_O1:
+	make output_dynamic OPT_FLAGS=-O1
+
+output_dynamic_O2:
+	make output_dynamic OPT_FLAGS=-O2
+
+output_dynamic_O3:
+	make output_dynamic OPT_FLAGS=-O3
+
+output_dynamic_O0:
+	make output_dynamic OPT_FLAGS=-O0
+
+output_dynamic_Os:
+	make output_dynamic OPT_FLAGS=-Os
 
 run_static:
 	make output_static
@@ -73,9 +94,14 @@ run_shared:
 	make output_shared
 	LD_LIBRARY_PATH=. ./$(OUTPUT_SHARED)
 
+run_dynamic:
+	make output_dynamic
+	LD_LIBRARY_PATH=. ./$(OUTPUT_DYNAMIC)
+
 run_all:
 	make run_static
 	make run_shared
+	make run_dynamic
 
 generate_test_files:
 	$(GENERATE_TEST_FILES_PATH)generate_test_files.sh small 1 10
@@ -114,27 +140,13 @@ test_static:
 	make output_static
 	make test OUTPUT_TEST=$(OUTPUT_STATIC)
 
-test_shared:
-	make output_shared
-	make test OUTPUT_TEST=$(OUTPUT_SHARED)
-
-test_all:
+test_optimalization_static:
 	make generate_test_files
 	rm -f $(REPORT_FILE)
+	make test_static OPT_FLAGS=-O0
 	make test_static OPT_FLAGS=-O
-	make test_static OPT_FLAGS=-O1
 	make test_static OPT_FLAGS=-O2
 	make test_static OPT_FLAGS=-O3
-	make test_static OPT_FLAGS=-O0
-	make test_static OPT_FLAGS=-Os
-
-	make test_shared OPT_FLAGS=-O
-	make test_shared OPT_FLAGS=-O1
-	make test_shared OPT_FLAGS=-O2
-	make test_shared OPT_FLAGS=-O3
-	make test_shared OPT_FLAGS=-O0
-	make test_shared OPT_FLAGS=-Os
-	less $(REPORT_FILE)
 
 clean:
 	rm -f *.o *.gch *.a *.so $(OUTPUT)* *.tmp small*.txt medium*.txt large*.txt

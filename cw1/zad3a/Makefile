@@ -1,13 +1,14 @@
 CC=gcc
 CFLAGS=-Wall
-MAIN_PATH=../2/
+MAIN_PATH=../zad2/
 MAIN=main
 OUTPUT=output
 OUTPUT_STATIC=$(addsuffix _static, $(OUTPUT))
 OUTPUT_SHARED=$(addsuffix _shared, $(OUTPUT))
-FILESTATSLIB_PATH=../1/
-TIMEMEASLIB_PATH=../2/
-GENERATE_TEST_FILES_PATH=../2/
+OUTPUT_DYNAMIC=$(addsuffix _dynamic, $(OUTPUT))
+FILESTATSLIB_PATH=../zad1/
+TIMEMEASLIB_PATH=../zad2/
+GENERATE_TEST_FILES_PATH=../zad2/
 REPORT_FILE=results3a.txt
 REPORT_LINES_COUNT=11
 
@@ -29,6 +30,11 @@ output_shared: $(MAIN_PATH)$(MAIN).c
 	make lib_shared LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
 	$(CC) $(CFLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
 
+output_dynamic:
+	make lib_shared LIB_PATH=$(FILESTATSLIB_PATH) LIB=filestatslib
+	make lib_shared LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
+	$(CC) $(CFLAGS) $(MAIN_PATH)$(MAIN).c $(FILESTATSLIB_PATH)filestatslib.c $(TIMEMEASLIB_PATH)timemeaslib.c -ldl -o $(OUTPUT_DYNAMIC) -I . -D DLL
+
 run_static:
 	make output_static
 	./$(OUTPUT_STATIC)
@@ -37,9 +43,18 @@ run_shared:
 	make output_shared
 	LD_LIBRARY_PATH=. ./$(OUTPUT_SHARED)
 
+run_shared:
+	make output_shared
+	LD_LIBRARY_PATH=. ./$(OUTPUT_SHARED)
+
+run_dynamic:
+	make output_dynamic
+	LD_LIBRARY_PATH=. ./$(OUTPUT_DYNAMIC)
+
 run_all:
 	make run_static
 	make run_shared
+	make run_dynamic
 
 generate_test_files:
 	$(GENERATE_TEST_FILES_PATH)generate_test_files.sh small 1 10
@@ -82,11 +97,16 @@ test_shared:
 	make output_shared
 	make test OUTPUT_TEST=$(OUTPUT_SHARED)
 
+test_dynamic:
+	make output_dynamic
+	make test OUTPUT_TEST=$(OUTPUT_DYNAMIC)
+
 test_all:
 	make generate_test_files
 	rm -f $(REPORT_FILE)
 	make test_static
 	make test_shared
+	make test_dynamic
 	less $(REPORT_FILE)
 
 clean:

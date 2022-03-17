@@ -1,1 +1,0 @@
-Program wykorzystujący biblioteki współdzielone wykonywał operacje tak samo szybko lub szyciej niż ten wykorzystujący biblioteki statyczne.

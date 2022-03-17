@@ -1,0 +1,2 @@
+Czasy wykonania programów wykorzystujących różne biblioteki są bardzo do siebie zbliżone.
+Program wykorzystujący bibliotekę dynamiczną jest minimalnie wolniejszy.

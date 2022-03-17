@@ -1,0 +1,1 @@
+Kolejność szybkości wykonania od najszybszej, do najwolniejszej: O0, O, O3, O2 (wnioskując po najdłużej wykonującym się teście).

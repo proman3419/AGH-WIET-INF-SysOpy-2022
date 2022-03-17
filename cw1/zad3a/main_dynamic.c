@@ -1,5 +1,9 @@
+#ifdef DLL
+#include <dlfcn.h>
+#else
 #include "../1/filestatslib.h"
 #include "timemeaslib.h"
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -38,9 +42,38 @@ void moveToArray(char** arrFrom, char** arrTo, int iFrom, int length)
 
 int main(int argc, char** argv)
 {
-    #ifdef DYNAMIC
-    filestatslib_handle_dynamic();
-    timemeaslib_handle_dynamic();
+    #ifdef DLL
+    static void* filestatslibHandle = dlopen("./filestatslib.so", RTLD_LAZY);
+    if (handle == NULL)
+    {
+        printf("[ERROR] Couldn't load filestatslib.so dynamically\n");
+        return -1;
+    }
+    printf("[SUCCESS] Loaded filestatslib.so dynamically\n");
+
+    void (*_createBlocksPlaceholders)(int) = dlsym(filestatslibHandle, "createBlocksPlaceholders");
+    void (*_createBlocks)(int, int) = dlsym(filestatslibHandle, "createBlocks");
+    void (*_gatherStats)(char**, int, const char*) = dlsym(filestatslibHandle, "gatherStats");
+    void (*_usewc)(char*, const char*) = dlsym(filestatslibHandle, "usewc");
+    int (*_loadFileToMemory)(const char*) = dlsym(filestatslibHandle, "loadFileToMemory");
+    void (*_removeBlock)(int) = dlsym(filestatslibHandle, "removeBlock");
+    long (*_getFileSize)(FILE*) = dlsym(filestatslibHandle, "getFileSize");
+    void (*_printBlock)(int) = dlsym(filestatslibHandle, "printBlock");
+    void (*_removeAllBlocks)() = dlsym(filestatslibHandle, "removeAllBlocks");
+
+    static void* timemeaslibHandle = dlopen("./timemeaslib.so", RTLD_LAZY);
+    if (handle == NULL)
+    {
+        printf("[ERROR] Couldn't load timemeaslib.so dynamically\n");
+        return -1;
+    }
+    printf("[SUCCESS] Loaded timemeaslib.so dynamically\n");
+
+    double (*_timeElapsedInSeconds)(clock_t, clock_t) = dlsym(timemeaslibHandle, "timeElapsedInSeconds");
+    void (*_saveTimes)(struct TimeType*, struct tms, struct tms, clock_t, clock_t) = dlsym(timemeaslibHandle, "saveTimes");
+    void (*_printTimeType)(char*, struct TimeType) = dlsym(timemeaslibHandle, "printTimeType");
+    void (*_printMeasuredTime)(struct MeasuredTime) = dlsym(timemeaslibHandle, "printMeasuredTime");
+    void (*printHorizontalLine)(char, int) = dlsym(timemeaslibHandle, "printHorizontalLine");
     #endif
 
     struct MeasuredTime mt = {0};
@@ -148,6 +181,11 @@ int main(int argc, char** argv)
     saveTimes(&mtPtr->total, tmsStartTotal, tmsEndTotal, clockStartTotal, clockEndTotal);
 
     printMeasuredTime(mt);
+
+    #ifdef DLL
+    dlclose(filestatslibHandle);
+    dlclose(timemeaslibHandle);
+    #endif
 
     return 0;
 }
