@@ -12,6 +12,19 @@ GENERATE_TEST_FILES_PATH=../zad2/
 REPORT_FILE=results3a.txt
 REPORT_LINES_COUNT=11
 
+all:
+	make output_static
+	make output_shared
+	make output_dynamic
+
+test:
+	make generate_test_files
+	rm -f $(REPORT_FILE)
+	make test_static
+	make test_shared
+	make test_dynamic
+	less $(REPORT_FILE)
+
 lib_static: $(LIB_PATH)$(LIB).c
 	$(CC) $(CFLAGS) -c $(LIB_PATH)$(LIB).c
 	ar cr $(LIB).a $(LIB).o
@@ -51,7 +64,7 @@ run_dynamic:
 	make output_dynamic
 	LD_LIBRARY_PATH=. ./$(OUTPUT_DYNAMIC)
 
-run_all:
+run:
 	make run_static
 	make run_shared
 	make run_dynamic
@@ -79,7 +92,7 @@ test_allocation: $(OUTPUT_TEST)
 	echo "Create, remove 100 1[MB] blocks, repeat 100 times" >> $(REPORT_FILE)
 	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_remove_blocks 100 1000000 100 | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
-test: $(OUTPUT_TEST)
+test_sub: $(OUTPUT_TEST)
 	echo "############################################" >> $(REPORT_FILE)
 	echo "Testing $(OUTPUT_TEST)" >> $(REPORT_FILE)
 	echo "############################################" >> $(REPORT_FILE)
@@ -91,23 +104,15 @@ test: $(OUTPUT_TEST)
 
 test_static:
 	make output_static
-	make test OUTPUT_TEST=$(OUTPUT_STATIC)
+	make test_sub OUTPUT_TEST=$(OUTPUT_STATIC)
 
 test_shared:
 	make output_shared
-	make test OUTPUT_TEST=$(OUTPUT_SHARED)
+	make test_sub OUTPUT_TEST=$(OUTPUT_SHARED)
 
 test_dynamic:
 	make output_dynamic
-	make test OUTPUT_TEST=$(OUTPUT_DYNAMIC)
-
-test_all:
-	make generate_test_files
-	rm -f $(REPORT_FILE)
-	make test_static
-	make test_shared
-	make test_dynamic
-	less $(REPORT_FILE)
+	make test_sub OUTPUT_TEST=$(OUTPUT_DYNAMIC)
 
 clean:
 	rm -f *.o *.gch *.a *.so $(OUTPUT)* *.tmp small*.txt medium*.txt large*.txt

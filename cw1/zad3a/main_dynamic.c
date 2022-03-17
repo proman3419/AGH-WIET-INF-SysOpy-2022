@@ -1,7 +1,7 @@
 #ifdef DLL
 #include <dlfcn.h>
 #else
-#include "../1/filestatslib.h"
+#include "../zad1/filestatslib.h"
 #include "timemeaslib.h"
 #endif
 #include <string.h>

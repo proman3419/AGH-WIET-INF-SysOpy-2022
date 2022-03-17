@@ -12,6 +12,17 @@ GENERATE_TEST_FILES_PATH=../zad2/
 REPORT_FILE=results3b.txt
 REPORT_LINES_COUNT=11
 
+all:
+	echo "make output_<static/shared/dynamic>_<optimalization flags>"
+
+test:
+	make generate_test_files
+	rm -f $(REPORT_FILE)
+	make test_static OPT_FLAGS=-O0
+	make test_static OPT_FLAGS=-O
+	make test_static OPT_FLAGS=-O2
+	make test_static OPT_FLAGS=-O3
+
 lib_static: $(LIB_PATH)$(LIB).c
 	$(CC) $(CFLAGS) $(OPT_FLAGS) -c $(LIB_PATH)$(LIB).c
 	ar cr $(LIB).a $(LIB).o
@@ -126,7 +137,7 @@ test_allocation: $(OUTPUT_TEST)
 	echo "Create, remove 100 1[MB] blocks, repeat 100 times" >> $(REPORT_FILE)
 	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_remove_blocks 100 1000000 100 | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
-test: $(OUTPUT_TEST)
+test_sub: $(OUTPUT_TEST)
 	echo "############################################" >> $(REPORT_FILE)
 	echo "Testing $(OUTPUT_TEST) with $(OPT_FLAGS) flags" >> $(REPORT_FILE)
 	echo "############################################" >> $(REPORT_FILE)
@@ -138,15 +149,7 @@ test: $(OUTPUT_TEST)
 
 test_static:
 	make output_static
-	make test OUTPUT_TEST=$(OUTPUT_STATIC)
-
-test_optimalization_static:
-	make generate_test_files
-	rm -f $(REPORT_FILE)
-	make test_static OPT_FLAGS=-O0
-	make test_static OPT_FLAGS=-O
-	make test_static OPT_FLAGS=-O2
-	make test_static OPT_FLAGS=-O3
+	make test_sub OUTPUT_TEST=$(OUTPUT_STATIC)
 
 clean:
 	rm -f *.o *.gch *.a *.so $(OUTPUT)* *.tmp small*.txt medium*.txt large*.txt

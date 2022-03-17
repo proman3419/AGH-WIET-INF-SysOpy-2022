@@ -10,6 +10,13 @@ GENERATE_TEST_FILES_PATH=./
 REPORT_FILE=report2.txt
 REPORT_LINES_COUNT=11
 
+all:
+	make output_static
+
+test:
+	make output_static
+	make test_sub OUTPUT_TEST=$(OUTPUT_STATIC)
+
 lib_static: $(LIB_PATH)$(LIB).c
 	$(CC) $(CFLAGS) -c $(LIB_PATH)$(LIB).c
 	ar cr $(LIB).a $(LIB).o
@@ -46,17 +53,13 @@ test_allocation: $(OUTPUT_TEST)
 	echo "Create, remove 100 1[MB] blocks, repeat 100 times" >> $(REPORT_FILE)
 	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_remove_blocks 100 1000000 100 | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
-test: $(OUTPUT_TEST)
+test_sub: $(OUTPUT_TEST)
 	rm -f $(REPORT_FILE)
 	make test_general TEST_SIZE="small" FILES_COUNT=10 FILE_SIZE=1
 	make test_general TEST_SIZE="medium" FILES_COUNT=10 FILE_SIZE=10
 	make test_general TEST_SIZE="large" FILES_COUNT=10 FILE_SIZE=100
 	make test_allocation 
 	less $(REPORT_FILE)
-
-test_static:
-	make output_static
-	make test OUTPUT_TEST=$(OUTPUT_STATIC)
 
 clean:
 	rm -f *.o *.gch *.a *.so $(OUTPUT)* *.tmp small*.txt medium*.txt large*.txt

@@ -1,4 +1,4 @@
-#include "../1/filestatslib.h"
+#include "../zad1/filestatslib.h"
 #include "timemeaslib.h"
 #include <string.h>
 #include <stdlib.h>
