@@ -38,6 +38,11 @@ void moveToArray(char** arrFrom, char** arrTo, int iFrom, int length)
 
 int main(int argc, char** argv)
 {
+    #ifdef DYNAMIC
+    filestatslib_handle_dynamic();
+    timemeaslib_handle_dynamic();
+    #endif
+
     struct MeasuredTime mt = {0};
     struct MeasuredTime* mtPtr = &mt;
     clock_t clockStart, clockEnd, clockStartTotal, clockEndTotal;

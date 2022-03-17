@@ -15,4 +15,4 @@ lib_all:
 	make lib_shared
 
 clean:
-	rm *.o *.gch *.a *.so
+	rm -f *.o *.gch *.a *.so

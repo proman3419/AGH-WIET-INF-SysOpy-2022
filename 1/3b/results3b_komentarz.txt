@@ -1,0 +1,4 @@
+Najszybsze wykonanie dla flag: -Os static, -Os shared.
+Najwolniejsze wykonanie dla flag: -O static, -O0 shared.
+Dla testów, w których występowało więcej małych operacji (np wielokrotne usuwanie dużej ilości małych bloków pamięci) przeważnie szybciej wykonywał się program wykorzystujący biblioteki statyczne.
+Dla testów o małej ilości dużych operacji (np wykonanie programu na różnej ilości dużych plików) przeważnie szybciej wykonywał się program wykorzystujący biblioteki współdzielone.

@@ -1,34 +1,50 @@
 CC=gcc
 CFLAGS=-Wall
-MAIN_PATH=./
+MAIN_PATH=../2/
 MAIN=main
 OUTPUT=output
 OUTPUT_STATIC=$(addsuffix _static, $(OUTPUT))
+OUTPUT_SHARED=$(addsuffix _shared, $(OUTPUT))
 FILESTATSLIB_PATH=../1/
-TIMEMEASLIB_PATH=./
-GENERATE_TEST_FILES_PATH=./
-REPORT_FILE=report2.txt
+TIMEMEASLIB_PATH=../2/
+GENERATE_TEST_FILES_PATH=../2/
+REPORT_FILE=results3b.txt
 REPORT_LINES_COUNT=11
 
 lib_static: $(LIB_PATH)$(LIB).c
 	$(CC) $(CFLAGS) -c $(LIB_PATH)$(LIB).c
 	ar cr $(LIB).a $(LIB).o
 
+lib_shared: $(LIB_PATH)$(LIB).c
+	$(CC) $(CFLAGS) -c -fPIC $(LIB_PATH)$(LIB).c
+	$(CC) -shared -o $(LIB).so $(LIB).o
+
 output_static: $(MAIN_PATH)$(MAIN).c
 	make lib_static LIB_PATH=$(FILESTATSLIB_PATH) LIB=filestatslib
 	make lib_static LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
-	$(CC) $(CFLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT_STATIC) -L . filestatslib.a timemeaslib.a
+	$(CC) $(CFLAGS) $(OPT_FLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT_STATIC) -L . filestatslib.a timemeaslib.a
+
+output_shared: $(MAIN_PATH)$(MAIN).c
+	make lib_shared LIB_PATH=$(FILESTATSLIB_PATH) LIB=filestatslib
+	make lib_shared LIB_PATH=$(TIMEMEASLIB_PATH) LIB=timemeaslib
+	$(CC) $(CFLAGS) $(OPT_FLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT_SHARED) -L . filestatslib.so timemeaslib.so
 
 run_static:
 	make output_static
 	./$(OUTPUT_STATIC)
 
+run_shared:
+	make output_shared
+	LD_LIBRARY_PATH=. ./$(OUTPUT_SHARED)
+
+run_all:
+	make run_static
+	make run_shared
+
 generate_test_files:
 	$(GENERATE_TEST_FILES_PATH)generate_test_files.sh $(TEST_SIZE) $(FILE_SIZE) $(FILES_COUNT)
 
 test_general: $(OUTPUT_TEST)
-	make generate_test_files 
-
 	echo "1 $(FILE_SIZE)[MB] file" >> $(REPORT_FILE)
 	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_table 1 wc_files $(TEST_SIZE)0.txt | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
@@ -47,16 +63,42 @@ test_allocation: $(OUTPUT_TEST)
 	LD_LIBRARY_PATH=. ./$(OUTPUT_TEST) create_remove_blocks 100 1000000 100 | tail -n $(REPORT_LINES_COUNT) >> $(REPORT_FILE)
 
 test: $(OUTPUT_TEST)
-	rm -f $(REPORT_FILE)
+	echo "############################################" >> $(REPORT_FILE)
+	echo "Testing $(OUTPUT_TEST) with $(OPT_FLAGS) flags" >> $(REPORT_FILE)
+	echo "############################################" >> $(REPORT_FILE)
+	echo "" >> $(REPORT_FILE)
 	make test_general TEST_SIZE="small" FILES_COUNT=10 FILE_SIZE=1
 	make test_general TEST_SIZE="medium" FILES_COUNT=10 FILE_SIZE=10
 	make test_general TEST_SIZE="large" FILES_COUNT=10 FILE_SIZE=100
 	make test_allocation 
-	less $(REPORT_FILE)
 
 test_static:
 	make output_static
 	make test OUTPUT_TEST=$(OUTPUT_STATIC)
+
+test_shared:
+	make output_shared
+	make test OUTPUT_TEST=$(OUTPUT_SHARED)
+
+test_all:
+	make generate_test_files TEST_SIZE="small" FILES_COUNT=10 FILE_SIZE=1
+	make generate_test_files TEST_SIZE="medium" FILES_COUNT=10 FILE_SIZE=10
+	make generate_test_files TEST_SIZE="large" FILES_COUNT=10 FILE_SIZE=100
+	rm -f $(REPORT_FILE)
+	make test_static OPT_FLAGS=-O
+	make test_static OPT_FLAGS=-O1
+	make test_static OPT_FLAGS=-O2
+	make test_static OPT_FLAGS=-O3
+	make test_static OPT_FLAGS=-O0
+	make test_static OPT_FLAGS=-Os
+
+	make test_shared OPT_FLAGS=-O
+	make test_shared OPT_FLAGS=-O1
+	make test_shared OPT_FLAGS=-O2
+	make test_shared OPT_FLAGS=-O3
+	make test_shared OPT_FLAGS=-O0
+	make test_shared OPT_FLAGS=-Os
+	less $(REPORT_FILE)
 
 clean:
 	rm -f *.o *.gch *.a *.so $(OUTPUT)* *.tmp small*.txt medium*.txt large*.txt
