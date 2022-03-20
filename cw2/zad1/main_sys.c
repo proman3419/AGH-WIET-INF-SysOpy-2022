@@ -52,7 +52,7 @@ void processLine(int fromFD, int toFD)
     startLinePosition = ftell(fromFD);
     do
     {
-        if (read(fromFD, buffer, 1))
+        if (read(fromFD, buffer, 1) != 1)
             break;
         if (isspace(buffer[0]) == 0)
             nonWhiteCharFound = 1;
