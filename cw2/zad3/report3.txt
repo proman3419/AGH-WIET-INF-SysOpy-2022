@@ -1,0 +1,369 @@
+Run output_dirstat, explore ../test/test3
+[INFO] The absolute path of the root directory is /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir1
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:26:13
+Last modified: 2022-03-21 18:26:13
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:26:41
+Last modified: 2022-03-21 18:26:40
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2/dir4
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:26:55
+Last modified: 2022-03-21 18:26:55
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2/dir4/dir5
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:26:51
+Last modified: 2022-03-21 18:26:51
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2/dir4/dir6
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:26:54
+Last modified: 2022-03-21 18:26:54
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2/dir4/dir7
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:26:55
+Last modified: 2022-03-21 18:26:55
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:12
+Last modified: 2022-03-21 18:27:12
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:30
+Last modified: 2022-03-21 18:27:30
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir10
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:22
+Last modified: 2022-03-21 18:27:22
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:38
+Last modified: 2022-03-21 18:27:38
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11/dir12
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:34
+Last modified: 2022-03-21 18:27:34
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11/dir13
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:36
+Last modified: 2022-03-21 18:27:36
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11/dir14
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:37
+Last modified: 2022-03-21 18:27:37
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11/dir15
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:38
+Last modified: 2022-03-21 18:27:38
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir9
+Hard links: 1
+File type: dir
+File size: 0[B]
+Last access: 2022-03-21 18:27:20
+Last modified: 2022-03-21 18:27:20
+
+--------------------------
+| File type | Occurances |
+--------------------------
+|      sock |          0 |
+|     slink |          0 |
+|      file |          0 |
+| block dev |          0 |
+|       dir |         15 |
+|  char dev |          0 |
+|      fifo |          0 |
+--------------------------
+
+
+Run output_dirstat, explore /tmp/
+[INFO] The absolute path of the root directory is /tmp
+
+Absolute file path: /tmp/serverauth.aYRmQCxej0
+Hard links: 1
+File type: file
+File size: 186[B]
+Last access: 2022-03-21 09:36:38
+Last modified: 2022-03-21 09:36:38
+
+Absolute file path: /tmp/.org.chromium.Chromium.9YzAjp
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:42
+
+Absolute file path: /tmp/.org.chromium.Chromium.9YzAjp/Caprine1_1.png
+Hard links: 1
+File type: file
+File size: 2204[B]
+Last access: 2022-03-21 09:36:42
+Last modified: 2022-03-21 09:36:42
+
+Absolute file path: /tmp/Sublime Merge.ffa19ea9a512738c9756787ded492665.sock
+Hard links: 1
+File type: sock
+File size: 0[B]
+Last access: 2022-03-21 18:29:42
+Last modified: 2022-03-21 15:15:00
+
+Absolute file path: /tmp/.org.chromium.Chromium.oqEUIx
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.org.chromium.Chromium.oqEUIx/SS
+Hard links: 1
+File type: sock
+File size: 0[B]
+Last access: 2022-03-21 11:31:18
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.org.chromium.Chromium.oqEUIx/SingletonCookie
+Hard links: 1
+File type: slink
+File size: 20[B]
+Last access: 2022-03-21 11:31:18
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.org.chromium.Chromium.ZzFtuD
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:48
+
+Absolute file path: /tmp/.org.chromium.Chromium.ZzFtuD/discord1_2.png
+Hard links: 1
+File type: file
+File size: 904[B]
+Last access: 2022-03-21 09:36:48
+Last modified: 2022-03-21 09:36:48
+
+Absolute file path: /tmp/.font-unix
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:31
+
+Absolute file path: /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-haveged.service-4Rxkca
+Hard links: 3
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 09:36:31
+Last modified: 2022-03-21 09:36:31
+
+[ERROR] Couldn't open the /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-haveged.service-4Rxkca directory
+
+Absolute file path: /tmp/.org.chromium.Chromium.3chseQ
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 11:31:18
+
+Absolute file path: /tmp/.org.chromium.Chromium.3chseQ/Caprine1_1.png
+Hard links: 1
+File type: file
+File size: 2204[B]
+Last access: 2022-03-21 11:31:18
+Last modified: 2022-03-21 11:31:18
+
+Absolute file path: /tmp/Sublime Text.65f05c6c107d7104a11c097656fb6a1b.sock
+Hard links: 1
+File type: sock
+File size: 0[B]
+Last access: 2022-03-21 09:38:00
+Last modified: 2022-03-21 09:38:00
+
+Absolute file path: /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-ModemManager.service-K6y1vx
+Hard links: 3
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 09:36:31
+Last modified: 2022-03-21 09:36:31
+
+[ERROR] Couldn't open the /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-ModemManager.service-K6y1vx directory
+
+Absolute file path: /tmp/Temp-{f22b1b6d-3d21-4630-b89d-041247e22c17}
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.X11-unix
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:38
+
+Absolute file path: /tmp/.X11-unix/X0
+Hard links: 1
+File type: sock
+File size: 0[B]
+Last access: 2022-03-21 09:36:38
+Last modified: 2022-03-21 09:36:38
+
+Absolute file path: /tmp/hsperfdata_przemek
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:43
+
+Absolute file path: /tmp/.org.chromium.Chromium.L8yHii
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.org.chromium.Chromium.L8yHii/SS
+Hard links: 1
+File type: sock
+File size: 0[B]
+Last access: 2022-03-21 09:36:41
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.org.chromium.Chromium.L8yHii/SingletonCookie
+Hard links: 1
+File type: slink
+File size: 19[B]
+Last access: 2022-03-21 09:36:41
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/qipc_systemsem_beaaafecddc90810d280abc52457f5481737a0ae6e6ead631d9
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 09:36:40
+Last modified: 2022-03-21 09:36:40
+
+Absolute file path: /tmp/.XIM-unix
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:31
+
+Absolute file path: /tmp/.com.google.Chrome.jq2F99
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.com.google.Chrome.jq2F99/SingletonCookie
+Hard links: 1
+File type: slink
+File size: 19[B]
+Last access: 2022-03-21 10:14:35
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.com.google.Chrome.jq2F99/SingletonSocket
+Hard links: 1
+File type: sock
+File size: 0[B]
+Last access: 2022-03-21 10:14:35
+Last modified: 2022-03-21 09:36:41
+
+Absolute file path: /tmp/.ICE-unix
+Hard links: 2
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 17:33:00
+Last modified: 2022-03-21 09:36:31
+
+Absolute file path: /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-systemd-timesyncd.service-dYMeFQ
+Hard links: 3
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 09:36:31
+Last modified: 2022-03-21 09:36:31
+
+[ERROR] Couldn't open the /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-systemd-timesyncd.service-dYMeFQ directory
+
+Absolute file path: /tmp/qipc_sharedmemory_beaaafecddc90810d280abc52457f5481737a0ae6e6ead631d9
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 09:36:40
+Last modified: 2022-03-21 09:36:40
+
+Absolute file path: /tmp/.X0-lock
+Hard links: 1
+File type: file
+File size: 11[B]
+Last access: 2022-03-21 09:36:38
+Last modified: 2022-03-21 09:36:38
+
+Absolute file path: /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-systemd-logind.service-cGdWEr
+Hard links: 3
+File type: dir
+File size: 4096[B]
+Last access: 2022-03-21 09:36:31
+Last modified: 2022-03-21 09:36:31
+
+[ERROR] Couldn't open the /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-systemd-logind.service-cGdWEr directory
+
+--------------------------
+| File type | Occurances |
+--------------------------
+|      sock |          6 |
+|     slink |          3 |
+|      file |          7 |
+| block dev |          0 |
+|       dir |         16 |
+|  char dev |          0 |
+|      fifo |          0 |
+--------------------------
+
+
