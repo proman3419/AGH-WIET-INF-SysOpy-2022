@@ -1,121 +1,331 @@
-Run output_dirstat, explore ../test/test3
-[INFO] The absolute path of the root directory is /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3
+Run output_dirstat, explore test3
+[INFO] The absolute path of the root directory is /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir1
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/char_device1
+Hard links: 1
+File type: char dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:23:29
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir1
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:26:13
-Last modified: 2022-03-21 18:26:13
+File size: 248[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:32:13
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir1/fifo9
+Hard links: 1
+File type: fifo
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:32:13
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir1/file1.txt
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:14:39
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:26:41
-Last modified: 2022-03-21 18:26:40
+File size: 248[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:37
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2/dir4
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:26:55
+File size: 336[B]
+Last access: 2022-03-21 21:03:39
 Last modified: 2022-03-21 18:26:55
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2/dir4/dir5
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir5
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:26:51
-Last modified: 2022-03-21 18:26:51
+File size: 272[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:24:24
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2/dir4/dir6
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir5/char_device2
 Hard links: 1
-File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:26:54
-Last modified: 2022-03-21 18:26:54
+File type: char dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:24:06
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir2/dir4/dir7
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir5/char_device3
 Hard links: 1
-File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:26:55
-Last modified: 2022-03-21 18:26:55
+File type: char dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:24:24
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir6
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:27:12
-Last modified: 2022-03-21 18:27:12
+File size: 256[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:12
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir6/file2.conf
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:01
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir6/file3.conf
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:12
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir7
 Hard links: 1
 File type: dir
+File size: 256[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:35:09
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir7/symlink1
+Hard links: 1
+File type: slink
+File size: 4[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:34:42
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/dir4/dir7/symlink2
+Hard links: 1
+File type: slink
+File size: 5[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:35:09
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir2/file4.conf
+Hard links: 1
+File type: file
 File size: 0[B]
-Last access: 2022-03-21 18:27:30
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:12
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3
+Hard links: 1
+File type: dir
+File size: 240[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:25:12
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir16
+Hard links: 1
+File type: dir
+File size: 160[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:25:27
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir16/char_device4
+Hard links: 1
+File type: char dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:25:27
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8
+Hard links: 1
+File type: dir
+File size: 336[B]
+Last access: 2022-03-21 21:03:39
 Last modified: 2022-03-21 18:27:30
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir10
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir10
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:27:22
-Last modified: 2022-03-21 18:27:22
+File size: 272[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:26:50
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir10/block_device1
+Hard links: 1
+File type: block dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:26:45
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir10/block_device2
+Hard links: 1
+File type: block dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:26:50
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:27:38
+File size: 432[B]
+Last access: 2022-03-21 21:03:39
 Last modified: 2022-03-21 18:27:38
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11/dir12
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir12
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:27:34
-Last modified: 2022-03-21 18:27:34
+File size: 240[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:31:24
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11/dir13
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir12/fifo7
 Hard links: 1
-File type: dir
+File type: fifo
 File size: 0[B]
-Last access: 2022-03-21 18:27:36
-Last modified: 2022-03-21 18:27:36
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:31:16
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11/dir14
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir12/fifo8
 Hard links: 1
-File type: dir
+File type: fifo
 File size: 0[B]
-Last access: 2022-03-21 18:27:37
-Last modified: 2022-03-21 18:27:37
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:31:24
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir11/dir15
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir13
 Hard links: 1
 File type: dir
-File size: 0[B]
-Last access: 2022-03-21 18:27:38
-Last modified: 2022-03-21 18:27:38
+File size: 448[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:31:08
 
-Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/test/test3/dir3/dir8/dir9
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir13/fifo5
+Hard links: 1
+File type: fifo
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:31:05
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir13/fifo6
+Hard links: 1
+File type: fifo
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:31:08
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir13/file6.md
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:12
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir13/file7.md
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:12
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir13/file8.txt
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:12
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir13/file9.json
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:12
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir14
 Hard links: 1
 File type: dir
+File size: 480[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:30:28
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir14/block_device3
+Hard links: 1
+File type: block dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:27:32
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir14/block_device4
+Hard links: 1
+File type: block dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:27:32
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir14/block_device5
+Hard links: 1
+File type: block dev
+File size: 24[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:27:39
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir14/fifo1
+Hard links: 1
+File type: fifo
 File size: 0[B]
-Last access: 2022-03-21 18:27:20
-Last modified: 2022-03-21 18:27:20
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:30:28
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir15
+Hard links: 1
+File type: dir
+File size: 336[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:30:46
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir15/fifo2
+Hard links: 1
+File type: fifo
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:30:41
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir15/fifo3
+Hard links: 1
+File type: fifo
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:30:43
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir11/dir15/fifo4
+Hard links: 1
+File type: fifo
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:30:46
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir9
+Hard links: 1
+File type: dir
+File size: 152[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:16:03
+
+Absolute file path: /media/shared/Documents/agh/semestr_4/sysopy/AGH-WIET-INF-SysOpy-2022/cw2/zad3/test3/dir3/dir8/dir9/file5.json
+Hard links: 1
+File type: file
+File size: 0[B]
+Last access: 2022-03-21 21:03:39
+Last modified: 2022-03-21 20:15:12
 
 --------------------------
 | File type | Occurances |
 --------------------------
 |      sock |          0 |
-|     slink |          0 |
-|      file |          0 |
-| block dev |          0 |
-|       dir |         15 |
-|  char dev |          0 |
-|      fifo |          0 |
+|     slink |          2 |
+|      file |          9 |
+| block dev |          5 |
+|       dir |         16 |
+|  char dev |          4 |
+|      fifo |          9 |
 --------------------------
 
 
@@ -142,13 +352,6 @@ File type: file
 File size: 2204[B]
 Last access: 2022-03-21 09:36:42
 Last modified: 2022-03-21 09:36:42
-
-Absolute file path: /tmp/Sublime Merge.ffa19ea9a512738c9756787ded492665.sock
-Hard links: 1
-File type: sock
-File size: 0[B]
-Last access: 2022-03-21 18:29:42
-Last modified: 2022-03-21 15:15:00
 
 Absolute file path: /tmp/.org.chromium.Chromium.oqEUIx
 Hard links: 2
@@ -215,13 +418,6 @@ File size: 2204[B]
 Last access: 2022-03-21 11:31:18
 Last modified: 2022-03-21 11:31:18
 
-Absolute file path: /tmp/Sublime Text.65f05c6c107d7104a11c097656fb6a1b.sock
-Hard links: 1
-File type: sock
-File size: 0[B]
-Last access: 2022-03-21 09:38:00
-Last modified: 2022-03-21 09:38:00
-
 Absolute file path: /tmp/systemd-private-2be67aaf16b942a68f6e3da60d66f830-ModemManager.service-K6y1vx
 Hard links: 3
 File type: dir
@@ -277,7 +473,7 @@ Absolute file path: /tmp/.org.chromium.Chromium.L8yHii/SingletonCookie
 Hard links: 1
 File type: slink
 File size: 19[B]
-Last access: 2022-03-21 09:36:41
+Last access: 2022-03-21 20:34:42
 Last modified: 2022-03-21 09:36:41
 
 Absolute file path: /tmp/qipc_systemsem_beaaafecddc90810d280abc52457f5481737a0ae6e6ead631d9
@@ -357,7 +553,7 @@ Last modified: 2022-03-21 09:36:31
 --------------------------
 | File type | Occurances |
 --------------------------
-|      sock |          6 |
+|      sock |          4 |
 |     slink |          3 |
 |      file |          7 |
 | block dev |          0 |

@@ -10,7 +10,9 @@ all:
 test:
 	make all
 	rm -f $(REPORT_FILE)
-	make test_sub OUTPUT=output_dirstat TEST_DIR=$(TEST_DIR_PATH)test3
+	sudo tar -xf $(TEST_DIR_PATH)test3.tar.gz
+	make test_sub OUTPUT=output_dirstat TEST_DIR=test3
+	rm -rf ./test3
 	make test_sub OUTPUT=output_dirstat TEST_DIR=/tmp/
 
 output: $(MAIN_PATH)$(MAIN).c
@@ -27,3 +29,4 @@ test_sub:
 
 clean:
 	rm -f *.o *.gch *.a output* test*.txt result*.txt
+	rm -rf ./test3
