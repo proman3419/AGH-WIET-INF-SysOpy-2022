@@ -5,16 +5,15 @@
 #include <dirent.h>
 #include <string.h>
 
-int printAbsoluteFilePath(char* filePath)
+char ROOT_DIR_ABSOLUTE_PATH[PATH_MAX];
+
+int setRootDirAbsolutePath(char* rootDirPath)
 {
-    char absoluteFilePath [PATH_MAX+1];
-    if (realpath(filePath, absoluteFilePath) == NULL)
+    if (realpath(rootDirPath, ROOT_DIR_ABSOLUTE_PATH) == NULL)
     {
-        printf("[ERROR] Couldn't find the absolute path of %s", filePath);
+        printf("[ERROR] Couldn't find the absolute path of %s\n", rootDirPath);
         return -1;
     }
-    
-    printf("%s", absoluteFilePath);
     return 0;
 }
 
@@ -41,7 +40,7 @@ int printFileStats(char* filePath)
         return -1;
     }
 
-    printf("\tAbsolute file path: "); printAbsoluteFilePath(filePath); printf("\n");
+    printf("\tAbsolute file path: %s\n", filePath);
     printf("\tHard links: %ld\n", fileStats.st_nlink);
     printf("\tFile type: "); printFileType(fileStats.st_mode); printf("\n");
     printf("\tFile size: %ld[B]\n", fileStats.st_size);
@@ -63,19 +62,25 @@ int exploreDir(char* dirPath)
     }
 
     struct dirent* dirEntPtr;
+    char* filePath = calloc(PATH_MAX, sizeof(char));
     while ((dirEntPtr = readdir(dir)) != NULL)
     {
         if (strcmp(dirEntPtr->d_name, ".") == 0 || 
             strcmp(dirEntPtr->d_name, "..") == 0)
             continue;
-        
+
+        snprintf(filePath, PATH_MAX, "%s/%s", dirPath, dirEntPtr->d_name);
         printf("[INFO] Processing %s\n", dirEntPtr->d_name);
-        printFileStats(dirEntPtr->d_name);
+        printFileStats(filePath);
 
         if (dirEntPtr->d_type == DT_DIR)
-            exploreDir(dirEntPtr->d_name);
+        {
+            printf("[INFO] Entering the %s directory\n", filePath);
+            exploreDir(filePath);
+        }
     }
 
+    free(filePath);
     closedir(dir);
 
     return 0;
@@ -88,8 +93,13 @@ int main(int argc, char** argv)
 
     char* rootDirPath = argv[1];
 
-    printFileStats(rootDirPath);
-    exploreDir(rootDirPath);
+    if (setRootDirAbsolutePath(rootDirPath) == -1)
+        return -1;
+
+    printf("%s\n", ROOT_DIR_ABSOLUTE_PATH);
+
+    printFileStats(ROOT_DIR_ABSOLUTE_PATH);
+    exploreDir(ROOT_DIR_ABSOLUTE_PATH);
 
     return 0;
 }
