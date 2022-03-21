@@ -5,7 +5,7 @@ REPORT_FILE=pomiar_zad_1.txt
 
 all:
 	make output MAIN_PATH=./ MAIN=main_lib OUTPUT=output_lib
-	make output MAIN_PATH=./ MAIN=main_lib OUTPUT=output_sys
+	make output MAIN_PATH=./ MAIN=main_sys OUTPUT=output_sys
 
 test:
 	make all
@@ -20,9 +20,9 @@ output: $(MAIN_PATH)$(MAIN).c
 	$(CC) $(CFLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT)
 
 generate_test_files: $(TEST_DIR_PATH)generate_test_files.sh
-	$(TEST_DIR_PATH)generate_test_files.sh $(TEST_DIR_PATH)sample1.txt test1.txt 30000
-	$(TEST_DIR_PATH)generate_test_files.sh $(TEST_DIR_PATH)sample2.txt test2.txt 70000
-	$(TEST_DIR_PATH)generate_test_files.sh $(TEST_DIR_PATH)sample3.txt test3.txt 150000
+	$(TEST_DIR_PATH)generate_test_files.sh $(TEST_DIR_PATH)sample1.txt test1.txt 500
+	$(TEST_DIR_PATH)generate_test_files.sh $(TEST_DIR_PATH)sample2.txt test2.txt 1500
+	$(TEST_DIR_PATH)generate_test_files.sh $(TEST_DIR_PATH)sample3.txt test3.txt 4000
 
 test_sub:
 	$(eval FILE_SIZE=$(shell find $(TEST_FILE) -printf "%k"))

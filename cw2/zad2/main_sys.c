@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 struct Occurance
 {
@@ -10,10 +12,12 @@ int processLine(int fileFD, char character, struct Occurance* occurances)
 {
     char buffer[1];
     int characterOccured = 0;
+    int readResult = 1;
 
     do
     {
-        if (read(fileFD, buffer, 1) != 1)
+        readResult = read(fileFD, buffer, 1);
+        if (readResult == 0)
             break;
         if (buffer[0] == character)
         {
@@ -22,22 +26,25 @@ int processLine(int fileFD, char character, struct Occurance* occurances)
         }
     } while (buffer[0] != '\n');
 
-    return characterOccured;
+    if (characterOccured == 1)
+        occurances->line++;
+
+    return readResult;
 }
 
 int countOccurances(char* filePath, char character, struct Occurance* occurances)
 {
-    int fileFD = open(filePath, "r");
+    int fileFD = open(filePath, O_RDONLY);
 
-    if (file == -1)
+    if (fileFD == -1)
     {
         printf("[ERROR] Couldn't open the file\n");
         return -1;
     }
 
-    while (!feof(fileFD))
-        if (processLine(fileFD, character, occurances) == 1)
-            occurances->line++;
+    while (processLine(fileFD, character, occurances) == 1) {}
+
+    close(fileFD);
 
     return 0;
 }

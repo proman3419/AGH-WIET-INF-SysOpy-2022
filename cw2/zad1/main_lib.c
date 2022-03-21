@@ -79,6 +79,9 @@ int copyFile(char* fileFromPath, char* fileToPath)
 
     printf("[SUCCESS] Copied %s to %s and removed non relevant lines\n", fileFromPath, fileToPath);
 
+    fclose(fileFrom);
+    fclose(fileTo);
+
     return 0;
 }
 
