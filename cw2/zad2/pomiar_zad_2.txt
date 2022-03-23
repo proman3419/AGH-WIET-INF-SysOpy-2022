@@ -5,18 +5,18 @@ sys 0.00
 
 Run output_sys, looking for a in test1.txt (size: 488[KB])
 real 0.18
-user 0.06
-sys 0.11
+user 0.04
+sys 0.13
 
 Run output_lib, looking for s in test1.txt (size: 488[KB])
-real 0.00
-user 0.00
+real 0.01
+user 0.01
 sys 0.00
 
 Run output_sys, looking for s in test1.txt (size: 488[KB])
 real 0.18
-user 0.04
-sys 0.13
+user 0.02
+sys 0.15
 
 Run output_lib, looking for d in test1.txt (size: 488[KB])
 real 0.00
@@ -25,7 +25,7 @@ sys 0.00
 
 Run output_sys, looking for d in test1.txt (size: 488[KB])
 real 0.18
-user 0.05
+user 0.06
 sys 0.12
 
 Run output_lib, looking for a in test2.txt (size: 4236[KB])
@@ -34,9 +34,9 @@ user 0.06
 sys 0.00
 
 Run output_sys, looking for a in test2.txt (size: 4236[KB])
-real 1.54
-user 0.31
-sys 1.22
+real 1.53
+user 0.33
+sys 1.19
 
 Run output_lib, looking for s in test2.txt (size: 4236[KB])
 real 0.06
@@ -44,29 +44,29 @@ user 0.06
 sys 0.00
 
 Run output_sys, looking for s in test2.txt (size: 4236[KB])
-real 1.58
-user 0.29
-sys 1.28
+real 1.52
+user 0.42
+sys 1.10
 
 Run output_lib, looking for d in test2.txt (size: 4236[KB])
-real 0.06
+real 0.07
 user 0.06
 sys 0.00
 
 Run output_sys, looking for d in test2.txt (size: 4236[KB])
-real 1.53
-user 0.39
-sys 1.14
+real 1.57
+user 0.35
+sys 1.22
 
 Run output_lib, looking for a in test3.txt (size: 9232[KB])
 real 0.15
-user 0.12
-sys 0.01
+user 0.13
+sys 0.00
 
 Run output_sys, looking for a in test3.txt (size: 9232[KB])
-real 3.32
-user 0.75
-sys 2.56
+real 3.39
+user 0.89
+sys 2.49
 
 Run output_lib, looking for s in test3.txt (size: 9232[KB])
 real 0.13
@@ -74,9 +74,9 @@ user 0.13
 sys 0.00
 
 Run output_sys, looking for s in test3.txt (size: 9232[KB])
-real 3.32
-user 0.88
-sys 2.44
+real 3.36
+user 0.82
+sys 2.53
 
 Run output_lib, looking for d in test3.txt (size: 9232[KB])
 real 0.14
@@ -84,7 +84,7 @@ user 0.13
 sys 0.00
 
 Run output_sys, looking for d in test3.txt (size: 9232[KB])
-real 3.31
-user 0.75
-sys 2.55
+real 3.33
+user 0.76
+sys 2.57
 

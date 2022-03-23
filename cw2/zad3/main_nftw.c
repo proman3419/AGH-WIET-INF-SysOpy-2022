@@ -1,11 +1,12 @@
+#define _XOPEN_SOURCE 500
 #include "filetypeocclib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <linux/limits.h>
-#include <dirent.h>
 #include <string.h>
 #include <time.h>
+#include <ftw.h>
 
 struct FileTypeOccurance FTO = {0};
 char ROOT_DIR_ABSOLUTE_PATH[PATH_MAX];
@@ -40,58 +41,16 @@ void printTimeReadable(time_t timet, char* timeStr)
     printf("%s", timeStr);
 }
 
-int printFileStats(char* absoluteFilePath)
+int printFileStats(const char* absoluteFilePath, const struct stat* fileStats, int fileFlags, struct FTW* ftwPtr)
 {
-    struct stat fileStats;
-    if (lstat(absoluteFilePath, &fileStats) == -1)
-    {
-        printf("[ERROR] Couldn't read stats of the %s file\n\n", 
-               absoluteFilePath);
-        return -1;
-    }
-
     char timeStr[20];
     printf("Absolute file path: %s\n", absoluteFilePath);
-    printf("Hard links: %ld\n", fileStats.st_nlink);
-    printf("File type: "); printFileType(fileStats.st_mode); printf("\n");
-    printf("File size: %ld[B]\n", fileStats.st_size);
-    printf("Last access: "); printTimeReadable(fileStats.st_atime, timeStr); printf("\n");
-    printf("Last modified: "); printTimeReadable(fileStats.st_mtime, timeStr); printf("\n");
+    printf("Hard links: %ld\n", fileStats->st_nlink);
+    printf("File type: "); printFileType(fileStats->st_mode); printf("\n");
+    printf("File size: %ld[B]\n", fileStats->st_size);
+    printf("Last access: "); printTimeReadable(fileStats->st_atime, timeStr); printf("\n");
+    printf("Last modified: "); printTimeReadable(fileStats->st_mtime, timeStr); printf("\n");
     printf("\n");
-
-    return 0;
-}
-
-int exploreDir(char* absoluteDirPath)
-{
-    DIR* dir = opendir(absoluteDirPath);
-
-    if (dir == NULL)
-    {
-        printf("[ERROR] Couldn't open the %s directory\n\n", absoluteDirPath);
-        return -1;
-    }
-
-    struct dirent* dirEntPtr;
-    char* absoluteFilePath = calloc(PATH_MAX, sizeof(char));
-    while ((dirEntPtr = readdir(dir)) != NULL)
-    {
-        if (strcmp(dirEntPtr->d_name, ".") == 0 || 
-            strcmp(dirEntPtr->d_name, "..") == 0)
-            continue;
-
-        snprintf(absoluteFilePath, PATH_MAX, "%s/%s", 
-                 absoluteDirPath, dirEntPtr->d_name);
-        printFileStats(absoluteFilePath);
-
-        if (dirEntPtr->d_type == DT_DIR)
-        {
-            exploreDir(absoluteFilePath);
-        }
-    }
-
-    free(absoluteFilePath);
-    closedir(dir);
 
     return 0;
 }
@@ -107,9 +66,8 @@ int main(int argc, char** argv)
         return -1;
 
     printf("[INFO] The absolute path of the root directory is %s\n\n", ROOT_DIR_ABSOLUTE_PATH);
-    
-    printFileStats(ROOT_DIR_ABSOLUTE_PATH);
-    exploreDir(ROOT_DIR_ABSOLUTE_PATH);
+
+    nftw(ROOT_DIR_ABSOLUTE_PATH, printFileStats, 100, FTW_PHYS);
     printFileTypeOccurance(FTO);
 
     return 0;
