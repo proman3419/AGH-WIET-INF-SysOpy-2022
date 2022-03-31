@@ -4,6 +4,7 @@
 #include <string.h>
 #include <linux/limits.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define MAX_BUFFER_LEN 256
 
@@ -31,11 +32,12 @@ FILE* openFile(char* fileName, char* mode)
 int checkIfFileContains(char* filePath, char* str)
 {
     FILE* fPtr = openFile(filePath, "r");
-    char* buffer = calloc(MAX_BUFFER_LEN, sizeof(char));
+    char buffer[MAX_BUFFER_LEN];
+    char* bufferPtr = buffer;
+    size_t bufferLen = MAX_BUFFER_LEN;
     int contains = 0;
-    size_t bufferLen;
 
-    while (getline(&buffer, &bufferLen, fPtr) != -1 && contains == 0)  
+    while (getline(&bufferPtr, &bufferLen, fPtr) != -1 && contains == 0)  
     {
         if (strstr(buffer, str) != NULL)
         {
@@ -45,7 +47,6 @@ int checkIfFileContains(char* filePath, char* str)
     }
 
     fclose(fPtr);
-    free(buffer);
 
     return contains;
 }
@@ -71,21 +72,19 @@ int exploreDir(char* dirPath, char* wantedStr, int maxDepth)
         snprintf(filePath, PATH_MAX, "%s/%s", dirPath, dirEntPtr->d_name);
 
         if (dirEntPtr->d_type == DT_REG)
-        {
-            printf("[%d] Checking %s\n", getpid(), filePath);
             if (checkIfTextFile(filePath) == 1)
-                printf("[%d] %s is a text file\n", getpid(), filePath);
-            if (checkIfFileContains(filePath, wantedStr) == 1)
-                printf("[%d] File %s contains %s\n", getpid(), filePath, wantedStr);
-        }
+                if (checkIfFileContains(filePath, wantedStr) == 1)
+                    printf("[%d] File %s contains %s\n", getpid(), filePath, wantedStr);
 
         if (dirEntPtr->d_type == DT_DIR && maxDepth > 0)
         {
             if (fork() == 0) 
             {
                 exploreDir(filePath, wantedStr, maxDepth-1);
-                return 0;
+                exit(0);
             }
+            else
+                wait(0);
         }
     }
 
