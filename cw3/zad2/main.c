@@ -1,7 +1,10 @@
+#include "timemeaslib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/times.h>
+#include <time.h>
 
 #define A 0
 #define B 1
@@ -9,7 +12,7 @@
 
 double f(double x)
 {
-    return 4 / (x*x + 1);
+    return 4/(x*x + 1);
 }
 
 char* getFileName(int processId)
@@ -19,7 +22,7 @@ char* getFileName(int processId)
     
     if (snprintf(fileName, fileNameLen, "w%d.txt", processId) < 0)
     {
-        printf("[ERROR] Encoding error occurred for the file name\n");
+        printf("[ERROR] Encoding error occurred for a file name\n");
         exit(1);
     }
 
@@ -94,6 +97,12 @@ double sumResultsFromFiles(int maxProcessId)
 
 int main(int argc, char** argv)
 {
+    struct MeasuredTime mt = {0};
+    struct MeasuredTime* mtPtr = &mt;
+    clock_t clockStartTotal, clockEndTotal;
+    struct tms tmsStartTotal, tmsEndTotal;
+    clockStartTotal = times(&tmsStartTotal);
+
     if (argc < 3)
     {
         printf("[ERROR] Required parameters: rectangleWidth, n\n");
@@ -124,7 +133,13 @@ int main(int argc, char** argv)
 
     while (wait(&status) > 0);
 
-    printf("%lf\n", sumResultsFromFiles(n));
+    printf("Integral of f(x) = 4/(x*x + 1) for A = %lf, B = %lf is equal to %lf\n", 
+           (double)A, (double)B, sumResultsFromFiles(n));
+
+    clockEndTotal = times(&tmsEndTotal);
+    saveTimes(&mtPtr->total, tmsStartTotal, tmsEndTotal, clockStartTotal, clockEndTotal);
+
+    printMeasuredTime(mt);
 
     return 0;
 }
