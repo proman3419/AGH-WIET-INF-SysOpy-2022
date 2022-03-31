@@ -51,7 +51,7 @@ int checkIfFileContains(char* filePath, char* str)
     return contains;
 }
 
-int exploreDir(char* dirPath, char* wantedStr, int maxDepth)
+int exploreDir(char* dirPath, char* relativeDirPath, char* wantedStr, int maxDepth)
 {
     DIR* dir = opendir(dirPath);
 
@@ -63,24 +63,27 @@ int exploreDir(char* dirPath, char* wantedStr, int maxDepth)
 
     struct dirent* dirEntPtr;
     char* filePath = calloc(PATH_MAX, sizeof(char));
+    char* relativeFilePath = calloc(PATH_MAX, sizeof(char));
     while ((dirEntPtr = readdir(dir)) != NULL)
     {
         if (strcmp(dirEntPtr->d_name, ".") == 0 || 
             strcmp(dirEntPtr->d_name, "..") == 0)
             continue;
 
+
+        snprintf(relativeFilePath, PATH_MAX, "%s/%s", relativeDirPath, dirEntPtr->d_name);
         snprintf(filePath, PATH_MAX, "%s/%s", dirPath, dirEntPtr->d_name);
 
         if (dirEntPtr->d_type == DT_REG)
             if (checkIfTextFile(filePath) == 1)
                 if (checkIfFileContains(filePath, wantedStr) == 1)
-                    printf("[%d] File %s contains %s\n", getpid(), filePath, wantedStr);
+                    printf("[%d] File %s contains %s\n", getpid(), relativeFilePath+1, wantedStr);
 
         if (dirEntPtr->d_type == DT_DIR && maxDepth > 0)
         {
             if (fork() == 0) 
             {
-                exploreDir(filePath, wantedStr, maxDepth-1);
+                exploreDir(filePath, relativeFilePath, wantedStr, maxDepth-1);
                 exit(0);
             }
             else
@@ -89,6 +92,7 @@ int exploreDir(char* dirPath, char* wantedStr, int maxDepth)
     }
 
     free(filePath);
+    free(relativeFilePath);
     closedir(dir);
 
     return 0;
@@ -106,7 +110,7 @@ int main(int argc, char** argv)
     char* wantedStr = argv[2];
     int maxDepth = atoi(argv[3]);
 
-    exploreDir(rootDirPath, wantedStr, maxDepth);
+    exploreDir(rootDirPath, "", wantedStr, maxDepth);
 
     return 0;
 }
