@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 
 #define CALLS_CNT 4
 
@@ -53,12 +54,25 @@ void testSIGINFO(struct sigaction act)
 {
     printf("=====================[ SA_SIGINFO ]=====================\n");
 
+    printf(">>> Send directly\n");
     setSigAction(act, printingHandler, SIGUSR1, SA_SIGINFO);
     kill(getpid(), SIGUSR1);
     printf("\n");
-    setSigAction(act, printingHandler, SIGUSR2, SA_SIGINFO);
+
+    printf(">>> Send from child\n");
+    if (fork() == 0)
+    {
+        kill(getpid(), SIGUSR1);
+        exit(0);
+    }
+    else
+        wait(NULL);
+    printf("\n");
+
+    printf(">>> Send with a custom signal value\n");
+    setSigAction(act, printingHandler, SIGUSR1, SA_SIGINFO);
     sigval_t sigVal = {1117};
-    sigqueue(getpid(), SIGUSR2, sigVal);
+    sigqueue(getpid(), SIGUSR1, sigVal);
 }
 
 void testRESETHAND(struct sigaction act)

@@ -46,17 +46,26 @@ If SA_SIGINFO is set and the signal is caught, the signal-catching function shal
 void func(int signo, siginfo_t *info, void *context);
 
 =====================[ SA_SIGINFO ]=====================
+>>> Send directly
 Signal number: 10
 Signal value: 0
-Sending process' PID: 50873
+Sending process' PID: 14439
 Exit value / signal for process termination: 0
-Address at which fault occured: 0x3e80000c6b9
+Address at which fault occured: 0x3e800003867
 
-Signal number: 12
+>>> Send from child
+Signal number: 10
+Signal value: 0
+Sending process' PID: 14440
+Exit value / signal for process termination: 0
+Address at which fault occured: 0x3e800003868
+
+>>> Send with a custom signal value
+Signal number: 10
 Signal value: 1117
-Sending process' PID: 50873
+Sending process' PID: 14439
 Exit value / signal for process termination: 1117
-Address at which fault occured: 0x3e80000c6b9
+Address at which fault occured: 0x3e800003867
 
 Zmieniona jest sygnatura handlera.
 

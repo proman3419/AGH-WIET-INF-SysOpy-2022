@@ -5,6 +5,7 @@ all:
 	make output MAIN_PATH=./ MAIN=main OUTPUT=output
 
 test:
+	make all
 	./output
 
 output: $(MAIN_PATH)$(MAIN).c
