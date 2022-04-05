@@ -106,7 +106,7 @@ int main(int argc, char** argv)
     if (argc < 3)
     {
         printf("[ERROR] Required parameters: rectangleWidth, n\n");
-        return 0;
+        return -1;
     }
 
     double rectangleWidth;

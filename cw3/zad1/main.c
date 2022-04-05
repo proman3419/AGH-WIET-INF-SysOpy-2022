@@ -7,7 +7,7 @@ int main(int argc, char** argv)
     if (argc < 2)
     {
         printf("[ERROR] Required parameters: n\n");
-        return 0;
+        return -1;
     }
 
     int n = atoi(argv[1]);

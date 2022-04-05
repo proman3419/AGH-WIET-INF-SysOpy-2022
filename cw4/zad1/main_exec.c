@@ -87,7 +87,7 @@ int main(int argc, char** argv)
     if (argc < 2)
     {
         printf("[ERROR] Required parameters: action\n");
-        return 0;
+        return -1;
     }
 
     enum Action action = strToAction(argv[1]);

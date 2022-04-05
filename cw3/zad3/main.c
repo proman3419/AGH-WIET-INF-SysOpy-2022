@@ -103,7 +103,7 @@ int main(int argc, char** argv)
     if (argc < 4)
     {
         printf("[ERROR] Required parameters: rootDirPath, wantedStr, maxDepth\n");
-        return 0;
+        return -1;
     }
 
     char* rootDirPath = argv[1];
