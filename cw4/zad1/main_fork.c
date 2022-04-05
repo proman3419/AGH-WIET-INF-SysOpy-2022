@@ -30,7 +30,7 @@ void processPrint(char* toPrint)
     printf(" %s\n", toPrint);
 }
 
-void printAndRise()
+void printAndRaise()
 {
     processPrint("Raising the signal");
     raise(SIGNAL);
@@ -38,9 +38,10 @@ void printAndRise()
 
 void raiseAndFork()
 {
-    printAndRise();
+    printAndRaise();
+    processPrint("Forking");
     if (fork() == 0)
-        printAndRise();
+        printAndRaise();
     else
         wait(NULL);
 }
@@ -75,7 +76,7 @@ void raiseBlocked()
 
     sigprocmask(SIG_BLOCK, &act.sa_mask, NULL);
 
-    printAndRise();
+    printAndRaise();
 }
 
 int main(int argc, char** argv)
@@ -103,13 +104,15 @@ int main(int argc, char** argv)
         case pending:
             raiseBlocked();
             checkIfPending();
-            if (action == pending)
+            processPrint("Forking");
+            if (fork() == 0)
             {
-                if (fork() == 0)
-                    checkIfPending();
-                else
-                    wait(NULL);
+                if (action == mask)
+                    printAndRaise();
+                checkIfPending();
             }
+            else
+                wait(NULL);
             break;
     }
 

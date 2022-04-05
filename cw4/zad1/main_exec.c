@@ -43,7 +43,7 @@ void executeChild(char* execPath, char* actionStr)
     execvp(execPath, args);
 }
 
-void printAndRise()
+void printAndRaise()
 {
     processPrint("Raising the signal");
     raise(SIGNAL);
@@ -79,7 +79,7 @@ void raiseBlocked()
 
     sigprocmask(SIG_BLOCK, &act.sa_mask, NULL);
 
-    printAndRise();
+    printAndRaise();
 }
 
 int main(int argc, char** argv)
@@ -100,21 +100,19 @@ int main(int argc, char** argv)
         {
             case ignore:
                 signal(SIGNAL, SIG_IGN);
-                printAndRise();
+                printAndRaise();
                 executeChild(argv[0], argv[1]);
                 break;
             case handler:
                 signal(SIGNAL, handlerFunc);
-                printAndRise();
+                printAndRaise();
                 executeChild(argv[0], argv[1]);
                 break;
             case mask:
             case pending:
                 raiseBlocked();
                 checkIfPending();            
-                if (action == pending)
-                    executeChild(argv[0], argv[1]);
-                break;
+                executeChild(argv[0], argv[1]);
         }
     }
     else
@@ -123,10 +121,12 @@ int main(int argc, char** argv)
         {
             case ignore:
             case handler:
-                printAndRise();
+                printAndRaise();
                 break;
             case mask:
             case pending:
+                if (action == mask)
+                    printAndRaise();
                 checkIfPending();            
                 break;
         }

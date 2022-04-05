@@ -1,0 +1,11 @@
+ignore: Sygnał u dziecka jest ignorowany.
+handler: Sygnał u dziecka jest odbierany, funkcja handler wywołuje się tylko w fork.
+mask: Maska blokująca działa również u dziecka.
+pending: Sygnał czekający w rodzicu nie jest widoczny w fork, jest widoczny w exec.
+
+Zarówno fork jak i exec zapewnia dziedziczenie wartości maski blokowanych, 
+ignorowanych sygnałów (ignore, mask).
+Funkcja handler zadziałała tylko w fork ponieważ zapewnia on dziedziczenie 
+ustaleń dotyczących obsługi sygnałów w przeciwieństwie do exec (handler).
+Sygnał czekający nie jest widoczny z dziecka w fork ponieważ nieobsłużone 
+sygnały procesu rodzica są czyszczone, w exec dziecko ma takie same jak rodzic (pending).
