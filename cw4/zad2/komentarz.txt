@@ -1,0 +1,73 @@
+źródła
+https://pubs.opengroup.org/onlinepubs/007904875/functions/sigaction.html
+https://stackoverflow.com/questions/33922223/what-exactly-sig-dfl-do
+
+
+
+SA_NODEFER
+If set and sig is caught, sig shall not be added to the thread's signal mask on 
+entry to the signal handler unless it is included in sa_mask. Otherwise, sig 
+shall always be added to the thread's signal mask on entry to the signal 
+handler unless it is included in sa_mask.
+
+Jeżeli sygnał nie jest dodawany do maski to znaczy, że kolejne jego wystąpienia
+nie zostaną zablokowane. Oczekiwany wynik:
+
+=====================[ SA_NODEFER ]=====================
+Current call id: 0, call depth: 0
+Current call id: 1, call depth: 1
+Current call id: 2, call depth: 2
+Current call id: 3, call depth: 3
+Current call id: 3, call depth: 3
+Current call id: 2, call depth: 2
+Current call id: 1, call depth: 1
+Current call id: 0, call depth: 0
+
+Bez ustawionej flagi:
+=====================[ SA_NODEFER ]=====================
+Current call id: 0, call depth: 0
+Current call id: 0, call depth: 0
+Current call id: 1, call depth: 0
+Current call id: 1, call depth: 0
+Current call id: 2, call depth: 0
+Current call id: 2, call depth: 0
+Current call id: 3, call depth: 0
+Current call id: 3, call depth: 0
+
+
+
+SA_SIGINFO
+If cleared and the signal is caught, the signal-catching function shall be entered as:
+void func(int signo);
+
+where signo is the only argument to the signal-catching function. In this case, the application shall use the sa_handler member to describe the signal-catching function and the application shall not modify the sa_sigaction member.
+
+If SA_SIGINFO is set and the signal is caught, the signal-catching function shall be entered as:
+void func(int signo, siginfo_t *info, void *context);
+
+=====================[ SA_SIGINFO ]=====================
+Signal number: 10
+Signal value: 0
+Sending process' PID: 50873
+Exit value / signal for process termination: 0
+Address at which fault occured: 0x3e80000c6b9
+
+Signal number: 12
+Signal value: 1117
+Sending process' PID: 50873
+Exit value / signal for process termination: 1117
+Address at which fault occured: 0x3e80000c6b9
+
+Zmieniona jest sygnatura handlera.
+
+
+
+SA_RESETHAND
+If set, the disposition of the signal shall be reset to SIG_DFL and the SA_SIGINFO flag shall be cleared on entry to the signal handler.
+
+=====================[ SA_RESETHAND ]=====================
+Current call id: 0, call depth: 0
+Current call id: 0, call depth: 0
+User defined signal 1
+
+Ustawia brak handlera, podjęta zostanie domyślna czynność gdy sygnał zostanie przechwycony.
