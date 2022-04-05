@@ -14,25 +14,25 @@ Jeżeli sygnał nie jest dodawany do maski to znaczy, że kolejne jego wystąpie
 nie zostaną zablokowane. Oczekiwany wynik:
 
 =====================[ SA_NODEFER ]=====================
-Current call id: 0, call depth: 0
-Current call id: 1, call depth: 1
-Current call id: 2, call depth: 2
-Current call id: 3, call depth: 3
-Current call id: 3, call depth: 3
-Current call id: 2, call depth: 2
-Current call id: 1, call depth: 1
-Current call id: 0, call depth: 0
+[START] Current call id: 0, call depth: 0
+[START] Current call id: 1, call depth: 1
+[START] Current call id: 2, call depth: 2
+[START] Current call id: 3, call depth: 3
+[END] Current call id: 3, call depth: 3
+[END] Current call id: 2, call depth: 2
+[END] Current call id: 1, call depth: 1
+[END] Current call id: 0, call depth: 0
 
 Bez ustawionej flagi:
 =====================[ SA_NODEFER ]=====================
-Current call id: 0, call depth: 0
-Current call id: 0, call depth: 0
-Current call id: 1, call depth: 0
-Current call id: 1, call depth: 0
-Current call id: 2, call depth: 0
-Current call id: 2, call depth: 0
-Current call id: 3, call depth: 0
-Current call id: 3, call depth: 0
+[START] Current call id: 0, call depth: 0
+[END] Current call id: 0, call depth: 0
+[START] Current call id: 1, call depth: 0
+[END] Current call id: 1, call depth: 0
+[START] Current call id: 2, call depth: 0
+[END] Current call id: 2, call depth: 0
+[START] Current call id: 3, call depth: 0
+[END] Current call id: 3, call depth: 0
 
 
 

@@ -22,7 +22,7 @@ void setSigAction(struct sigaction act, void (*handlerFunc)(int, siginfo_t*, voi
 void signalingHandler(int signo, siginfo_t* info, void* context)
 {
     int currCallId = callId;
-    printf("Current call id: %d, call depth: %d\n", currCallId, callDepth);
+    printf("[START] Current call id: %d, call depth: %d\n", currCallId, callDepth);
     
     ++callId;
     ++callDepth;
@@ -30,7 +30,7 @@ void signalingHandler(int signo, siginfo_t* info, void* context)
         kill(getpid(), SIGUSR1);
     --callDepth;
 
-    printf("Current call id: %d, call depth: %d\n", currCallId, callDepth);
+    printf("[END] Current call id: %d, call depth: %d\n", currCallId, callDepth);
 }
 
 void printingHandler(int signo, siginfo_t* info, void* context)
@@ -46,7 +46,7 @@ void testNODEFER(struct sigaction act)
 {
     printf("=====================[ SA_NODEFER ]=====================\n");
 
-    setSigAction(act, signalingHandler, SIGUSR1, SA_NODEFER);
+    setSigAction(act, signalingHandler, SIGUSR1, 0);
     kill(getpid(), SIGUSR1);
 }
 
