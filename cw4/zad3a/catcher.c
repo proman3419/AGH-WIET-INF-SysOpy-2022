@@ -9,6 +9,7 @@ enum SendingMode {KILL, SIGQUEUE, SIGRT};
 
 int SEND_SIGNAL = SIGUSR1;
 int FINISH_SIGNAL = SIGUSR2;
+int senderPID;
 int signalsReceivedCnt = 0;
 int signalsSentCnt;
 
@@ -33,7 +34,7 @@ void sendSignalHandler(int signo, siginfo_t* info, void* context)
         return;
 
     ++signalsReceivedCnt;
-    printf("Received a SEND_SIGNAL from catcher\n");
+    printf("Received a SEND_SIGNAL from sender\n");
 }
 
 void finishSignalHandler(int signo, siginfo_t* info, void* context)
@@ -41,10 +42,11 @@ void finishSignalHandler(int signo, siginfo_t* info, void* context)
     if (signo != FINISH_SIGNAL)
         return;
 
-    printf("Received a FINISH_SIGNAL from catcher\n");
+    printf("Received a FINISH_SIGNAL from sender\n");
+    senderPID = info->si_pid;
 }
 
-void sendSignals(int catcherPID, int signalsCnt, enum SendingMode sendingMode)
+void sendSignals(int signalsCnt, enum SendingMode sendingMode)
 {
     for (int i = 0; i < signalsCnt; ++i)
     {
@@ -52,41 +54,39 @@ void sendSignals(int catcherPID, int signalsCnt, enum SendingMode sendingMode)
         {
             case KILL:
             case SIGRT:
-                kill(catcherPID, SEND_SIGNAL);
+                kill(senderPID, SEND_SIGNAL);
                 break;
             case SIGQUEUE:
                 sigval_t sigVal = {i};
-                sigqueue(catcherPID, SEND_SIGNAL, sigVal);
+                sigqueue(senderPID, SEND_SIGNAL, sigVal);
                 break;
         }
-        ++signalsSentCnt;
     }
 
     switch (sendingMode)
     {
         case KILL:
         case SIGRT:
-            kill(catcherPID, FINISH_SIGNAL);
+            kill(senderPID, FINISH_SIGNAL);
             break;
         case SIGQUEUE:
             sigval_t sigVal = {signalsCnt};
-            sigqueue(catcherPID, FINISH_SIGNAL, sigVal);
+            sigqueue(senderPID, FINISH_SIGNAL, sigVal);
             break;
-        ++signalsSentCnt;
     }
 }
 
 int main(int argc, char** argv)
 {
-    if (argc < 4)
+    if (argc < 2)
     {
-        printf("[ERROR] Required parameters: catcherPID, signalsCnt, sendingMode\n");
+        printf("[ERROR] Required parameters: sendingMode\n");
         return -1;
     }
 
-    int catcherPID = atoi(argv[1]);
-    int signalsCnt = atoi(argv[2]);
-    enum SendingMode sendingMode = strToSendingMode(argv[3]);
+    enum SendingMode sendingMode = strToSendingMode(argv[1]);
+
+    printf("Catcher PID: %d\n", getpid());
 
     if (sendingMode == SIGRT)
     {
@@ -100,14 +100,12 @@ int main(int argc, char** argv)
     struct sigaction finishAct;
     setSigAction(finishAct, finishSignalHandler, FINISH_SIGNAL, SA_SIGINFO);
 
-    sendSignals(catcherPID, signalsCnt, sendingMode);
-
     sigset_t sigSet;
     sigemptyset(&sigSet);
     sigaddset(&sigSet, FINISH_SIGNAL);
     sigsuspend(&sigSet);
 
-    printf("Sent: %d, received: %d\n", signalsSentCnt, signalsReceivedCnt);
+    sendSignals(signalsReceivedCnt, sendingMode);
 
     return 0;
 }

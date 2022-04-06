@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
+#define SIGNAL SIGUSR1
 #define CALLS_CNT 4
 
 int callId;
@@ -27,7 +28,7 @@ void signalingHandler(int signo, siginfo_t* info, void* context)
     ++callId;
     ++callDepth;
     if (callId < CALLS_CNT)
-        kill(getpid(), SIGUSR1);
+        kill(getpid(), SIGNAL);
     --callDepth;
 
     printf("[END] Current call id: %d, call depth: %d\n", currCallId, callDepth);
@@ -46,8 +47,8 @@ void testNODEFER(struct sigaction act)
 {
     printf("=====================[ SA_NODEFER ]=====================\n");
 
-    setSigAction(act, signalingHandler, SIGUSR1, 0);
-    kill(getpid(), SIGUSR1);
+    setSigAction(act, signalingHandler, SIGNAL, SA_NODEFER);
+    kill(getpid(), SIGNAL);
 }
 
 void testSIGINFO(struct sigaction act)
@@ -55,14 +56,14 @@ void testSIGINFO(struct sigaction act)
     printf("=====================[ SA_SIGINFO ]=====================\n");
 
     printf(">>> Send directly\n");
-    setSigAction(act, printingHandler, SIGUSR1, SA_SIGINFO);
-    kill(getpid(), SIGUSR1);
+    setSigAction(act, printingHandler, SIGNAL, SA_SIGINFO);
+    kill(getpid(), SIGNAL);
     printf("\n");
 
     printf(">>> Send from child\n");
     if (fork() == 0)
     {
-        kill(getpid(), SIGUSR1);
+        kill(getpid(), SIGNAL);
         exit(0);
     }
     else
@@ -70,18 +71,18 @@ void testSIGINFO(struct sigaction act)
     printf("\n");
 
     printf(">>> Send with a custom signal value\n");
-    setSigAction(act, printingHandler, SIGUSR1, SA_SIGINFO);
+    setSigAction(act, printingHandler, SIGNAL, SA_SIGINFO);
     sigval_t sigVal = {1117};
-    sigqueue(getpid(), SIGUSR1, sigVal);
+    sigqueue(getpid(), SIGNAL, sigVal);
 }
 
 void testRESETHAND(struct sigaction act)
 {
     printf("=====================[ SA_RESETHAND ]=====================\n");
 
-    setSigAction(act, signalingHandler, SIGUSR1, SA_RESETHAND);
-    kill(getpid(), SIGUSR1);
-    kill(getpid(), SIGUSR1);
+    setSigAction(act, signalingHandler, SIGNAL, SA_RESETHAND);
+    kill(getpid(), SIGNAL);
+    kill(getpid(), SIGNAL);
 }
 
 int main(int argc, char** argv)
