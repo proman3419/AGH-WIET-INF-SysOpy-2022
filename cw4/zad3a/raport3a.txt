@@ -1,0 +1,8 @@
+kill
+Sent: 10000, caught: 695, received back: 101
+
+sigqueue
+Sent: 10000, caught: 771, received back: 205
+
+sigrt
+Sent: 10000, caught: 10000, received back: 10000

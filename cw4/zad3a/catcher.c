@@ -11,7 +11,6 @@ int SEND_SIGNAL = SIGUSR1;
 int FINISH_SIGNAL = SIGUSR2;
 int senderPID;
 int signalsReceivedCnt = 0;
-int signalsSentCnt;
 
 enum SendingMode strToSendingMode(char* str)
 {
@@ -28,7 +27,7 @@ void setSigAction(struct sigaction act, void (*handlerFunc)(int, siginfo_t*, voi
     sigaction(sigNo, &act, NULL);
 }
 
-void sendSignalHandler(int signo, siginfo_t* info, void* context)
+void sendHandler(int signo, siginfo_t* info, void* context)
 {
     if (signo != SEND_SIGNAL)
         return;
@@ -37,7 +36,7 @@ void sendSignalHandler(int signo, siginfo_t* info, void* context)
     printf("Received a SEND_SIGNAL from sender\n");
 }
 
-void finishSignalHandler(int signo, siginfo_t* info, void* context)
+void finishHandler(int signo, siginfo_t* info, void* context)
 {
     if (signo != FINISH_SIGNAL)
         return;
@@ -48,7 +47,7 @@ void finishSignalHandler(int signo, siginfo_t* info, void* context)
 
 void sendSignals(int signalsCnt, enum SendingMode sendingMode)
 {
-    for (int i = 0; i < signalsCnt; ++i)
+    for (int i = 1; i <= signalsCnt; ++i)
     {
         switch (sendingMode)
         {
@@ -63,17 +62,8 @@ void sendSignals(int signalsCnt, enum SendingMode sendingMode)
         }
     }
 
-    switch (sendingMode)
-    {
-        case KILL:
-        case SIGRT:
-            kill(senderPID, FINISH_SIGNAL);
-            break;
-        case SIGQUEUE:
-            sigval_t sigVal = {signalsCnt};
-            sigqueue(senderPID, FINISH_SIGNAL, sigVal);
-            break;
-    }
+    sigval_t sigVal = {signalsReceivedCnt};
+    sigqueue(senderPID, FINISH_SIGNAL, sigVal);
 }
 
 int main(int argc, char** argv)
@@ -95,10 +85,10 @@ int main(int argc, char** argv)
     }
 
     struct sigaction sendAct;
-    setSigAction(sendAct, sendSignalHandler, SEND_SIGNAL, SA_SIGINFO);
+    setSigAction(sendAct, sendHandler, SEND_SIGNAL, SA_SIGINFO);
 
     struct sigaction finishAct;
-    setSigAction(finishAct, finishSignalHandler, FINISH_SIGNAL, SA_SIGINFO);
+    setSigAction(finishAct, finishHandler, FINISH_SIGNAL, SA_SIGINFO);
 
     sigset_t sigSet;
     sigemptyset(&sigSet);

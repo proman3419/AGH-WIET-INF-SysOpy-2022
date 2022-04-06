@@ -10,7 +10,7 @@ enum SendingMode {KILL, SIGQUEUE, SIGRT};
 int SEND_SIGNAL = SIGUSR1;
 int FINISH_SIGNAL = SIGUSR2;
 int signalsReceivedCnt = 0;
-int signalsSentCnt;
+int signalsCaughtCnt;
 
 enum SendingMode strToSendingMode(char* str)
 {
@@ -27,26 +27,30 @@ void setSigAction(struct sigaction act, void (*handlerFunc)(int, siginfo_t*, voi
     sigaction(sigNo, &act, NULL);
 }
 
-void sendSignalHandler(int signo, siginfo_t* info, void* context)
+void sendHandler(int signo, siginfo_t* info, void* context)
 {
     if (signo != SEND_SIGNAL)
         return;
 
     ++signalsReceivedCnt;
-    printf("Received a SEND_SIGNAL from catcher\n");
+    if (info->si_value.sival_int == 0)
+        printf("Received a SEND_SIGNAL from catcher\n");
+    else
+        printf("Received a SEND_SIGNAL from catcher, signal order: %d\n", info->si_value.sival_int);
 }
 
-void finishSignalHandler(int signo, siginfo_t* info, void* context)
+void finishHandler(int signo, siginfo_t* info, void* context)
 {
     if (signo != FINISH_SIGNAL)
         return;
 
+    signalsCaughtCnt = info->si_value.sival_int;
     printf("Received a FINISH_SIGNAL from catcher\n");
 }
 
 void sendSignals(int catcherPID, int signalsCnt, enum SendingMode sendingMode)
 {
-    for (int i = 0; i < signalsCnt; ++i)
+    for (int i = 1; i <= signalsCnt; ++i)
     {
         switch (sendingMode)
         {
@@ -59,7 +63,6 @@ void sendSignals(int catcherPID, int signalsCnt, enum SendingMode sendingMode)
                 sigqueue(catcherPID, SEND_SIGNAL, sigVal);
                 break;
         }
-        ++signalsSentCnt;
     }
 
     switch (sendingMode)
@@ -72,7 +75,6 @@ void sendSignals(int catcherPID, int signalsCnt, enum SendingMode sendingMode)
             sigval_t sigVal = {signalsCnt};
             sigqueue(catcherPID, FINISH_SIGNAL, sigVal);
             break;
-        ++signalsSentCnt;
     }
 }
 
@@ -95,10 +97,10 @@ int main(int argc, char** argv)
     }
 
     struct sigaction sendAct;
-    setSigAction(sendAct, sendSignalHandler, SEND_SIGNAL, SA_SIGINFO);
+    setSigAction(sendAct, sendHandler, SEND_SIGNAL, SA_SIGINFO);
 
     struct sigaction finishAct;
-    setSigAction(finishAct, finishSignalHandler, FINISH_SIGNAL, SA_SIGINFO);
+    setSigAction(finishAct, finishHandler, FINISH_SIGNAL, SA_SIGINFO);
 
     sendSignals(catcherPID, signalsCnt, sendingMode);
 
@@ -107,7 +109,7 @@ int main(int argc, char** argv)
     sigaddset(&sigSet, FINISH_SIGNAL);
     sigsuspend(&sigSet);
 
-    printf("Sent: %d, received: %d\n", signalsSentCnt, signalsReceivedCnt);
+    printf("Sent: %d, caught: %d, received back: %d\n", signalsCnt, signalsCaughtCnt, signalsReceivedCnt);
 
     return 0;
 }
