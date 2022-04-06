@@ -11,7 +11,7 @@ shall always be added to the thread's signal mask on entry to the signal
 handler unless it is included in sa_mask.
 
 Jeżeli sygnał nie jest dodawany do maski to znaczy, że kolejne jego wystąpienia
-nie zostaną zablokowane. Oczekiwany wynik:
+nie zostaną zablokowane.
 
 =====================[ SA_NODEFER ]=====================
 [START] Current call id: 0, call depth: 0
