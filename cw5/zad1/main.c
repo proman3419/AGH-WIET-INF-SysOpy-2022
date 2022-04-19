@@ -109,10 +109,7 @@ char** parseSubcomponent(char* subcomponent)
     int i = 0;
     args[i++] = temp;
     while ((temp = strtok(NULL, " ")) != NULL)
-    {
-        // printf("%s\n", temp);
         args[i++] = temp;
-    }
     return args;
 }
 
@@ -125,11 +122,14 @@ void runTasks(char** components, int** tasks)
             int componentId = tasks[taskId][progId] - MIN_COMPONENT_ID;
             if (componentId == -1)
                 break;
+            char** subcomponents = parseComponent(components[componentId]);
             for (int subcomponentId = 0; subcomponentId < MAX_COMPONENTS_IN_LINE; ++subcomponentId)
             {
                 if (subcomponents[subcomponentId] == NULL)
                     break;
                 char** args = parseSubcomponent(subcomponents[subcomponentId]);
+                printf("taskId: %d progId: %d componentId: %d subcomponentId: %d %s\n", 
+                       taskId, progId, componentId, subcomponentId, args[0]);
             }
         }
     }
