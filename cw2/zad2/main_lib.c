@@ -35,7 +35,6 @@ int countOccurances(char* filePath, char character, struct Occurance* occurances
         return -1;
     }
 
-
     while (!feof(file))
         if (processLine(file, character, occurances) == 1)
             occurances->line++;
