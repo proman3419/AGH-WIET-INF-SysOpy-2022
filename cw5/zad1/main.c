@@ -7,6 +7,9 @@
 
 #define MAX_DATA_LINE_LEN 256
 #define MAX_COMPONENTS_IN_LINE 32
+#define MAX_COMPONENT_ARGS 8
+#define MAX_ARG_LEN 128
+#define MIN_COMPONENT_ID 1
 #define COMPONENT_NAME_COMMON_PART_LEN 8
 #define PIPE_READ 0
 #define PIPE_WRITE 1
@@ -62,21 +65,20 @@ void loadComponents(FILE* fPtr, char** components)
     char* line = NULL; size_t len = 0; ssize_t read; int i = 0;
     while ((read = getline(&line, &len, fPtr)) != -1)
     {
-        components[i++] = strchr(line, '=') + 2;
         if (strcmp(line, "\n") == 0)
             break;
+        components[i++] = strdup(strchr(line, '=') + 2);
     }
 }
 
 // Call it after loadComponents
-void loadTasks(FILE* fPtr, int** tasks, char** components)
+void loadTasks(FILE* fPtr, int** tasks)
 {
     char* line = NULL; size_t len = 0; ssize_t read; int i = 0;
-    char* temp;
     while ((read = getline(&line, &len, fPtr)) != -1)
     {
         int j = 1;
-        temp = strtok(line, "| ");
+        char* temp = strtok(line, "| ");
         tasks[i][j++] = atoi(temp+COMPONENT_NAME_COMMON_PART_LEN+1);
         while ((temp = strtok(NULL, "| ")) != NULL)
             tasks[i][j++] = atoi(temp+COMPONENT_NAME_COMMON_PART_LEN+1);
@@ -85,30 +87,52 @@ void loadTasks(FILE* fPtr, int** tasks, char** components)
     }
 }
 
+// split component on '|'
+char** parseComponent(char* component)
+{
+    char** subcomponents = (char **)calloc((unsigned int)MAX_COMPONENTS_IN_LINE, sizeof(char *));
+    char* temp = strdup(component);
+    temp = strtok(temp, "|");
+    int i = 0;
+    subcomponents[i++] = temp;
+    while ((temp = strtok(NULL, "|")) != NULL)
+        subcomponents[i++] = temp;
+    return subcomponents;
+}
+
+// split subcomponent on ' '
+char** parseSubcomponent(char* subcomponent)
+{
+    char** args = (char **)calloc((unsigned int)MAX_COMPONENT_ARGS, sizeof(char *));
+    char* temp = strdup(subcomponent);
+    temp = strtok(subcomponent, " ");
+    int i = 0;
+    args[i++] = temp;
+    while ((temp = strtok(NULL, " ")) != NULL)
+    {
+        // printf("%s\n", temp);
+        args[i++] = temp;
+    }
+    return args;
+}
+
 void runTasks(char** components, int** tasks)
 {
-    // for (int i = 0; i < tasksCnt; ++i)
-    // {
-    //     if (fork() == 0) // child
-    //     {
-    //         for (int j = 0; j < tasks[i][0]; ++j)
-    //         {
-    //             // fork();
-    //         }
-    //     }
-    //     else // parent
-    //         while (wait(NULL) > 0);
-    // }
-    // int fd[2];
-    // pipe(fd);
-    // pid_t pid = fork();
-    // if (pid == 0) { // dziecko
-    //     close(fd[1]); 
-    //     // read(fd[0], ...) - odczyt danych z potoku
-    // } else { // rodzic
-    //     close(fd[0]);
-    //     // write(fd[1], ...) - zapis danych do potoku
-    // }
+    for (int taskId = 0; taskId < tasksCnt; ++taskId)
+    {
+        for (int progId = 1; progId <= tasks[taskId][0]; ++progId)
+        {
+            int componentId = tasks[taskId][progId] - MIN_COMPONENT_ID;
+            if (componentId == -1)
+                break;
+            for (int subcomponentId = 0; subcomponentId < MAX_COMPONENTS_IN_LINE; ++subcomponentId)
+            {
+                if (subcomponents[subcomponentId] == NULL)
+                    break;
+                char** args = parseSubcomponent(subcomponents[subcomponentId]);
+            }
+        }
+    }
 }
 
 int main(int argc, char** argv)
@@ -121,20 +145,19 @@ int main(int argc, char** argv)
 
     char* filePath = argv[1];
 
-    char** components = NULL;
-    int** tasks = NULL;
     FILE* fPtr = openFile(filePath, "r");
     initComponentsTasksCnt(fPtr);
+    char** components = (char **)malloc((unsigned int)componentsCnt*sizeof(char *));
+    int** tasks = NULL;
 
     // components[i][0] = arguments count for the component
     // components[i][j] = jth argument of ith component (j > 0)
-    components = callocArray2DChar(componentsCnt, MAX_DATA_LINE_LEN);
     loadComponents(fPtr, components);
 
     // tasks[i][0] = components count for the task
     // tasks[i][j] = jth componentId of ith task (j > 0)
     tasks = callocArray2DInt(tasksCnt, MAX_COMPONENTS_IN_LINE);
-    loadTasks(fPtr, tasks, components);
+    loadTasks(fPtr, tasks);
 
     runTasks(components, tasks);
 
