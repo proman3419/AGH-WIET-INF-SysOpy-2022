@@ -91,7 +91,7 @@ void loadComponents(FILE* fPtr, char** components)
     }
 }
 
-// Call it after loadComponents
+// call it after loadComponents
 void loadTasks(FILE* fPtr, int** tasks)
 {
     char* line = NULL; size_t len = 0; ssize_t read; int i = 0;

@@ -6,7 +6,6 @@ składnik5 = grep j
 składnik6 = wc -l
 
 składnik1
-składnik2
 składnik2 | składnik3
 składnik4 | składnik5
 składnik2 | składnik3 | składnik6
