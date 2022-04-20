@@ -8,22 +8,12 @@
 #define MAX_DATA_LINE_LEN 256
 #define MAX_COMPONENTS_IN_LINE 32
 #define MAX_COMPONENT_ARGS 8
-#define MAX_ARG_LEN 128
 #define MIN_COMPONENT_ID 1
 #define COMPONENT_NAME_COMMON_PART_LEN 8
-#define PIPE_READ 0
-#define PIPE_WRITE 1
+#define READ 0
+#define WRITE 1
 
 int componentsCnt, tasksCnt;
-
-char** callocArray2DChar(int r, int c)
-{
-    char **A = (char **)malloc((unsigned int)r*sizeof(char *));
-    for (int i = 0; i < r; i++)
-        A[i] = (char *)calloc((unsigned int)c, sizeof(char));
-
-    return A;
-}
 
 int** callocArray2DInt(int r, int c)
 {
@@ -32,6 +22,33 @@ int** callocArray2DInt(int r, int c)
         A[i] = (int *)calloc((unsigned int)c, sizeof(int));
 
     return A;
+}
+
+void freeArray3DChar(char ***A, int r, int c)
+{
+    for (int i = 0; i < r; i++)
+    {
+        // ??? should work
+        // int j = 0;
+        // while (j < c && A[i][j] != NULL)
+        //     free(A[i][j++]);
+        free(A[i]);
+    }
+    free(A);
+}
+
+void freeArray2DChar(char **A, int r)
+{
+    for (int i = 0; i < r; i++)
+        free(A[i]);
+    free(A);
+}
+
+void freeArray2DInt(int **A, int r)
+{
+    for (int i = 0; i < r; i++)
+        free(A[i]);
+    free(A);
 }
 
 FILE* openFile(char* fileName, char* mode)
@@ -67,6 +84,9 @@ void loadComponents(FILE* fPtr, char** components)
     {
         if (strcmp(line, "\n") == 0)
             break;
+        int strLen = strlen(line);
+        if (strLen > 0 && line[strLen-1] == '\n')
+            line[strLen-1] = '\0';
         components[i++] = strdup(strchr(line, '=') + 2);
     }
 }
@@ -96,7 +116,11 @@ char** parseComponent(char* component)
     int i = 0;
     subcomponents[i++] = temp;
     while ((temp = strtok(NULL, "|")) != NULL)
+    {
+        while (*temp == ' ')
+            ++temp;
         subcomponents[i++] = temp;
+    }
     return subcomponents;
 }
 
@@ -110,29 +134,71 @@ char** parseSubcomponent(char* subcomponent)
     args[i++] = temp;
     while ((temp = strtok(NULL, " ")) != NULL)
         args[i++] = temp;
+    args[i] = NULL;
     return args;
 }
 
-void runTasks(char** components, int** tasks)
+int createFlatTaskArray(char** components, int** tasks, int taskId, char*** task)
 {
-    for (int taskId = 0; taskId < tasksCnt; ++taskId)
+    int flatTaskId = 0;
+    for (int progId = 1; progId <= tasks[taskId][0]; ++progId)
     {
-        for (int progId = 1; progId <= tasks[taskId][0]; ++progId)
+        int componentId = tasks[taskId][progId] - MIN_COMPONENT_ID;
+        if (componentId == -1)
+            break;
+
+        printf("\tprogram id: %d, component id: %d\n", progId, componentId);
+        
+        char** subcomponents = parseComponent(components[componentId]);
+        int i = 0;
+        while (subcomponents[i] != NULL)
         {
-            int componentId = tasks[taskId][progId] - MIN_COMPONENT_ID;
-            if (componentId == -1)
+            printf("\t\tsubcomponent id: %d, body: %s\n", i, subcomponents[i]);
+            i++;
+        }
+        
+        for (int subcomponentId = 0; subcomponentId < MAX_COMPONENTS_IN_LINE; ++subcomponentId)
+        {
+            if (subcomponents[subcomponentId] == NULL)
                 break;
-            char** subcomponents = parseComponent(components[componentId]);
-            for (int subcomponentId = 0; subcomponentId < MAX_COMPONENTS_IN_LINE; ++subcomponentId)
-            {
-                if (subcomponents[subcomponentId] == NULL)
-                    break;
-                char** args = parseSubcomponent(subcomponents[subcomponentId]);
-                printf("taskId: %d progId: %d componentId: %d subcomponentId: %d %s\n", 
-                       taskId, progId, componentId, subcomponentId, args[0]);
-            }
+            char** args = parseSubcomponent(subcomponents[subcomponentId]);
+            task[flatTaskId++] = args;
         }
     }
+    return flatTaskId;
+}
+
+void runTask(char*** task, int taskLen)
+{
+    int pipes[MAX_COMPONENTS_IN_LINE][2];
+    for (int i = 0; i < taskLen-1; ++i)
+        pipe(pipes[i]);
+
+    for (int i = 0; i < taskLen; ++i)
+    {
+        if (fork() == 0) 
+        {
+            if (i != taskLen - 1)
+                dup2(pipes[i][WRITE], STDOUT_FILENO);
+
+            if (i != 0)
+                dup2(pipes[i-1][READ], STDIN_FILENO);
+
+            for (int j = 0; j < taskLen-1; ++j)
+            {
+                close(pipes[j][READ]);
+                close(pipes[j][WRITE]);
+            }
+
+            execvp(task[i][READ], task[i]);
+            exit(0);
+        }
+    }
+
+    for (int i = 0; i < taskLen-1; ++i)
+        close(pipes[i][WRITE]);
+
+    while (wait(NULL) > 0);
 }
 
 int main(int argc, char** argv)
@@ -150,8 +216,6 @@ int main(int argc, char** argv)
     char** components = (char **)malloc((unsigned int)componentsCnt*sizeof(char *));
     int** tasks = NULL;
 
-    // components[i][0] = arguments count for the component
-    // components[i][j] = jth argument of ith component (j > 0)
     loadComponents(fPtr, components);
 
     // tasks[i][0] = components count for the task
@@ -159,7 +223,19 @@ int main(int argc, char** argv)
     tasks = callocArray2DInt(tasksCnt, MAX_COMPONENTS_IN_LINE);
     loadTasks(fPtr, tasks);
 
-    runTasks(components, tasks);
+    for (int taskId = 0; taskId < tasksCnt; ++taskId)
+    {
+        printf("> task id: %d\n", taskId);
+        char*** task = (char ***)calloc((unsigned int)MAX_COMPONENTS_IN_LINE, sizeof(char **));
+        int taskLen = createFlatTaskArray(components, tasks, taskId, task);
+        printf("< OUTPUT\n");
+        runTask(task, taskLen);
+        printf("\n");
+        freeArray3DChar(task, taskLen, MAX_COMPONENT_ARGS);
+    }
+
+    freeArray2DChar(components, componentsCnt);
+    freeArray2DInt(tasks, tasksCnt);
 
     return 0;
 }

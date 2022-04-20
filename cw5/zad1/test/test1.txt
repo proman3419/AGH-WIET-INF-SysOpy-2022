@@ -1,7 +1,12 @@
 składnik1 = cat /etc/passwd | wc -l
-składnik2 = ls | grep '^a'
+składnik2 = cat /etc/passwd
 składnik3 = grep 11
+składnik4 = echo "Pingwin fajny jest"
+składnik5 = grep j
+składnik6 = wc -l
 
-składnik1 | składnik3
-składnik1            
-składnik2            
+składnik1
+składnik2
+składnik2 | składnik3
+składnik4 | składnik5
+składnik2 | składnik3 | składnik6
