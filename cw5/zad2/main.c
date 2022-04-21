@@ -9,9 +9,9 @@ void listMails(char* orderBy)
 {
     FILE* mail;
     if (strcmp(orderBy, "author") == 0)
-        mail = popen("mail | tail -n +3 | head -n -1 | sort -k3", "w");
+        mail = popen("mail | head -n -1 | tail -n +3 | sort -k3", "w");
     else if (strcmp(orderBy, "date") == 0)
-        mail = popen("mail | tail -n +3 | head -n -1 | sort -dr", "w");
+        mail = popen("mail | head -n -1 | tail -n +3", "w");
     else
     {
         printf("[ERROR] Ordering type not recognized; supported orderings: author, date\n");

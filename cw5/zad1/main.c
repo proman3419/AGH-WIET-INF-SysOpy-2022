@@ -190,7 +190,7 @@ void runTask(char*** task, int taskLen)
                 close(pipes[j][WRITE]);
             }
 
-            execvp(task[i][READ], task[i]);
+            execvp(task[i][0], task[i]);
             exit(0);
         }
     }
