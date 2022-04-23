@@ -10,7 +10,7 @@ Serwer po uruchomieniu tworzy nową kolejkę komunikatów systemu V. Za pomocą 
 Klient bezpośrednio po uruchomieniu tworzy kolejkę z unikalnym kluczem IPC i wysyła jej klucz komunikatem do serwera (komunikat INIT). Po otrzymaniu takiego komunikatu, serwer otwiera kolejkę klienta, przydziela klientowi identyfikator (np. numer w kolejności zgłoszeń) i odsyła ten identyfikator do klienta (komunikacja w kierunku serwer->klient odbywa się za pomocą kolejki klienta). Po otrzymaniu identyfikatora, klient może wysłać zlecenie do serwera(zlecenia są czytane ze standardowego wyjścia w postaci typ_komunikatu).
 
 
-### Rodzaje zleceń
+#### Rodzaje zleceń
 * LIST: Zlecenie wypisania listy wszystkich aktywnych klientów.
 * 2ALL string: Zlecenie wysłania komunikatu do wszystkich pozostałych klientów. Klient wysyła ciąg znaków. Serwer wysyła ten ciąg wraz z identyfikatorem klienta-nadawcy oraz aktualną datą do wszystkich pozostałych klientów.
 * 2ONE id_klienta string: Zlecenie wysłania komunikatu do konkretnego klienta. Klient wysyła ciąg znaków podając jako adresata konkretnego klienta o identyfikatorze z listy aktywnych klientów. Serwer wysyła ten ciąg wraz z identyfikatorem klienta-nadawcy oraz aktualną datą do wskazanego klienta.
