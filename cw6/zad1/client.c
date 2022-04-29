@@ -29,52 +29,61 @@ void setup()
     printf("Set up\n");
 }
 
-void stopHandler()
-{
-
-}
-
-void listHandler()
-{
-    struct MsgBuf request;
-    fillMsgBuf(&request, LIST, qid, cid, MAX_CLIENTS, "");
-    if (msgsnd(qidServer, &request, sizeof(struct MsgBuf), 0) == -1)
-        perrorAndExit();
-
-    struct MsgBuf response;
-    if (msgrcv(qid, &response, sizeof(struct MsgBuf), LIST, 0) == -1)
-        perrorAndExit();
-    printf("%s\n", response.msg);
-}
-
-void tallHandler(char* input)
-{
-
-}
-
-void toneHandler(int cidTo, char* msg)
-{
-    printf("cid %d | msg %s\n", cidTo, msg);
-
-    // struct MsgBuf request;
-    // fillMsgBuf(&request, TONE, qid, cid, cidTo, msg);
-    // if (msgsnd(qidServer, &request, sizeof(struct MsgBuf), 0) == -1)
-    //     perrorAndExit();
-}
-
 void init()
 {
     printf("Initializing...\n");
     struct MsgBuf request;
-    fillMsgBuf(&request, INIT, qid, -1, MAX_CLIENTS, "");
-    if (msgsnd(qidServer, &request, sizeof(struct MsgBuf), 0) == -1)
+    request.mtype = INIT;
+    fillMtext(&request.mtext, qid, -1, MAX_CLIENTS, "");
+    if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
         perrorAndExit();
 
     struct MsgBuf response;
-    if (msgrcv(qid, &response, sizeof(struct MsgBuf), INIT, 0) == -1)
+    if (msgrcv(qid, &response, MSG_BUF_SIZE, INIT, 0) == -1)
         perrorAndExit();
-    cid = atoi(response.msg);
+    cid = atoi(response.mtext.msg);
     printf("Initialized, the client ID is: %ld\n", cid);
+}
+
+// void stopHandler()
+// {
+
+// }
+
+// void listHandler()
+// {
+//     struct MsgBuf request;
+//     fillMsgBuf(&request, LIST, qid, cid, MAX_CLIENTS, "");
+//     if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
+//         perrorAndExit();
+
+//     struct MsgBuf response;
+//     if (msgrcv(qid, &response, MSG_BUF_SIZE, LIST, 0) == -1)
+//         perrorAndExit();
+//     printf("%s\n", response.mtext);
+// }
+
+// void tallHandler(char* args)
+// {
+
+// }
+
+void toneHandler(int cidTo, char* mtext)
+{
+    printf("cidto: %d | mtext: %s\n", cidTo, mtext);
+    // int ocid;
+    // char* mtext;
+    // sscanf(args, "%d %[^\t\n]", &bb, mtext);
+
+    // struct MsgBuf request;
+    // fillMsgBuf(&request, TONE, qkey, qid, ocid, "");
+    // if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
+    //     perrorAndExit();
+
+    // struct MsgBuf response;
+    // if (msgrcv(qid, &response, MSG_BUF_SIZE, TONE, 0) == -1)
+    //     perrorAndExit();
+    // printf("%s\n", response.mtext);
 }
 
 int main(int argc, char** argv)
@@ -83,28 +92,29 @@ int main(int argc, char** argv)
     init();
 
     char input[MAX_MESSAGE_LEN];
-    char* cidToStr;
-    char* msg = NULL;
+    char* rest;
+    char* token;
+    enum Job job;
     for (;;)
     {
         fgets(input, MAX_MESSAGE_LEN, stdin);
-        strtok_r(input, " ", &msg);
+        job = extractJobFromMsg(input);
+        // args = input + JOB_STR_LEN + 1; // +1 for space
+        // strtok_r(input, " ", &rest);  
+        // token = strtok_r(NULL, " ", &rest);
 
-        // enum Job job = extractJobFromMsg(input);
-
-        // switch (job)
-        // {
-        //     // case STOP: stopHandler(); break;
-        //     // case LIST: listHandler(); break;
-        //     // case TALL: tallHandler(input); break;
-        //     case TONE:
-        //         printf("%s\n", input);
-        //         strtok_r(input, " ", &msg);
-        //         // if ((cidToStr = strtok_r(msg, " ", &msg)) != NULL)
-        //             // toneHandler(atoi(cidToStr), msg);
-        //         break;
-        //     default: break;
-        // }
+        switch (job)
+        {
+            // case STOP: stopHandler(); break;
+            // case LIST: listHandler(); break;
+            // case TALL: tallHandler(args); break;
+            case TONE:
+                strtok_r(input, " ", &rest);  
+                token = strtok_r(NULL, " ", &rest);
+                toneHandler(atoi(token), rest);
+                break;
+            default: break;
+        }
     }
 
     return 0;

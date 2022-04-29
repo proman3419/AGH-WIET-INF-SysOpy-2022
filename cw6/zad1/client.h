@@ -3,11 +3,11 @@
 
 void clean();
 void setup();
-void stopHandler();
-void listHandler();
-void tallHandler(char* input);
-void toneHandler(int cidTo, char* msg);
 void init();
+// void stopHandler();
+// void listHandler();
+// void tallHandler(char* args);
+void toneHandler(int cidTo, char* mtext);
 int main(int argc, char** argv);
 
 #endif

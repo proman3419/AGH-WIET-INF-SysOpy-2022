@@ -1,5 +1,7 @@
 #include "common.h"
 
+const size_t MSG_BUF_SIZE = sizeof(struct MsgBuf) - sizeof(long);;
+
 void perrorAndExit()
 {
     perror("[!] Error");
@@ -42,24 +44,16 @@ enum Job extractJobFromMsg(char* msg)
     return job;
 }
 
-void fillMsgBuf(struct MsgBuf* msgBuf, long mtype, int qidFrom, 
-                int cidFrom, int cidTo, char* msg)
+void fillMtext(struct Mtext* mtext, int qidFrom, int cidFrom, int cidTo, char* msg)
 {
-    if (mtype == -1)
-    {
-        msgBuf->mtype = extractJobFromMsg(msg);
-        msg = msg + JOB_STR_LEN;
-    }
-    else
-        msgBuf->mtype = mtype;
-    msgBuf->qidFrom = qidFrom;
-    msgBuf->cidFrom = cidFrom;
-    msgBuf->cidTo = cidTo;
-    strcpy(msgBuf->msg, msg);
+    mtext->qidFrom = qidFrom;
+    mtext->cidFrom = cidFrom;
+    mtext->cidTo = cidTo;
+    strcpy(mtext->msg, msg);
 
     time_t rawTime;
     time(&rawTime);
-    msgBuf->time = *localtime(&rawTime);
+    mtext->time = *localtime(&rawTime);
 }
 
 void printTime(const struct tm* time)
