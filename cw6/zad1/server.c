@@ -49,15 +49,27 @@ void listHandler(struct MsgBuf received)
     }
 
     struct MsgBuf response;
-    fillMsgBuf(&response, LIST, qkey, qid, MAX_CLIENTS, "");
+    fillMsgBuf(&response, LIST, qid, MAX_CLIENTS, received.cidFrom, "");
     strcpy(response.msg, msg);
-    if (msgsnd(received.qid, &response, sizeof(struct MsgBuf), 0) == -1)
-        printf("Sending response for LIST request to %d failed\n", received.qid);
+    if (msgsnd(received.qidFrom, &response, sizeof(struct MsgBuf), 0) == -1)
+        printf("Sending response for LIST request to %d failed\n", received.cidFrom);
 }
 
 void tallHandler(struct MsgBuf received)
 {
+    if (received.cidTo < 0 || received.cidTo >= MAX_CLIENTS)
+    {
+        printf("Invalid client ID\n");
+        return;
+    }
+    if (qidsClients[received.cidTo] == -1)
+    {
+        printf("The client with ID %d is not active\n", received.cidTo);
+        return;        
+    }
 
+    if (msgsnd(qidsClients[received.cidTo], &received, sizeof(struct MsgBuf), 0) == -1)
+        printf("Forwarding the message from %d to %d failed\n", received.cidFrom, received.cidTo);
 }
 
 void toneHandler(struct MsgBuf received)
@@ -72,7 +84,7 @@ void initHandler(struct MsgBuf received)
     {
         if (qidsClients[i] == -1)
         {
-            qidsClients[i] = received.qid;
+            qidsClients[i] = received.qidFrom;
             cid = i;
             break;
         }
@@ -83,13 +95,13 @@ void initHandler(struct MsgBuf received)
     {
         char cidStr[16];
         sprintf(cidStr, "%d", cid);
-        fillMsgBuf(&response, INIT, qkey, qid, MAX_CLIENTS, cidStr);
+        fillMsgBuf(&response, INIT, qid, MAX_CLIENTS, received.cidFrom, cidStr);
     }
     else
-        fillMsgBuf(&response, INIT, qkey, qid, MAX_CLIENTS, "-1");
+        fillMsgBuf(&response, INIT, qid, MAX_CLIENTS, received.cidFrom, "-1");
 
-    if (msgsnd(received.qid, &response, sizeof(struct MsgBuf), 0) == -1)
-        printf("Sending response for INIT request to %d failed\n", received.qid);
+    if (msgsnd(received.qidFrom, &response, sizeof(struct MsgBuf), 0) == -1)
+        printf("Sending response for INIT request to %d failed\n", received.cidFrom);
 }
 
 int main(int argc, char** argv)
@@ -106,7 +118,7 @@ int main(int argc, char** argv)
         }
         else
         {
-            printf("Received request %s from %d\n", jobToStr((enum Job)received.mtype), received.cid);
+            printf("Received request %s from %d\n", jobToStr((enum Job)received.mtype), received.cidFrom);
             switch ((enum Job)received.mtype)
             {
                 case STOP: stopHandler(received); break;

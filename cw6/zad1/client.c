@@ -26,8 +26,6 @@ void setup()
     qid = msgget(qkey, IPC_CREAT | IPC_EXCL | PERMISSIONS);
     if (qidServer == -1 || qid == -1)
         perrorAndExit();
-    printf("%d %d\n", qid, qidServer);
-
     printf("Set up\n");
 }
 
@@ -39,7 +37,7 @@ void stopHandler()
 void listHandler()
 {
     struct MsgBuf request;
-    fillMsgBuf(&request, LIST, qkey, qid, cid, "");
+    fillMsgBuf(&request, LIST, qid, cid, MAX_CLIENTS, "");
     if (msgsnd(qidServer, &request, sizeof(struct MsgBuf), 0) == -1)
         perrorAndExit();
 
@@ -49,33 +47,26 @@ void listHandler()
     printf("%s\n", response.msg);
 }
 
-void tallHandler(char* args)
+void tallHandler(char* input)
 {
 
 }
 
-void toneHandler(char* args)
+void toneHandler(int cidTo, char* msg)
 {
-    // int ocid;
-    // char* msg;
-    // sscanf(args, "%d %[^\t\n]", &bb, msg);
+    printf("cid %d | msg %s\n", cidTo, msg);
 
     // struct MsgBuf request;
-    // fillMsgBuf(&request, TONE, qkey, qid, ocid, "");
+    // fillMsgBuf(&request, TONE, qid, cid, cidTo, msg);
     // if (msgsnd(qidServer, &request, sizeof(struct MsgBuf), 0) == -1)
     //     perrorAndExit();
-
-    // struct MsgBuf response;
-    // if (msgrcv(qid, &response, sizeof(struct MsgBuf), TONE, 0) == -1)
-    //     perrorAndExit();
-    // printf("%s\n", response.msg);
 }
 
 void init()
 {
     printf("Initializing...\n");
     struct MsgBuf request;
-    fillMsgBuf(&request, INIT, qkey, qid, -1, "");
+    fillMsgBuf(&request, INIT, qid, -1, MAX_CLIENTS, "");
     if (msgsnd(qidServer, &request, sizeof(struct MsgBuf), 0) == -1)
         perrorAndExit();
 
@@ -91,21 +82,29 @@ int main(int argc, char** argv)
     setup();
     init();
 
+    char input[MAX_MESSAGE_LEN];
+    char* cidToStr;
+    char* msg = NULL;
     for (;;)
     {
-        char input[MAX_MESSAGE_LEN];
         fgets(input, MAX_MESSAGE_LEN, stdin);
-        enum Job job = extractJobFromMsg(input);
-        char* args = input + JOB_STR_LEN + 1; // +1 for space
+        strtok_r(input, " ", &msg);
 
-        switch (job)
-        {
-            case STOP: stopHandler(); break;
-            case LIST: listHandler(); break;
-            case TALL: tallHandler(args); break;
-            case TONE: toneHandler(args); break;
-            default: break;
-        }
+        // enum Job job = extractJobFromMsg(input);
+
+        // switch (job)
+        // {
+        //     // case STOP: stopHandler(); break;
+        //     // case LIST: listHandler(); break;
+        //     // case TALL: tallHandler(input); break;
+        //     case TONE:
+        //         printf("%s\n", input);
+        //         strtok_r(input, " ", &msg);
+        //         // if ((cidToStr = strtok_r(msg, " ", &msg)) != NULL)
+        //             // toneHandler(atoi(cidToStr), msg);
+        //         break;
+        //     default: break;
+        // }
     }
 
     return 0;

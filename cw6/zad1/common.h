@@ -7,6 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <time.h>
 
 #define MAX_CLIENTS 32
 #define MAX_MESSAGE_LEN 512
@@ -27,17 +28,19 @@ enum Job
 struct MsgBuf
 {
     long mtype;
-    key_t qkey;
-    int qid;
-    int cid;
+    int qidFrom;
+    int cidFrom;
+    int cidTo;
     char msg[MAX_MESSAGE_LEN];
+    struct tm time;
 };
 
 void perrorAndExit();
 enum Job strToJob(char* str);
 char* jobToStr(enum Job job);
 enum Job extractJobFromMsg(char* msg);
-void fillMsgBuf(struct MsgBuf* msgBuf, long mtype, 
-                key_t qkey, int qid, int cid, char* msg);
+void fillMsgBuf(struct MsgBuf* msgBuf, long mtype, int qidFrom,
+                int cidFrom, int cidTo, char* msg);
+                // assume that we always set time to the current one
 
 #endif

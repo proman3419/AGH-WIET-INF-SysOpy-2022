@@ -42,8 +42,8 @@ enum Job extractJobFromMsg(char* msg)
     return job;
 }
 
-void fillMsgBuf(struct MsgBuf* msgBuf, long mtype, 
-                key_t qkey, int qid, int cid, char* msg)
+void fillMsgBuf(struct MsgBuf* msgBuf, long mtype, int qidFrom, 
+                int cidFrom, int cidTo, char* msg)
 {
     if (mtype == -1)
     {
@@ -52,8 +52,17 @@ void fillMsgBuf(struct MsgBuf* msgBuf, long mtype,
     }
     else
         msgBuf->mtype = mtype;
-    msgBuf->qkey = qkey;
-    msgBuf->qid = qid;
-    msgBuf->cid = cid;
+    msgBuf->qidFrom = qidFrom;
+    msgBuf->cidFrom = cidFrom;
+    msgBuf->cidTo = cidTo;
     strcpy(msgBuf->msg, msg);
+
+    time_t rawTime;
+    time(&rawTime);
+    msgBuf->time = *localtime(&rawTime);
+}
+
+void printTime(const struct tm* time)
+{
+    printf("%s", asctime(time));
 }
