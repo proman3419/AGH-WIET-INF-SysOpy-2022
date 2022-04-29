@@ -11,17 +11,18 @@
 
 #define MAX_CLIENTS 32
 #define MAX_MESSAGE_LEN 500
-#define JOB_STR_LEN 4
+#define MSG_TYPE_STR_LEN 4
 #define SERVER_PROJ 's'
 #define PERMISSIONS 0600
 
-enum Job
+enum MsgType
 {
     STOP,
     LIST,
     TALL,
     TONE,
     INIT,
+    TEXT,
     UNKN
 };
 
@@ -42,9 +43,9 @@ struct MsgBuf
 extern const size_t MSG_BUF_SIZE;
 
 void perrorAndExit();
-enum Job strToJob(char* str);
-char* jobToStr(enum Job job);
-enum Job extractJobFromMsg(char* msg);
+enum MsgType strToMsgType(char* str);
+char* msgTypeToStr(enum MsgType msgType);
+enum MsgType extractMsgTypeFromMsg(char* msg);
 // assume that we always set time to the current one
 void fillMtext(struct Mtext* mtext, int qidFrom, int cidFrom, int cidTo, char* msg);
 

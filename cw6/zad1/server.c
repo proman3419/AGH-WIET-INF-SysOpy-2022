@@ -27,6 +27,9 @@ void setup()
 
     for (int i = 0; i < MAX_CLIENTS; ++i)
         qidsClients[i] = -1;
+
+    printf("My qid: %d\n", qid);
+
     printf("Set up\n");
 }
 
@@ -35,47 +38,67 @@ void setup()
 
 // }
 
-// void listHandler(struct MsgBuf received)
-// {
-//     char mtext[MAX_MESSAGE_LEN] = "Active clients:\n";
-//     for (int i = 0; i < MAX_CLIENTS; ++i)
-//     {
-//         char cidStr[16];
-//         if (qidsClients[i] != -1)
-//         {
-//             sprintf(cidStr, "%d\n", i);
-//             strcat(mtext, cidStr);
-//         }
-//     }
+void listHandler(struct MsgBuf received)
+{
+    char msg[MAX_MESSAGE_LEN] = "Active clients:\n";
+    for (int i = 0; i < MAX_CLIENTS; ++i)
+    {
+        char cidStr[16];
+        if (qidsClients[i] != -1)
+        {
+            sprintf(cidStr, "%d\n", i);
+            strcat(msg, cidStr);
+        }
+    }
 
-//     struct MsgBuf response;
-//     fillMsgBuf(&response, LIST, qid, MAX_CLIENTS, received.cidFrom, "");
-//     strcpy(response.mtext, mtext);
-//     if (msgsnd(received.qidFrom, &response, MSG_BUF_SIZE, 0) == -1)
-//         printf("Sending response for LIST request to %d failed\n", received.cidFrom);
-// }
+    struct MsgBuf response;
+    response.mtype = LIST;
+    fillMtext(&response.mtext, qid, MAX_CLIENTS, received.mtext.cidFrom, msg);
+    if (msgsnd(received.mtext.qidFrom, &response, MSG_BUF_SIZE, 0) == -1)
+        printf("Sending response for LIST request to %d failed\n", received.mtext.cidFrom);
+}
 
-// void tallHandler(struct MsgBuf received)
-// {
-//     if (received.cidTo < 0 || received.cidTo >= MAX_CLIENTS)
-//     {
-//         printf("Invalid client ID\n");
-//         return;
-//     }
-//     if (qidsClients[received.cidTo] == -1)
-//     {
-//         printf("The client with ID %d is not active\n", received.cidTo);
-//         return;        
-//     }
+void tallHandler(struct MsgBuf received)
+{
+    for (int i = 0; i < MAX_CLIENTS; ++i)
+    {
+        if (qidsClients[i] != -1)
+        {
+            struct MsgBuf response;
+            response.mtype = TEXT;
+            fillMtext(&response.mtext, received.mtext.qidFrom, received.mtext.cidFrom, received.mtext.cidTo, received.mtext.msg);
+            printf("%s to: %d from: %d\n", received.mtext.msg, qidsClients[i], received.mtext.qidFrom);
+            if (msgsnd(qidsClients[i], &response, MSG_BUF_SIZE, 0) == -1)
+                printf("Forwarding the message from %d to %d failed\n", received.mtext.cidFrom, received.mtext.cidTo);
 
-//     if (msgsnd(qidsClients[received.cidTo], &received, MSG_BUF_SIZE, 0) == -1)
-//         printf("Forwarding the message from %d to %d failed\n", received.cidFrom, received.cidTo);
-// }
+        }
+    }
 
-// void toneHandler(struct MsgBuf received)
-// {
+    // if (received.cidTo < 0 || received.cidTo >= MAX_CLIENTS)
+    // {
+    //     printf("Invalid client ID\n");
+    //     return;
+    // }
+    // if (qidsClients[received.cidTo] == -1)
+    // {
+    //     printf("The client with ID %d is not active\n", received.cidTo);
+    //     return;        
+    // }
 
-// }
+    // if (msgsnd(qidsClients[received.cidTo], &received, MSG_BUF_SIZE, 0) == -1)
+    //     printf("Forwarding the message from %d to %d failed\n", received.cidFrom, received.cidTo);
+}
+
+void toneHandler(struct MsgBuf received)
+{
+    printf("yzje\n");
+    struct MsgBuf response;
+    response.mtype = TEXT;
+    fillMtext(&response.mtext, received.mtext.qidFrom, received.mtext.cidFrom, received.mtext.cidTo, received.mtext.msg);
+    printf("%s to: %d from: %d\n", received.mtext.msg, qidsClients[received.mtext.cidTo], received.mtext.qidFrom);
+    if (msgsnd(qidsClients[received.mtext.cidTo], &response, MSG_BUF_SIZE, 0) == -1)
+        printf("Forwarding the message from %d to %d failed\n", received.mtext.cidFrom, received.mtext.cidTo);
+}
 
 void initHandler(struct MsgBuf received)
 {
@@ -109,9 +132,9 @@ int main(int argc, char** argv)
 {
     setup();
 
+    struct MsgBuf received;
     for (;;)
     {
-        struct MsgBuf received;
         if (msgrcv(qid, &received, MSG_BUF_SIZE, 0, IPC_NOWAIT) == -1)
         {
             if (errno != ENOMSG)
@@ -119,13 +142,13 @@ int main(int argc, char** argv)
         }
         else
         {
-            printf("Received request %s from %d\n", jobToStr((enum Job)received.mtype), received.mtext.cidFrom);
-            switch ((enum Job)received.mtype)
+            printf("Received request %s from %d\n", msgTypeToStr((enum MsgType)received.mtype), received.mtext.cidFrom);
+            switch ((enum MsgType)received.mtype)
             {
                 // case STOP: stopHandler(received); break;
-                // case LIST: listHandler(received); break;
-                // case TALL: tallHandler(received); break;
-                // case TONE: toneHandler(received); break;
+                case LIST: listHandler(received); break;
+                case TALL: tallHandler(received); break;
+                case TONE: toneHandler(received); break;
                 case INIT: initHandler(received); break;
                 default: break;
             }
