@@ -4,10 +4,12 @@
 void clean();
 void setup();
 void init();
-// void stopHandler();
+void stopHandler();
 void listHandler();
 void tallHandler(char* msg);
 void toneHandler(int cidTo, char* msg);
+void sigintHandler(int sigNum);
+void sigintHandlerSetup();
 void sender();
 void listener();
 int main(int argc, char** argv);

@@ -4,6 +4,7 @@
 int qid, qidServer;
 key_t qkey, qkeyServer;
 size_t cid;
+pid_t pidSender, pidListener;
 
 void clean()
 {
@@ -16,6 +17,8 @@ void setup()
 {
     printf("Setting up...\n");
     atexit(clean);
+    pidListener = getpid();
+    sigintHandlerSetup();
 
     qkeyServer = ftok(getenv("HOME"), SERVER_PROJ);
     qkey = ftok(getenv("HOME"), getpid()%256);
@@ -49,10 +52,19 @@ void init()
     printf("Initialized, the client ID is: %ld\n", cid);
 }
 
-// void stopHandler()
-// {
-
-// }
+void stopHandler()
+{
+    printf("SIEMA\n");
+    struct MsgBuf request;
+    request.mtype = STOP;
+    fillMtext(&request.mtext, qid, cid, MAX_CLIENTS, "");
+    printf("%d\n", qidServer);
+    if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
+    {
+        printf("STOP SEND FAILED %d %d %d %d %d\n", errno, EAGAIN, EIDRM , EINTR, EINVAL);
+    }
+    exit(0);
+}
 
 void listHandler()
 {
@@ -86,6 +98,24 @@ void toneHandler(int cidTo, char* msg)
         perrorAndExit();
 }
 
+void sigintHandler(int sigNum)
+{
+    printf("DOSTALEM\n");
+    if (getpid() == pidListener)
+        stopHandler();
+    exit(0);
+}
+
+void sigintHandlerSetup()
+{
+    struct sigaction act;
+    act.sa_handler = sigintHandler;
+    sigfillset(&act.sa_mask);
+    sigdelset(&act.sa_mask, SIGINT);
+    sigprocmask(SIG_SETMASK, &act.sa_mask, NULL);
+    sigaction(SIGINT, &act, NULL);
+}
+
 void sender()
 {
     char input[MAX_MESSAGE_LEN];
@@ -99,7 +129,11 @@ void sender()
 
         switch (msgType)
         {
-            // case STOP: stopHandler(); break;
+            case STOP:
+                printf("%d\n", pidListener);
+                kill(pidListener, SIGINT);
+                stopHandler();
+                break;
             case LIST: listHandler(); break;
             case TALL: 
                 strtok_r(input, " ", &rest);  
@@ -122,7 +156,6 @@ void listener()
     {
         if (msgrcv(qid, &received, MSG_BUF_SIZE, TEXT, 0) == -1)
         {
-            printf("%s AAAAAA\n", msgTypeToStr(received.mtype));
             if (errno != ENOMSG)
                 perrorAndExit();
         }
@@ -131,7 +164,11 @@ void listener()
             printf("Received request %s from %d\n", msgTypeToStr((enum MsgType)received.mtype), received.mtext.cidFrom);
             switch ((enum MsgType)received.mtype)
             {
-                case STOP: printf("stop resp\n"); break;
+                case STOP: 
+                    printf("Received STOP from server\n");
+                    kill(pidSender, SIGINT);
+                    exit(0);
+                    break;
                 case LIST: printf("list resp\n"); break;
                 case TEXT: printf("%s\n", received.mtext.msg); break;
                 case INIT: printf("init resp\n"); break;
@@ -146,10 +183,10 @@ int main(int argc, char** argv)
     setup();
     init();
 
-    if (fork() == 0)
+    if ((pidSender = fork()) == 0)
         sender();
     else
-        listener();   
+        listener();        
 
     return 0;
 }

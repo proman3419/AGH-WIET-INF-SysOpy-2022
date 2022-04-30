@@ -33,10 +33,11 @@ void setup()
     printf("Set up\n");
 }
 
-// void stopHandler(struct MsgBuf received)
-// {
-
-// }
+void stopHandler(struct MsgBuf received)
+{
+    printf("Client %d disconnected\n", received.mtext.cidFrom);
+    qidsClients[received.mtext.cidFrom] = -1;
+}
 
 void listHandler(struct MsgBuf received)
 {
@@ -145,7 +146,7 @@ int main(int argc, char** argv)
             printf("Received request %s from %d\n", msgTypeToStr((enum MsgType)received.mtype), received.mtext.cidFrom);
             switch ((enum MsgType)received.mtype)
             {
-                // case STOP: stopHandler(received); break;
+                case STOP: printf("MAMY TO\n"); stopHandler(received); break;
                 case LIST: listHandler(received); break;
                 case TALL: tallHandler(received); break;
                 case TONE: toneHandler(received); break;

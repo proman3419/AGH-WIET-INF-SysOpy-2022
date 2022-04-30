@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <time.h>
+#include <signal.h>
 
 #define MAX_CLIENTS 32
 #define MAX_MESSAGE_LEN 500
@@ -17,13 +18,13 @@
 
 enum MsgType
 {
-    STOP,
-    LIST,
-    TALL,
-    TONE,
-    INIT,
-    TEXT,
-    UNKN
+    STOP = 1,
+    LIST = 2,
+    TALL = 3,
+    TONE = 4,
+    INIT = 5,
+    UNKN = 6,
+    TEXT = 7
 };
 
 struct Mtext
