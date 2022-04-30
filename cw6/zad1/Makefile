@@ -32,4 +32,4 @@ lib_static: $(LIB_PATH)$(LIB).c
 	ar cr $(LIB).a $(LIB).o
 
 clean:
-	rm -f *.o *.gch *.a *.so output*
+	rm -f *.o *.gch *.a *.so output* *.log

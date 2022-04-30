@@ -18,27 +18,27 @@ void perrorAndExit()
     exit(-1);
 }
 
-enum MsgType strToMsgType(char* str)
-{
-    if (strcmp(str, "STOP") == 0) return STOP;
-    if (strcmp(str, "LIST") == 0) return LIST;
-    if (strcmp(str, "TALL") == 0) return TALL;
-    if (strcmp(str, "TONE") == 0) return TONE;
-    if (strcmp(str, "INIT") == 0) return INIT;
-    return UNKN;
-}
-
 char* msgTypeToStr(enum MsgType msgType)
 {
     switch (msgType)
     {
         case STOP: return "STOP";
         case LIST: return "LIST";
-        case TALL: return "TALL";
-        case TONE: return "TONE";
+        case TALL: return "2ALL";
+        case TONE: return "2ONE";
         case INIT: return "INIT";
         default: return "UNKN";
     }
+}
+
+enum MsgType strToMsgType(char* str)
+{
+    if (strcmp(str, "STOP") == 0) return STOP;
+    if (strcmp(str, "LIST") == 0) return LIST;
+    if (strcmp(str, "2ALL") == 0) return TALL;
+    if (strcmp(str, "2ONE") == 0) return TONE;
+    if (strcmp(str, "INIT") == 0) return INIT;
+    return UNKN;
 }
 
 enum MsgType extractMsgTypeFromMsg(char* msg)
@@ -54,28 +54,43 @@ enum MsgType extractMsgTypeFromMsg(char* msg)
     return msgType;
 }
 
-void printTime(const struct tm* time)
+char* timeToReadable(struct tm* time, char* timeBuf)
 {
-    printf("%s", asctime(time));
+    timeBuf = asctime(time);
+    timeBuf[strlen(timeBuf)-1] = '\0';
+    return timeBuf;
 }
 
-void fillMtext(struct Mtext* mtext, int qidFrom, size_t cidFrom, size_t cidTo, char* msg)
+void fillMsgBuf(struct MsgBuf* msgBuf, enum MsgType mtype, int qidFrom, 
+                size_t cidFrom, size_t cidTo, char* msg)
 {
-    mtext->qidFrom = qidFrom;
-    mtext->cidFrom = cidFrom;
-    mtext->cidTo = cidTo;
-    strcpy(mtext->msg, msg);
+    msgBuf->mtype = mtype;
+    msgBuf->mtext.qidFrom = qidFrom;
+    msgBuf->mtext.cidFrom = cidFrom;
+    msgBuf->mtext.cidTo = cidTo;
+    strcpy(msgBuf->mtext.msg, msg);
 
     time_t rawTime;
     time(&rawTime);
-    mtext->time = *localtime(&rawTime);
+    msgBuf->mtext.time = *localtime(&rawTime);
 }
 
 void printMtext(struct Mtext* mtext)
 {
+    char timeBuf[32];
     printf("\n");
     printf("### From: %ld\n", mtext->cidFrom);
     printf("### To: %ld\n", mtext->cidTo);
-    printf("### Time: "); printTime(&mtext->time);
+    printf("### Time: %s\n", timeToReadable(&mtext->time, timeBuf));
     printf("### Message: %s", mtext->msg);
+}
+
+void sigintHandlerSetup(void (*handlerFunc)(int))
+{
+    struct sigaction act;
+    act.sa_handler = handlerFunc;
+    sigfillset(&act.sa_mask);
+    sigdelset(&act.sa_mask, SIGINT);
+    sigprocmask(SIG_SETMASK, &act.sa_mask, NULL);
+    sigaction(SIGINT, &act, NULL);
 }

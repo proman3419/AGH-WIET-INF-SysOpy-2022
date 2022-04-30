@@ -18,22 +18,12 @@ void sigintHandler(int sigNum)
     exit(0);
 }
 
-void sigintHandlerSetup()
-{
-    struct sigaction act;
-    act.sa_handler = sigintHandler;
-    sigfillset(&act.sa_mask);
-    sigdelset(&act.sa_mask, SIGINT);
-    sigprocmask(SIG_SETMASK, &act.sa_mask, NULL);
-    sigaction(SIGINT, &act, NULL);
-}
-
 void setup()
 {
     printf("Setting up...\n");
     atexit(clean);
     pidListener = getpid();
-    sigintHandlerSetup();
+    sigintHandlerSetup(sigintHandler);
 
     qkeyServer = ftok(getenv("HOME"), SERVER_PROJ);
     qkey = ftok(getenv("HOME"), getpid()%256);
@@ -51,8 +41,7 @@ void init()
 {
     printf("Initializing...\n");
     struct MsgBuf request;
-    request.mtype = INIT;
-    fillMtext(&request.mtext, qid, -1, SERVER_CID, "");
+    fillMsgBuf(&request, INIT, qid, -1, SERVER_CID, "");
     if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
         perrorAndExit();
 
@@ -66,8 +55,7 @@ void init()
 void stopHandler()
 {
     struct MsgBuf request;
-    request.mtype = STOP;
-    fillMtext(&request.mtext, qid, cid, SERVER_CID, "");
+    fillMsgBuf(&request, STOP, qid, cid, SERVER_CID, "");
     if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
         printSendFail(STOP, SERVER_CID);
     exit(0);
@@ -76,8 +64,7 @@ void stopHandler()
 void listHandler()
 {
     struct MsgBuf request;
-    request.mtype = LIST;
-    fillMtext(&request.mtext, qid, cid, SERVER_CID, "");
+    fillMsgBuf(&request, LIST, qid, cid, SERVER_CID, "");
     if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
         printSendFail(LIST, SERVER_CID);
 }
@@ -85,8 +72,7 @@ void listHandler()
 void tallHandler(char* msg)
 {
     struct MsgBuf request;
-    request.mtype = TALL;
-    fillMtext(&request.mtext, qid, cid, -1, msg);
+    fillMsgBuf(&request, TALL, qid, cid, -1, msg);
     if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
         printSendFail(TALL, SERVER_CID);
 }
@@ -94,8 +80,7 @@ void tallHandler(char* msg)
 void toneHandler(size_t cidTo, char* msg)
 {
     struct MsgBuf request;
-    request.mtype = TONE;
-    fillMtext(&request.mtext, qid, cid, cidTo, msg);
+    fillMsgBuf(&request, TONE, qid, cid, cidTo, msg);
     if (msgsnd(qidServer, &request, MSG_BUF_SIZE, 0) == -1)
         printSendFail(TONE, SERVER_CID);
 }
@@ -150,8 +135,9 @@ void listener()
             switch ((enum MsgType)received.mtype)
             {
                 case STOP: 
-                    printf("The server disconnected\n");
+                    printf("\nServer disconnected\n");
                     kill(pidSender, SIGINT);
+                    stopHandler();
                     exit(0);
                     break;
                 case LIST:

@@ -46,13 +46,14 @@ extern const size_t MSG_BUF_SIZE;
 void printSendFail(enum MsgType msgType, size_t cidTo);
 void printReceiveFail(enum MsgType msgType, size_t cidFrom);
 void perrorAndExit();
-enum MsgType strToMsgType(char* str);
 char* msgTypeToStr(enum MsgType msgType);
+enum MsgType strToMsgType(char* str);
 enum MsgType extractMsgTypeFromMsg(char* msg);
-void printTime(const struct tm* time);
+char* timeToReadable(struct tm* time, char* timeBuf);
 // assume that we always set time to the current one
-void fillMtext(struct Mtext* mtext, int qidFrom, size_t cidFrom, size_t cidTo, char* msg);
+void fillMsgBuf(struct MsgBuf* msgBuf, enum MsgType msgType, int qidFrom, 
+                size_t cidFrom, size_t cidTo, char* msg);
 void printMtext(struct Mtext* mtext);
-void showPrompt(size_t cid);
+void sigintHandlerSetup(void (*handlerFunc)(int));
 
 #endif
