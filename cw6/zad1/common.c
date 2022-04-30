@@ -82,7 +82,7 @@ void printMtext(struct Mtext* mtext)
     printf("### From: %ld\n", mtext->cidFrom);
     printf("### To: %ld\n", mtext->cidTo);
     printf("### Time: %s\n", timeToReadable(&mtext->time, timeBuf));
-    printf("### Message: %s", mtext->msg);
+    printf("### Message: %s\n", mtext->msg);
 }
 
 void sigintHandlerSetup(void (*handlerFunc)(int))

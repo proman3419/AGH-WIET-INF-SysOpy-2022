@@ -13,7 +13,7 @@ void clean()
 
 void sigintHandler(int sigNum)
 {
-    if (getpid() == pidListener)
+    if (getpid() == pidSender)
         stopHandler();
     exit(0);
 }
@@ -22,7 +22,6 @@ void setup()
 {
     printf("Setting up...\n");
     atexit(clean);
-    pidListener = getpid();
     sigintHandlerSetup(sigintHandler);
 
     qkeyServer = ftok(getenv("HOME"), SERVER_PROJ);
@@ -112,12 +111,14 @@ void sender()
                 listHandler();
                 break;
             case TALL: 
-                strtok_r(input, " ", &rest);  
+                strtok_r(input, " ", &rest);
+                rest[strlen(rest)-1] = '\0';
                 tallHandler(rest);
                 break;
             case TONE:
                 strtok_r(input, " ", &rest);  
                 token = strtok_r(NULL, " ", &rest);
+                rest[strlen(rest)-1] = '\0';
                 toneHandler(atoi(token), rest);
                 break;
             default: break;
@@ -140,9 +141,9 @@ void listener()
             switch ((enum MsgType)received.mtype)
             {
                 case STOP: 
-                    printf("\nServer disconnected\n");
+                    printf("\nServer disconnected");
                     kill(pidSender, SIGINT);
-                    stopHandler();
+                    exit(0);
                     break;
                 case LIST:
                     printf("\n### Clients online:\n%s", received.mtext.msg);
@@ -162,10 +163,16 @@ int main(int argc, char** argv)
     setup();
     init();
 
-    if ((pidSender = fork()) == 0)
-        sender();        
-    else
+    if (fork() == 0)
+    {
+        pidListener = getpid();
         listener();        
+    }
+    else
+    {
+        pidSender = getpid();
+        sender();        
+    }
 
     exit(0);
     return 0;

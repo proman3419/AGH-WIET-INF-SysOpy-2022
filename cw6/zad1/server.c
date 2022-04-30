@@ -33,7 +33,11 @@ void sigintHandler(int sigNum)
                 perrorAndExit();
         }
         else
+        {
             stopHandler(received);
+            logToFile(&received.mtext.time, received.mtext.cidFrom, 
+                      received.mtype, received.mtext.msg);
+        }
     } while (clientsCnt > 0); 
 
     printf("All clients disconnected, exiting");
@@ -94,7 +98,8 @@ void tallHandler(struct MsgBuf received)
         if (i != received.mtext.cidFrom && qidsClients[i] != -1)
         {
             struct MsgBuf response;
-            fillMsgBuf(&response, TALL, received.mtext.qidFrom, received.mtext.cidFrom, received.mtext.cidTo, received.mtext.msg);
+            fillMsgBuf(&response, TALL, received.mtext.qidFrom, 
+                       received.mtext.cidFrom, -1, received.mtext.msg);
             if (msgsnd(qidsClients[i], &response, MSG_BUF_SIZE, 0) == -1)
                 printSendFail(TALL, response.mtext.cidTo);
         }
@@ -125,7 +130,7 @@ void initHandler(struct MsgBuf received)
     }
 
     struct MsgBuf response;
-    fillMsgBuf(&response, INIT, qid, MAX_CLIENTS, cidRegistered, "");
+    fillMsgBuf(&response, INIT, qid, SERVER_CID, cidRegistered, "");
     if (msgsnd(received.mtext.qidFrom, &response, MSG_BUF_SIZE, 0) == -1)
         printSendFail(INIT, response.mtext.cidTo);
     else
@@ -136,14 +141,14 @@ void initHandler(struct MsgBuf received)
     }
 }
 
-void logToFile(struct tm* time, size_t cidFrom, enum MsgType msgType)
+void logToFile(struct tm* time, size_t cidFrom, enum MsgType msgType, char* msg)
 {
     FILE* logFilePtr;
     char timeBuf[32];
     if ((logFilePtr = fopen("log.log", "a+")) == NULL)
         perrorAndExit();
-    fprintf(logFilePtr, "%s|%ld|%s\n", 
-            timeToReadable(time, timeBuf), cidFrom, msgTypeToStr(msgType));
+    fprintf(logFilePtr, "%s|%ld|%s|%s\n", 
+            timeToReadable(time, timeBuf), cidFrom, msgTypeToStr(msgType), msg);
     fclose(logFilePtr);
 }
 
@@ -161,8 +166,10 @@ int main(int argc, char** argv)
         }
         else
         {
-            printf("Received request %s from %ld\n", msgTypeToStr((enum MsgType)received.mtype), received.mtext.cidFrom);
-            logToFile(&received.mtext.time, received.mtext.cidFrom, received.mtype);
+            printf("Received request %s from %ld\n", msgTypeToStr(received.mtype), 
+                   received.mtext.cidFrom);
+            logToFile(&received.mtext.time, received.mtext.cidFrom, 
+                      received.mtype, received.mtext.msg);
             switch ((enum MsgType)received.mtype)
             {
                 case STOP: stopHandler(received); break;
@@ -175,5 +182,6 @@ int main(int argc, char** argv)
         }
     }
 
+    exit(0);
     return 0;
 }
