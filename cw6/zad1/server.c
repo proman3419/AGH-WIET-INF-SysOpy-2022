@@ -7,9 +7,7 @@ key_t qkey;
 
 void clean()
 {
-    printf("Cleaning...\n");
     msgctl(qid, IPC_RMID, NULL);
-    printf("Cleaned\n");
 }
 
 void setup()
@@ -28,20 +26,18 @@ void setup()
     for (int i = 0; i < MAX_CLIENTS; ++i)
         qidsClients[i] = -1;
 
-    printf("My qid: %d\n", qid);
-
     printf("Set up\n");
 }
 
 void stopHandler(struct MsgBuf received)
 {
-    printf("Client %d disconnected\n", received.mtext.cidFrom);
+    printf("Client %ld disconnected\n", received.mtext.cidFrom);
     qidsClients[received.mtext.cidFrom] = -1;
 }
 
 void listHandler(struct MsgBuf received)
 {
-    char msg[MAX_MESSAGE_LEN] = "Active clients:\n";
+    char msg[MAX_MESSAGE_LEN] = "Online clients:\n";
     for (int i = 0; i < MAX_CLIENTS; ++i)
     {
         char cidStr[16];
@@ -56,77 +52,60 @@ void listHandler(struct MsgBuf received)
     response.mtype = LIST;
     fillMtext(&response.mtext, qid, MAX_CLIENTS, received.mtext.cidFrom, msg);
     if (msgsnd(received.mtext.qidFrom, &response, MSG_BUF_SIZE, 0) == -1)
-        printf("Sending response for LIST request to %d failed\n", received.mtext.cidFrom);
+        printSendFail(LIST, response.mtext.cidTo);
+    else
+        printf("Sent online clients list to %ld\n", response.mtext.cidTo);
 }
 
 void tallHandler(struct MsgBuf received)
 {
     for (int i = 0; i < MAX_CLIENTS; ++i)
     {
-        if (qidsClients[i] != -1)
+        if (i != received.mtext.cidFrom && qidsClients[i] != -1)
         {
             struct MsgBuf response;
-            response.mtype = TEXT;
+            response.mtype = TALL;
             fillMtext(&response.mtext, received.mtext.qidFrom, received.mtext.cidFrom, received.mtext.cidTo, received.mtext.msg);
-            printf("%s to: %d from: %d\n", received.mtext.msg, qidsClients[i], received.mtext.qidFrom);
             if (msgsnd(qidsClients[i], &response, MSG_BUF_SIZE, 0) == -1)
-                printf("Forwarding the message from %d to %d failed\n", received.mtext.cidFrom, received.mtext.cidTo);
-
+                printSendFail(TALL, response.mtext.cidTo);
         }
     }
-
-    // if (received.cidTo < 0 || received.cidTo >= MAX_CLIENTS)
-    // {
-    //     printf("Invalid client ID\n");
-    //     return;
-    // }
-    // if (qidsClients[received.cidTo] == -1)
-    // {
-    //     printf("The client with ID %d is not active\n", received.cidTo);
-    //     return;        
-    // }
-
-    // if (msgsnd(qidsClients[received.cidTo], &received, MSG_BUF_SIZE, 0) == -1)
-    //     printf("Forwarding the message from %d to %d failed\n", received.cidFrom, received.cidTo);
+    printf("Forwarded message from %ld to all\n", received.mtext.cidFrom);
 }
 
 void toneHandler(struct MsgBuf received)
 {
-    printf("yzje\n");
     struct MsgBuf response;
-    response.mtype = TEXT;
+    response.mtype = TONE;
     fillMtext(&response.mtext, received.mtext.qidFrom, received.mtext.cidFrom, received.mtext.cidTo, received.mtext.msg);
-    printf("%s to: %d from: %d\n", received.mtext.msg, qidsClients[received.mtext.cidTo], received.mtext.qidFrom);
+
     if (msgsnd(qidsClients[received.mtext.cidTo], &response, MSG_BUF_SIZE, 0) == -1)
-        printf("Forwarding the message from %d to %d failed\n", received.mtext.cidFrom, received.mtext.cidTo);
+        printSendFail(TONE, response.mtext.cidTo);
+    else
+        printf("Forwarded message from %ld to %ld\n", received.mtext.cidFrom, received.mtext.cidTo);
 }
 
 void initHandler(struct MsgBuf received)
 {
-    int cid = -1;
+    int cidRegistered = -1;
     for (int i = 0; i < MAX_CLIENTS; ++i)
     {
         if (qidsClients[i] == -1)
         {
             qidsClients[i] = received.mtext.qidFrom;
-            cid = i;
+            cidRegistered = i;
             break;
         }
     }
 
     struct MsgBuf response;
     response.mtype = INIT;
-    if (cid != -1)
-    {
-        char cidStr[16];
-        sprintf(cidStr, "%d", cid);
-        fillMtext(&response.mtext, qid, MAX_CLIENTS, received.mtext.cidFrom, cidStr);
-    }
-    else
-        fillMtext(&response.mtext, qid, MAX_CLIENTS, received.mtext.cidFrom, "-1");
+    fillMtext(&response.mtext, qid, MAX_CLIENTS, cidRegistered, "");
 
     if (msgsnd(received.mtext.qidFrom, &response, MSG_BUF_SIZE, 0) == -1)
-        printf("Sending response for INIT request to %d failed\n", received.mtext.cidFrom);
+        printSendFail(INIT, response.mtext.cidTo);
+    else
+        printf("Registered new client as %ld\n", response.mtext.cidTo);
 }
 
 int main(int argc, char** argv)
@@ -143,10 +122,10 @@ int main(int argc, char** argv)
         }
         else
         {
-            printf("Received request %s from %d\n", msgTypeToStr((enum MsgType)received.mtype), received.mtext.cidFrom);
+            printf("Received request %s from %ld\n", msgTypeToStr((enum MsgType)received.mtype), received.mtext.cidFrom);
             switch ((enum MsgType)received.mtype)
             {
-                case STOP: printf("MAMY TO\n"); stopHandler(received); break;
+                case STOP: stopHandler(received); break;
                 case LIST: listHandler(received); break;
                 case TALL: tallHandler(received); break;
                 case TONE: toneHandler(received); break;

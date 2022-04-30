@@ -2,9 +2,19 @@
 
 const size_t MSG_BUF_SIZE = sizeof(struct MsgBuf) - sizeof(long);
 
+void printSendFail(enum MsgType msgType, size_t cidTo)
+{
+    printf("Failed to send %s to %ld\n", msgTypeToStr(msgType), cidTo);
+}
+
+void printReceiveFail(enum MsgType msgType, size_t cidFrom)
+{
+    printf("Failed to receive %s from %ld\n", msgTypeToStr(msgType), cidFrom);
+}
+
 void perrorAndExit()
 {
-    perror("[!] Error");
+    perror("Fatal error");
     exit(-1);
 }
 
@@ -15,7 +25,6 @@ enum MsgType strToMsgType(char* str)
     if (strcmp(str, "TALL") == 0) return TALL;
     if (strcmp(str, "TONE") == 0) return TONE;
     if (strcmp(str, "INIT") == 0) return INIT;
-    if (strcmp(str, "TEXT") == 0) return TEXT;
     return UNKN;
 }
 
@@ -28,7 +37,6 @@ char* msgTypeToStr(enum MsgType msgType)
         case TALL: return "TALL";
         case TONE: return "TONE";
         case INIT: return "INIT";
-        case TEXT: return "TEXT";
         default: return "UNKN";
     }
 }
@@ -46,7 +54,12 @@ enum MsgType extractMsgTypeFromMsg(char* msg)
     return msgType;
 }
 
-void fillMtext(struct Mtext* mtext, int qidFrom, int cidFrom, int cidTo, char* msg)
+void printTime(const struct tm* time)
+{
+    printf("%s", asctime(time));
+}
+
+void fillMtext(struct Mtext* mtext, int qidFrom, size_t cidFrom, size_t cidTo, char* msg)
 {
     mtext->qidFrom = qidFrom;
     mtext->cidFrom = cidFrom;
@@ -58,7 +71,11 @@ void fillMtext(struct Mtext* mtext, int qidFrom, int cidFrom, int cidTo, char* m
     mtext->time = *localtime(&rawTime);
 }
 
-void printTime(const struct tm* time)
+void printMtext(struct Mtext* mtext)
 {
-    printf("%s", asctime(time));
+    printf("\n");
+    printf("### From: %ld\n", mtext->cidFrom);
+    printf("### To: %ld\n", mtext->cidTo);
+    printf("### Time: "); printTime(&mtext->time);
+    printf("### Message: %s", mtext->msg);
 }

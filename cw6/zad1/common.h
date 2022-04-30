@@ -14,6 +14,7 @@
 #define MAX_MESSAGE_LEN 500
 #define MSG_TYPE_STR_LEN 4
 #define SERVER_PROJ 's'
+#define SERVER_CID 9999
 #define PERMISSIONS 0600
 
 enum MsgType
@@ -23,15 +24,14 @@ enum MsgType
     TALL = 3,
     TONE = 4,
     INIT = 5,
-    UNKN = 6,
-    TEXT = 7
+    UNKN = 6
 };
 
 struct Mtext
 {
     int qidFrom;
-    int cidFrom;
-    int cidTo;
+    size_t cidFrom;
+    size_t cidTo;
     char msg[MAX_MESSAGE_LEN];
     struct tm time;
 };
@@ -43,11 +43,16 @@ struct MsgBuf
 };
 extern const size_t MSG_BUF_SIZE;
 
+void printSendFail(enum MsgType msgType, size_t cidTo);
+void printReceiveFail(enum MsgType msgType, size_t cidFrom);
 void perrorAndExit();
 enum MsgType strToMsgType(char* str);
 char* msgTypeToStr(enum MsgType msgType);
 enum MsgType extractMsgTypeFromMsg(char* msg);
+void printTime(const struct tm* time);
 // assume that we always set time to the current one
-void fillMtext(struct Mtext* mtext, int qidFrom, int cidFrom, int cidTo, char* msg);
+void fillMtext(struct Mtext* mtext, int qidFrom, size_t cidFrom, size_t cidTo, char* msg);
+void printMtext(struct Mtext* mtext);
+void showPrompt(size_t cid);
 
 #endif
