@@ -9,7 +9,6 @@ int clientsCnt;
 void clean()
 {
     msgctl(qid, IPC_RMID, NULL);
-
 }
 
 void sigintHandler(int sigNum)
@@ -57,7 +56,6 @@ void setup()
 
     for (int i = 0; i < MAX_CLIENTS; ++i)
         qidsClients[i] = -1;
-
     printf("Set up\n");
 }
 
@@ -70,13 +68,13 @@ void stopHandler(struct MsgBuf received)
 
 void listHandler(struct MsgBuf received)
 {
-    char msg[MAX_MESSAGE_LEN] = "Online clients:\n";
+    char msg[MAX_MESSAGE_LEN] = "";
     for (int i = 0; i < MAX_CLIENTS; ++i)
     {
         char cidStr[16];
         if (qidsClients[i] != -1)
         {
-            sprintf(cidStr, "%d\n", i);
+            sprintf(cidStr, "### %d\n", i);
             strcat(msg, cidStr);
         }
     }
@@ -144,7 +142,7 @@ void logToFile(struct tm* time, size_t cidFrom, enum MsgType msgType)
     char timeBuf[32];
     if ((logFilePtr = fopen("log.log", "a+")) == NULL)
         perrorAndExit();
-    fprintf(logFilePtr, "%s | %ld | %s\n", 
+    fprintf(logFilePtr, "%s|%ld|%s\n", 
             timeToReadable(time, timeBuf), cidFrom, msgTypeToStr(msgType));
     fclose(logFilePtr);
 }

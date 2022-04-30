@@ -26,13 +26,18 @@ void setup()
     sigintHandlerSetup(sigintHandler);
 
     qkeyServer = ftok(getenv("HOME"), SERVER_PROJ);
-    qkey = ftok(getenv("HOME"), getpid()%256);
+    qkey = ftok(getenv("HOME"), getpid());
     if (qkeyServer == -1 || qkey == -1)
         perrorAndExit();
 
     qidServer = msgget(qkeyServer, 0);
-    qid = msgget(qkey, IPC_CREAT | IPC_EXCL | PERMISSIONS);
-    if (qidServer == -1 || qid == -1)
+    qid = msgget(qkey, IPC_CREAT | PERMISSIONS);
+    if (qidServer == -1)
+    {
+        printf("Server is offline\n");
+        exit(-1);
+    }
+    if (qid == -1)
         perrorAndExit();
     printf("Set up\n");
 }
@@ -101,7 +106,7 @@ void sender()
         {
             case STOP:
                 kill(pidListener, SIGINT);
-                stopHandler();
+                exit(0);
                 break;
             case LIST: 
                 listHandler();
@@ -138,10 +143,9 @@ void listener()
                     printf("\nServer disconnected\n");
                     kill(pidSender, SIGINT);
                     stopHandler();
-                    exit(0);
                     break;
                 case LIST:
-                    printf("\n%s", received.mtext.msg);
+                    printf("\n### Clients online:\n%s", received.mtext.msg);
                     break;
                 case TALL:
                 case TONE:
@@ -159,9 +163,10 @@ int main(int argc, char** argv)
     init();
 
     if ((pidSender = fork()) == 0)
-        sender();
+        sender();        
     else
         listener();        
 
+    exit(0);
     return 0;
 }
