@@ -53,6 +53,11 @@ void init()
     if (msgrcv(qid, &response, MSG_BUF_SIZE, INIT, 0) == -1)
         perrorAndExit();
     cid = response.mtext.cidTo;
+    if (cid == -1)
+    {
+        printf("Max clients connected to the server\n");
+        exit(0);
+    }
     printf("Initialized, the client ID is: %ld\n", cid);
 }
 
