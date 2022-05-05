@@ -5,6 +5,7 @@ AUTHOR="RomanPrzemyslaw"
 
 mkdir "$AUTHOR"
 cp -r "cw$CW_NO" "$AUTHOR"
+rm "$AUTHOR/cw$CW_NO/README.md"
 if [[ $CW_NO -le 9 ]]; then
     TAR_NAME="$AUTHOR-cw0$CW_NO.tar.gz"
 else

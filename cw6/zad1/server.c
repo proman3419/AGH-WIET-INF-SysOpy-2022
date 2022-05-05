@@ -110,11 +110,26 @@ void tallHandler(struct MsgBuf received)
 void toneHandler(struct MsgBuf received)
 {
     struct MsgBuf response;
-    fillMsgBuf(&response, TONE, received.mtext.qidFrom, received.mtext.cidFrom, received.mtext.cidTo, received.mtext.msg);
-    if (msgsnd(qidsClients[received.mtext.cidTo], &response, MSG_BUF_SIZE, 0) == -1)
-        printSendFail(TONE, response.mtext.cidTo);
+    size_t cidTo = received.mtext.cidTo;
+    if (cidTo < 0 || cidTo >= MAX_CLIENTS || qidsClients[cidTo] == -1)
+    {
+        fillMsgBuf(&response, TONE, qid, SERVER_CID, 
+                   received.mtext.cidFrom, "Invalid client ID");
+        if (msgsnd(qidsClients[received.mtext.cidFrom], &response, MSG_BUF_SIZE, 0) == -1)
+            printSendFail(TONE, response.mtext.cidFrom);
+        else
+            printf("Invalid client ID %ld\n", received.mtext.cidTo);
+    }
     else
-        printf("Forwarded message from %ld to %ld\n", received.mtext.cidFrom, received.mtext.cidTo);
+    {
+        fillMsgBuf(&response, TONE, received.mtext.qidFrom, 
+                   received.mtext.cidFrom, received.mtext.cidTo, received.mtext.msg);
+        if (msgsnd(qidsClients[received.mtext.cidTo], &response, MSG_BUF_SIZE, 0) == -1)
+            printSendFail(TONE, response.mtext.cidTo);
+        else
+            printf("Forwarded message from %ld to %ld\n", 
+                   received.mtext.cidFrom, received.mtext.cidTo);
+    }
 }
 
 void initHandler(struct MsgBuf received)
@@ -135,6 +150,11 @@ void initHandler(struct MsgBuf received)
         printSendFail(INIT, response.mtext.cidTo);
     else
     {
+        if (cidRegistered == -1)
+        {
+            printf("Client register dropped, max clients registered\n");
+            return;
+        }
         printf("Registered new client as %ld\n", response.mtext.cidTo);
         qidsClients[cidRegistered] = received.mtext.qidFrom;
         ++clientsCnt;
