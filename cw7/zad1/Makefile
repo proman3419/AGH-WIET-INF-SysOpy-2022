@@ -14,7 +14,12 @@ test:
 	./output 5 5
 
 output: $(MAIN_PATH)$(MAIN).c
-	$(CC) $(CFLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT)
+	make lib_static LIB_PATH=./ LIB=common
+	$(CC) $(CFLAGS) $(MAIN_PATH)$(MAIN).c -o $(OUTPUT) -L . common.a
+
+lib_static: $(LIB_PATH)$(LIB).c
+	$(CC) $(CFLAGS) -c $(LIB_PATH)$(LIB).c
+	ar cr $(LIB).a $(LIB).o
 
 clean:
-	rm -f *.o output* oven table
+	rm -f *.o output* *.a oven table

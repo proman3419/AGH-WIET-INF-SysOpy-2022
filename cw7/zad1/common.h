@@ -44,7 +44,7 @@ struct Container
     int toPutId;
     int toTakeId;
 };
-const size_t CONTAINER_SIZE = sizeof(struct Container);
+extern const size_t CONTAINER_SIZE;
 
 union semun 
 {
@@ -55,66 +55,13 @@ union semun
                                 (Linux-specific) */
 };
 
-void checkError(int errorCode, char* toPrint)
-{
-    if (errorCode == -1)
-    {
-        printf("%s, errno: %d\n", toPrint, errno);
-        exit(-1);
-    }
-}
-
-char* getCurrTime()
-{
-    struct timeval currTime;
-    gettimeofday(&currTime, NULL);
-
-    const int BUFFER_SIZE = 64;
-    char buffer[BUFFER_SIZE];
-    char* bufferPtr = &buffer[0];
-    strftime(bufferPtr, BUFFER_SIZE, "%H:%M:%S", localtime(&currTime.tv_sec));
-
-    char* currTimeStr = calloc(BUFFER_SIZE, sizeof(char));
-    int msec = currTime.tv_usec / 1000;
-    sprintf(currTimeStr, "%s:%03d", bufferPtr, msec);
-
-    return currTimeStr;
-}
-
-void lockSem(int semId, int semNum)
-{
-    struct sembuf semBuf = {.sem_num = semNum, .sem_op = -1};
-    semop(semId, &semBuf, 1);
-}
-
-void unlockSem(int semId, int semNum)
-{
-    struct sembuf semBuf = {.sem_num = semNum, .sem_op = 1};
-    semop(semId, &semBuf, 1);
-}
-
-int getSemSetId()
-{
-    key_t key = ftok(getenv("HOME"), SEMSET_PROJ);
-    int semSetId = semget(key, SEMS_CNT, 0);
-    return semSetId;
-}
-
-int getContainerId(char* pathName, char proj)
-{
-    key_t key = ftok(pathName, proj);
-    int shmId = shmget(key, CONTAINER_SIZE, 0);
-    return shmId;
-}
-
-int getOvenShmId()
-{
-    return getContainerId(OVEN_PATH, OVEN_PROJ);
-}
-
-int getTableShmId()
-{
-    return getContainerId(TABLE_PATH, TABLE_PROJ);
-}
+void checkError(int errorCode, char* toPrint);
+char* getCurrTime();
+void lockSem(int semId, int semNum);
+void unlockSem(int semId, int semNum);
+int getSemSetId();
+int getContainerId(char* pathName, char proj);
+int getOvenShmId();
+int getTableShmId();
 
 #endif

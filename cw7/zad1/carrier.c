@@ -1,3 +1,4 @@
+#include "carrier.h"
 #include "common.h"
 
 int takePizza(int semSetId, struct Container* table)
@@ -8,7 +9,7 @@ int takePizza(int semSetId, struct Container* table)
     int pizzaType = table->pizzas[table->toTakeId];
     if (pizzaType == -1)
         exit(-1);
-    
+
     table->pizzas[table->toTakeId] = -1;
     table->toTakeId = (table->toTakeId + 1) % CONTAINER_CAPACITY;
     table->pizzasCnt--;

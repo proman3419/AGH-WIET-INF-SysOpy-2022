@@ -1,3 +1,4 @@
+#include "chef.h"
 #include "common.h"
 
 void putInOven(int semSetId, struct Container* oven, int pizzaType)
@@ -75,7 +76,7 @@ int main(int argc, char** argv)
     struct Container* table = shmat(tableShmId, NULL, 0);
 
     srand(getpid());
-    
+
     mainLoop(semSetId, oven, table);
 
     return 0;
