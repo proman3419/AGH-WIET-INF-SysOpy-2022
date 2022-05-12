@@ -1,2 +1,2 @@
-dla N, M < CONTAINER_SIZE (5) wykorzystujemy pracowników w pełni
+dla N, M <= CONTAINER_CAPACITY (5) wykorzystujemy pracowników w pełni
 w przeciwnym przypadku nie wszyscy pracownicy są użyteczni w tym samym momencie
