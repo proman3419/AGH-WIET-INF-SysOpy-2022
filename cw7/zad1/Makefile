@@ -2,15 +2,15 @@ CC=gcc
 CFLAGS=-Wall -O3
 
 all:
-	touch oven
-	touch table
+	touch OVEN
+	touch TABLE
 	make output MAIN_PATH=./ MAIN=chef OUTPUT=output_chef
 	make output MAIN_PATH=./ MAIN=carrier OUTPUT=output_carrier
 	make output MAIN_PATH=./ MAIN=main OUTPUT=output
 
 test_small:
 	make all
-	./output 3 4
+	./output 3 3
 
 test_big:
 	make all
@@ -25,4 +25,4 @@ lib_static: $(LIB_PATH)$(LIB).c
 	ar cr $(LIB).a $(LIB).o
 
 clean:
-	rm -f *.o output* *.a oven table
+	rm -f *.o output* *.a OVEN TABLE

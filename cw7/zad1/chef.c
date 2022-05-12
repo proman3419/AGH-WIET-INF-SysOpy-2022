@@ -7,8 +7,8 @@ void putInOven(int semSetId, struct Container* oven, int pizzaType)
     lockSem(semSetId, OVEN_SEM);
 
     oven->pizzas[oven->toPutId] = pizzaType;
-    oven->toPutId = (oven->toPutId + 1) % CONTAINER_CAPACITY;
     oven->pizzasCnt++;
+    oven->toPutId = (oven->toPutId + 1) % CONTAINER_CAPACITY;
 
     unlockSem(semSetId, OVEN_SEM);
 }
@@ -22,8 +22,8 @@ int takeOutFromOven(int semSetId, struct Container* oven)
         exit(-1);
 
     oven->pizzas[oven->toTakeId] = -1;
-    oven->toTakeId = (oven->toTakeId + 1) % CONTAINER_CAPACITY;
     oven->pizzasCnt--;
+    oven->toTakeId = (oven->toTakeId + 1) % CONTAINER_CAPACITY;
 
     unlockSem(semSetId, OVEN_SEM);
     unlockSem(semSetId, OVEN_FULL_SEM);
@@ -37,8 +37,8 @@ void putOnTable(int semSetId, struct Container* table, int pizzaType)
     lockSem(semSetId, TABLE_SEM);
 
     table->pizzas[table->toPutId] = pizzaType;
-    table->toPutId = (table->toPutId + 1) % CONTAINER_CAPACITY;
     table->pizzasCnt++;
+    table->toPutId = (table->toPutId + 1) % CONTAINER_CAPACITY;
 
     unlockSem(semSetId, TABLE_SEM);
     unlockSem(semSetId, TABLE_EMPTY_SEM);

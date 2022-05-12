@@ -11,8 +11,8 @@ int takePizza(int semSetId, struct Container* table)
         exit(-1);
 
     table->pizzas[table->toTakeId] = -1;
-    table->toTakeId = (table->toTakeId + 1) % CONTAINER_CAPACITY;
     table->pizzasCnt--;
+    table->toTakeId = (table->toTakeId + 1) % CONTAINER_CAPACITY;
 
     unlockSem(semSetId, TABLE_SEM);
     unlockSem(semSetId, TABLE_FULL_SEM);

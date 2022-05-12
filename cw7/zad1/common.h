@@ -15,8 +15,8 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define OVEN_PATH "oven"
-#define TABLE_PATH "table"
+#define OVEN_PATH "OVEN"
+#define TABLE_PATH "TABLE"
 
 #define OVEN_PROJ 'O'
 #define TABLE_PROJ 'T'
