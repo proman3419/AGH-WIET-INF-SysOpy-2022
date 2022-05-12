@@ -21,13 +21,6 @@ int init(char* pathName, char proj)
     return shmId;
 }
 
-void sigintHandler(int signum)
-{
-    semctl(semSetId, 0, IPC_RMID, NULL);
-    shmctl(ovenShmId, IPC_RMID, NULL);
-    shmctl(tableShmId, IPC_RMID, NULL);
-}
-
 void createSemSet()
 {
     key_t key = ftok(getenv("HOME"), SEMSET_PROJ);
@@ -53,6 +46,13 @@ void createSemSet()
     printf("Created semaphore set, semSetId: %d\n", semSetId);
 }
 
+void sigintHandler(int signum)
+{
+    semctl(semSetId, 0, IPC_RMID, NULL);
+    shmctl(ovenShmId, IPC_RMID, NULL);
+    shmctl(tableShmId, IPC_RMID, NULL);
+}
+
 int main(int argc, char** argv)
 {
     if (argc < 3)
@@ -64,11 +64,11 @@ int main(int argc, char** argv)
     int chefsCnt = atoi(argv[1]);
     int carriersCnt = atoi(argv[2]);
 
-    signal(SIGINT, sigintHandler);
-
     ovenShmId = init(OVEN_PATH, OVEN_PROJ);
     tableShmId = init(TABLE_PATH, TABLE_PROJ);
     createSemSet();
+
+    signal(SIGINT, sigintHandler);
 
     for (int i = 0; i < chefsCnt; ++i)
         if (fork() == 0)

@@ -43,14 +43,18 @@ void unlockSem(int semId, int semNum)
 int getSemSetId()
 {
     key_t key = ftok(getenv("HOME"), SEMSET_PROJ);
+    checkError(key, "Failed to access the semaphore set key");
     int semSetId = semget(key, SEMS_CNT, 0);
+    checkError(semSetId, "Failed to access the semaphore set id");
     return semSetId;
 }
 
 int getContainerId(char* pathName, char proj)
 {
     key_t key = ftok(pathName, proj);
+    checkError(key, "Failed to access a key");
     int shmId = shmget(key, CONTAINER_SIZE, 0);
+    checkError(shmId, "Failed to access a shared memory id");
     return shmId;
 }
 

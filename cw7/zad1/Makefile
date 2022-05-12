@@ -8,10 +8,13 @@ all:
 	make output MAIN_PATH=./ MAIN=carrier OUTPUT=output_carrier
 	make output MAIN_PATH=./ MAIN=main OUTPUT=output
 
-test:
-	make clean
+test_small:
 	make all
-	./output 5 5
+	./output 3 4
+
+test_big:
+	make all
+	./output 7 7
 
 output: $(MAIN_PATH)$(MAIN).c
 	make lib_static LIB_PATH=./ LIB=common
