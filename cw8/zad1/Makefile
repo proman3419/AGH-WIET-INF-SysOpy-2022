@@ -28,4 +28,3 @@ test_sub:
 
 clean:
 	rm -f *.o output*
-	rm -rf negatives

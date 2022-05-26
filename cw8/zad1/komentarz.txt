@@ -1,0 +1,3 @@
+Metoda podziału blokowego jest szybsza od drugiej metody dla wybranych przeze mnie obrazów.
+Jeżeli obraz miałby równomierne występowanie kolorów to czasy wykonania dla obu metod powinny być pdobne.
+Dużo czasu działania programu jest poświęcone na wyświetlanie / zapisywanie komunikatów.

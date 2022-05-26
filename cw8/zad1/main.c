@@ -63,10 +63,8 @@ void loadImage(char* imgPath)
     FILE* fp = openFile(imgPath, "r");
     char* buff = calloc(MAX_LINE_LEN, sizeof(char));
 
-    // skip the "magic number"
-    fgets(buff, MAX_LINE_LEN, fp);
+    fgets(buff, MAX_LINE_LEN, fp); // skip the "magic number"
 
-    // load image's width, height
     fgets(buff, MAX_LINE_LEN, fp);
     sscanf(buff, "%d %d\n", &imgWidth, &imgHeight);
 
@@ -89,45 +87,50 @@ void loadImage(char* imgPath)
     fclose(fp);
 }
 
+size_t* getTimeElapsed(struct timeval startTime)
+{
+    struct timeval endTime;
+    gettimeofday(&endTime, NULL);
+    size_t* time = malloc(sizeof(size_t));
+    *time = (endTime.tv_sec - startTime.tv_sec) * 1000000 + endTime.tv_usec - startTime.tv_usec;
+    return time;
+}
+
 void* numbersDivisionMethod(void* arg)
 {
-    struct timeval startTime, endTime;
+    struct timeval startTime;
     gettimeofday(&startTime, NULL);
 
     int id = *((int*)arg);
-
-    int minPxVal = 256 / threadsCnt * id;
-    int maxPxVal = (id != threadsCnt - 1) ? (256 / threadsCnt * (id + 1) ) : 256;
-
+    int minPxVal = 255 / threadsCnt * id;
+    // the last thread handles the remaining values
+    int maxPxVal = (id == threadsCnt-1) ? 255 : (255/threadsCnt*(id+1));
     int px;
+
     for (int r = 0; r < imgHeight; ++r)
     {
         for (int c = 0; c < imgWidth; ++c)
         {
             px = img[r][c];
-            if (px >= minPxVal && px < maxPxVal)
+            if (minPxVal <= px && px <= maxPxVal)
                 imgNegative[r][c] = 255 - px;
         }
     }
 
-    gettimeofday(&endTime, NULL);
-    size_t* t = malloc(sizeof(size_t));
-    *t = (endTime.tv_sec - startTime.tv_sec) * 1000000 + endTime.tv_usec - startTime.tv_usec;
-    pthread_exit(t);
+    pthread_exit(getTimeElapsed(startTime));
 }
 
 void* blockDivisionMethod(void* arg)
 {
-    struct timeval startTime, endTime;
+    struct timeval startTime;
     gettimeofday(&startTime, NULL);
 
     int id = *((int*)arg);
-
-    int xMin = (id) * ceil(imgWidth/threadsCnt);
-    int xMax = (id != threadsCnt - 1) ? 
-               ((id+1) * ceil(imgWidth/threadsCnt)-1) : imgWidth - 1;
-
+    int xMin = id * ceil(imgWidth/threadsCnt);
+    int xMax = (id == threadsCnt-1) ? imgWidth - 1 :
+               ((id+1)*ceil(imgWidth/threadsCnt)-1);
     int px;
+
     for (int r = 0; r < imgHeight; ++r)
     {
         for (int c = xMin; c <= xMax; ++c)
@@ -137,15 +140,12 @@ void* blockDivisionMethod(void* arg)
         }
     }
 
-    gettimeofday(&endTime, NULL);
-    size_t* t = malloc(sizeof(size_t));
-    *t = (endTime.tv_sec - startTime.tv_sec) * 1000000 + endTime.tv_usec - startTime.tv_usec;
-    pthread_exit(t);
+    pthread_exit(getTimeElapsed(startTime));
 }
 
 void runThreads(enum DivisionMethod divisionMethod)
 {
-    for(int i = 0; i < threadsCnt; ++i)
+    for (int i = 0; i < threadsCnt; ++i)
     {
         threadsIds[i] = i;
         if (divisionMethod == NUMBERS)
@@ -164,6 +164,17 @@ void printAndSaveToFile(char* msg, char* savePath, int fprintfNewline)
     else
         fprintf(fp, "%s\n", msg);
     fclose(fp);
+}
+
+void waitThreads(char* buff)
+{
+    size_t* time;
+    for (int i = 0; i < threadsCnt; ++i)
+    {
+        pthread_join(threads[i], (void **)&time);
+        snprintf(buff, LOG_BUFF_SIZE, "> Thread: %3d\ttime: %4lu[μs]\n", i, *time);
+        printAndSaveToFile(buff, LOG_FILE_PATH, 0);
+    }
 }
 
 void saveImg(int** img, char* path)
@@ -217,7 +228,7 @@ int main(int argc, char** argv)
     threads = calloc(threadsCnt, sizeof(pthread_t));
     threadsIds = calloc(threadsCnt, sizeof(int));
 
-    struct timeval startTime, endTime;
+    struct timeval startTime;
     gettimeofday(&startTime, NULL);
 
     runThreads(divisionMethod);
@@ -238,20 +249,11 @@ int main(int argc, char** argv)
     snprintf(buff, LOG_BUFF_SIZE, "+======================================+\n");
     printAndSaveToFile(buff, LOG_FILE_PATH, 0);
 
-    size_t* t;
-    for (int i = 0; i < threadsCnt; ++i)
-    {
-        pthread_join(threads[i], (void **)&t);
-        snprintf(buff, LOG_BUFF_SIZE, "> Thread: %3d\ttime: %4lu[μs]\n", i, *t);
-        printAndSaveToFile(buff, LOG_FILE_PATH, 0);
-    }
+    waitThreads(buff);
 
-    gettimeofday(&endTime, NULL);
-    t = malloc(sizeof(size_t));
-    *t = (endTime.tv_sec - startTime.tv_sec) * 1000000 + endTime.tv_usec - startTime.tv_usec;
     snprintf(buff, LOG_BUFF_SIZE, "+======================================+\n");
     printAndSaveToFile(buff, LOG_FILE_PATH, 0);
-    snprintf(buff, LOG_BUFF_SIZE, "| Total time: %4lu[μs]\n", *t);
+    snprintf(buff, LOG_BUFF_SIZE, "| Total time: %4lu[μs]\n", *getTimeElapsed(startTime));
     printAndSaveToFile(buff, LOG_FILE_PATH, 0);
     snprintf(buff, LOG_BUFF_SIZE, "+======================================+\n");
     printAndSaveToFile(buff, LOG_FILE_PATH, 1);

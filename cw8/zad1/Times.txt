@@ -5,9 +5,9 @@
 | Threads count:    1
 | Division method:  numbers
 +======================================+
-> Thread:   0	time:  269[μs]
+> Thread:   0	time:  166[μs]
 +======================================+
-| Total time:  864[μs]
+| Total time:  769[μs]
 +======================================+
 
 +======================================+
@@ -17,130 +17,130 @@
 | Threads count:    2
 | Division method:  numbers
 +======================================+
-> Thread:   0	time:  299[μs]
-> Thread:   1	time:  277[μs]
-+======================================+
-| Total time:  975[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/casablanca.ascii.pgm
-| Image width:      460
-| Image height:     360
-| Threads count:    4
-| Division method:  numbers
-+======================================+
-> Thread:   0	time:  362[μs]
-> Thread:   1	time:  320[μs]
-> Thread:   2	time:  332[μs]
-> Thread:   3	time:  281[μs]
-+======================================+
-| Total time: 1242[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/casablanca.ascii.pgm
-| Image width:      460
-| Image height:     360
-| Threads count:    8
-| Division method:  numbers
-+======================================+
-> Thread:   0	time:  324[μs]
-> Thread:   1	time:  376[μs]
-> Thread:   2	time:  373[μs]
-> Thread:   3	time:  395[μs]
-> Thread:   4	time:  349[μs]
-> Thread:   5	time:  499[μs]
-> Thread:   6	time:  354[μs]
-> Thread:   7	time:  351[μs]
-+======================================+
-| Total time: 1640[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/casablanca.ascii.pgm
-| Image width:      460
-| Image height:     360
-| Threads count:    16
-| Division method:  numbers
-+======================================+
-> Thread:   0	time:  244[μs]
-> Thread:   1	time:  269[μs]
-> Thread:   2	time:  281[μs]
-> Thread:   3	time:  255[μs]
-> Thread:   4	time:  265[μs]
-> Thread:   5	time:  494[μs]
-> Thread:   6	time:  272[μs]
-> Thread:   7	time:  211[μs]
-> Thread:   8	time:  527[μs]
-> Thread:   9	time:  364[μs]
-> Thread:  10	time:  337[μs]
-> Thread:  11	time:  324[μs]
-> Thread:  12	time:  393[μs]
-> Thread:  13	time:  336[μs]
-> Thread:  14	time:  313[μs]
-> Thread:  15	time:  358[μs]
-+======================================+
-| Total time: 4914[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/coins.ascii.pgm
-| Image width:      300
-| Image height:     246
-| Threads count:    1
-| Division method:  numbers
-+======================================+
-> Thread:   0	time:   96[μs]
-+======================================+
-| Total time:  674[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/coins.ascii.pgm
-| Image width:      300
-| Image height:     246
-| Threads count:    2
-| Division method:  numbers
-+======================================+
-> Thread:   0	time:  104[μs]
-> Thread:   1	time:   98[μs]
-+======================================+
-| Total time: 1089[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/coins.ascii.pgm
-| Image width:      300
-| Image height:     246
-| Threads count:    4
-| Division method:  numbers
-+======================================+
-> Thread:   0	time:  100[μs]
-> Thread:   1	time:   92[μs]
-> Thread:   2	time:  119[μs]
-> Thread:   3	time:   79[μs]
-+======================================+
-| Total time:  875[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/coins.ascii.pgm
-| Image width:      300
-| Image height:     246
-| Threads count:    8
-| Division method:  numbers
-+======================================+
-> Thread:   0	time:  210[μs]
+> Thread:   0	time:  249[μs]
 > Thread:   1	time:  195[μs]
-> Thread:   2	time:  159[μs]
-> Thread:   3	time:  123[μs]
-> Thread:   4	time:  127[μs]
-> Thread:   5	time:  135[μs]
-> Thread:   6	time:  111[μs]
-> Thread:   7	time:   68[μs]
 +======================================+
-| Total time: 2217[μs]
+| Total time:  805[μs]
++======================================+
+
++======================================+
+| Image path:       img/casablanca.ascii.pgm
+| Image width:      460
+| Image height:     360
+| Threads count:    4
+| Division method:  numbers
++======================================+
+> Thread:   0	time:  190[μs]
+> Thread:   1	time:  231[μs]
+> Thread:   2	time:  230[μs]
+> Thread:   3	time:  154[μs]
++======================================+
+| Total time:  974[μs]
++======================================+
+
++======================================+
+| Image path:       img/casablanca.ascii.pgm
+| Image width:      460
+| Image height:     360
+| Threads count:    8
+| Division method:  numbers
++======================================+
+> Thread:   0	time:  338[μs]
+> Thread:   1	time:  600[μs]
+> Thread:   2	time:  404[μs]
+> Thread:   3	time:  568[μs]
+> Thread:   4	time:  520[μs]
+> Thread:   5	time:  711[μs]
+> Thread:   6	time:  486[μs]
+> Thread:   7	time:  410[μs]
++======================================+
+| Total time: 1786[μs]
++======================================+
+
++======================================+
+| Image path:       img/casablanca.ascii.pgm
+| Image width:      460
+| Image height:     360
+| Threads count:    16
+| Division method:  numbers
++======================================+
+> Thread:   0	time:  256[μs]
+> Thread:   1	time:  292[μs]
+> Thread:   2	time:  298[μs]
+> Thread:   3	time:  351[μs]
+> Thread:   4	time:  294[μs]
+> Thread:   5	time:  648[μs]
+> Thread:   6	time:  221[μs]
+> Thread:   7	time:  312[μs]
+> Thread:   8	time:  526[μs]
+> Thread:   9	time:  391[μs]
+> Thread:  10	time:  423[μs]
+> Thread:  11	time:  422[μs]
+> Thread:  12	time:  336[μs]
+> Thread:  13	time:  200[μs]
+> Thread:  14	time:  248[μs]
+> Thread:  15	time:  375[μs]
++======================================+
+| Total time: 2548[μs]
++======================================+
+
++======================================+
+| Image path:       img/coins.ascii.pgm
+| Image width:      300
+| Image height:     246
+| Threads count:    1
+| Division method:  numbers
++======================================+
+> Thread:   0	time:   67[μs]
++======================================+
+| Total time:  627[μs]
++======================================+
+
++======================================+
+| Image path:       img/coins.ascii.pgm
+| Image width:      300
+| Image height:     246
+| Threads count:    2
+| Division method:  numbers
++======================================+
+> Thread:   0	time:   78[μs]
+> Thread:   1	time:   87[μs]
++======================================+
+| Total time:  650[μs]
++======================================+
+
++======================================+
+| Image path:       img/coins.ascii.pgm
+| Image width:      300
+| Image height:     246
+| Threads count:    4
+| Division method:  numbers
++======================================+
+> Thread:   0	time:  101[μs]
+> Thread:   1	time:  136[μs]
+> Thread:   2	time:  151[μs]
+> Thread:   3	time:   99[μs]
++======================================+
+| Total time: 1090[μs]
++======================================+
+
++======================================+
+| Image path:       img/coins.ascii.pgm
+| Image width:      300
+| Image height:     246
+| Threads count:    8
+| Division method:  numbers
++======================================+
+> Thread:   0	time:   64[μs]
+> Thread:   1	time:  124[μs]
+> Thread:   2	time:  152[μs]
+> Thread:   3	time:  107[μs]
+> Thread:   4	time:   92[μs]
+> Thread:   5	time:  134[μs]
+> Thread:   6	time:  141[μs]
+> Thread:   7	time:   87[μs]
++======================================+
+| Total time: 1717[μs]
 +======================================+
 
 +======================================+
@@ -150,24 +150,24 @@
 | Threads count:    16
 | Division method:  numbers
 +======================================+
-> Thread:   0	time:   85[μs]
-> Thread:   1	time:   78[μs]
-> Thread:   2	time:   73[μs]
-> Thread:   3	time:  121[μs]
-> Thread:   4	time:  101[μs]
-> Thread:   5	time:   79[μs]
-> Thread:   6	time:   69[μs]
-> Thread:   7	time:   80[μs]
-> Thread:   8	time:   89[μs]
-> Thread:   9	time:  100[μs]
-> Thread:  10	time:  118[μs]
-> Thread:  11	time:   95[μs]
-> Thread:  12	time:   78[μs]
-> Thread:  13	time:  100[μs]
-> Thread:  14	time:   90[μs]
-> Thread:  15	time:   56[μs]
+> Thread:   0	time:   54[μs]
+> Thread:   1	time:   50[μs]
+> Thread:   2	time:   65[μs]
+> Thread:   3	time:   93[μs]
+> Thread:   4	time:  138[μs]
+> Thread:   5	time:  109[μs]
+> Thread:   6	time:   77[μs]
+> Thread:   7	time:   97[μs]
+> Thread:   8	time:   70[μs]
+> Thread:   9	time:   71[μs]
+> Thread:  10	time:   77[μs]
+> Thread:  11	time:  138[μs]
+> Thread:  12	time:  116[μs]
+> Thread:  13	time:   90[μs]
+> Thread:  14	time:   66[μs]
+> Thread:  15	time:   54[μs]
 +======================================+
-| Total time: 3010[μs]
+| Total time: 2352[μs]
 +======================================+
 
 +======================================+
@@ -177,9 +177,9 @@
 | Threads count:    1
 | Division method:  numbers
 +======================================+
-> Thread:   0	time:  859[μs]
+> Thread:   0	time:  711[μs]
 +======================================+
-| Total time: 1132[μs]
+| Total time: 1054[μs]
 +======================================+
 
 +======================================+
@@ -189,10 +189,10 @@
 | Threads count:    2
 | Division method:  numbers
 +======================================+
-> Thread:   0	time:  893[μs]
-> Thread:   1	time: 1091[μs]
+> Thread:   0	time:  959[μs]
+> Thread:   1	time:  955[μs]
 +======================================+
-| Total time: 1257[μs]
+| Total time: 1518[μs]
 +======================================+
 
 +======================================+
@@ -202,12 +202,12 @@
 | Threads count:    4
 | Division method:  numbers
 +======================================+
-> Thread:   0	time:  899[μs]
-> Thread:   1	time:  894[μs]
-> Thread:   2	time:  933[μs]
-> Thread:   3	time:  953[μs]
+> Thread:   0	time:  861[μs]
+> Thread:   1	time:  905[μs]
+> Thread:   2	time: 1047[μs]
+> Thread:   3	time:  943[μs]
 +======================================+
-| Total time: 1439[μs]
+| Total time: 1441[μs]
 +======================================+
 
 +======================================+
@@ -217,16 +217,16 @@
 | Threads count:    8
 | Division method:  numbers
 +======================================+
-> Thread:   0	time: 1136[μs]
-> Thread:   1	time: 1259[μs]
-> Thread:   2	time: 1217[μs]
-> Thread:   3	time: 1100[μs]
-> Thread:   4	time: 1161[μs]
-> Thread:   5	time: 1332[μs]
-> Thread:   6	time: 1600[μs]
-> Thread:   7	time: 1505[μs]
+> Thread:   0	time: 1171[μs]
+> Thread:   1	time: 1218[μs]
+> Thread:   2	time: 1116[μs]
+> Thread:   3	time: 1213[μs]
+> Thread:   4	time: 1222[μs]
+> Thread:   5	time: 1853[μs]
+> Thread:   6	time: 1850[μs]
+> Thread:   7	time: 1611[μs]
 +======================================+
-| Total time: 2102[μs]
+| Total time: 2262[μs]
 +======================================+
 
 +======================================+
@@ -236,24 +236,24 @@
 | Threads count:    16
 | Division method:  numbers
 +======================================+
-> Thread:   0	time: 1490[μs]
-> Thread:   1	time: 3615[μs]
-> Thread:   2	time: 1267[μs]
-> Thread:   3	time: 1203[μs]
-> Thread:   4	time: 2114[μs]
-> Thread:   5	time: 1283[μs]
-> Thread:   6	time: 1528[μs]
-> Thread:   7	time: 1159[μs]
-> Thread:   8	time: 1153[μs]
-> Thread:   9	time: 1422[μs]
-> Thread:  10	time: 1473[μs]
-> Thread:  11	time: 1495[μs]
-> Thread:  12	time: 1377[μs]
-> Thread:  13	time: 1411[μs]
-> Thread:  14	time: 1258[μs]
-> Thread:  15	time: 1970[μs]
+> Thread:   0	time: 1361[μs]
+> Thread:   1	time: 1312[μs]
+> Thread:   2	time: 1815[μs]
+> Thread:   3	time: 1311[μs]
+> Thread:   4	time: 1274[μs]
+> Thread:   5	time: 1259[μs]
+> Thread:   6	time: 3656[μs]
+> Thread:   7	time: 1347[μs]
+> Thread:   8	time: 1474[μs]
+> Thread:   9	time: 1463[μs]
+> Thread:  10	time: 1303[μs]
+> Thread:  11	time: 1276[μs]
+> Thread:  12	time: 1329[μs]
+> Thread:  13	time: 1359[μs]
+> Thread:  14	time: 1064[μs]
+> Thread:  15	time: 2120[μs]
 +======================================+
-| Total time: 6038[μs]
+| Total time: 4894[μs]
 +======================================+
 
 +======================================+
@@ -263,9 +263,9 @@
 | Threads count:    1
 | Division method:  block
 +======================================+
-> Thread:   0	time:  139[μs]
+> Thread:   0	time:  383[μs]
 +======================================+
-| Total time:  959[μs]
+| Total time: 1031[μs]
 +======================================+
 
 +======================================+
@@ -275,10 +275,10 @@
 | Threads count:    2
 | Division method:  block
 +======================================+
-> Thread:   0	time:  269[μs]
-> Thread:   1	time:  238[μs]
+> Thread:   0	time:   62[μs]
+> Thread:   1	time:   59[μs]
 +======================================+
-| Total time: 1731[μs]
+| Total time:  898[μs]
 +======================================+
 
 +======================================+
@@ -288,144 +288,144 @@
 | Threads count:    4
 | Division method:  block
 +======================================+
-> Thread:   0	time:   55[μs]
-> Thread:   1	time:   61[μs]
-> Thread:   2	time:   58[μs]
-> Thread:   3	time:   63[μs]
+> Thread:   0	time:   97[μs]
+> Thread:   1	time:   90[μs]
+> Thread:   2	time:   76[μs]
+> Thread:   3	time:   75[μs]
++======================================+
+| Total time: 1142[μs]
++======================================+
+
++======================================+
+| Image path:       img/casablanca.ascii.pgm
+| Image width:      460
+| Image height:     360
+| Threads count:    8
+| Division method:  block
++======================================+
+> Thread:   0	time:   28[μs]
+> Thread:   1	time:   14[μs]
+> Thread:   2	time:   16[μs]
+> Thread:   3	time:   17[μs]
+> Thread:   4	time:   13[μs]
+> Thread:   5	time:   21[μs]
+> Thread:   6	time:   16[μs]
+> Thread:   7	time:   21[μs]
++======================================+
+| Total time: 1506[μs]
++======================================+
+
++======================================+
+| Image path:       img/casablanca.ascii.pgm
+| Image width:      460
+| Image height:     360
+| Threads count:    16
+| Division method:  block
++======================================+
+> Thread:   0	time:   16[μs]
+> Thread:   1	time:   16[μs]
+> Thread:   2	time:   10[μs]
+> Thread:   3	time:   16[μs]
+> Thread:   4	time:   12[μs]
+> Thread:   5	time:   16[μs]
+> Thread:   6	time:   11[μs]
+> Thread:   7	time:   14[μs]
+> Thread:   8	time:   15[μs]
+> Thread:   9	time:   26[μs]
+> Thread:  10	time:   14[μs]
+> Thread:  11	time:   14[μs]
+> Thread:  12	time:   14[μs]
+> Thread:  13	time:   14[μs]
+> Thread:  14	time:   11[μs]
+> Thread:  15	time:   17[μs]
++======================================+
+| Total time: 2510[μs]
++======================================+
+
++======================================+
+| Image path:       img/coins.ascii.pgm
+| Image width:      300
+| Image height:     246
+| Threads count:    1
+| Division method:  block
++======================================+
+> Thread:   0	time:   45[μs]
++======================================+
+| Total time:  713[μs]
++======================================+
+
++======================================+
+| Image path:       img/coins.ascii.pgm
+| Image width:      300
+| Image height:     246
+| Threads count:    2
+| Division method:  block
++======================================+
+> Thread:   0	time:   38[μs]
+> Thread:   1	time:   34[μs]
++======================================+
+| Total time:  764[μs]
++======================================+
+
++======================================+
+| Image path:       img/coins.ascii.pgm
+| Image width:      300
+| Image height:     246
+| Threads count:    4
+| Division method:  block
++======================================+
+> Thread:   0	time:   13[μs]
+> Thread:   1	time:    8[μs]
+> Thread:   2	time:    9[μs]
+> Thread:   3	time:   12[μs]
++======================================+
+| Total time:  933[μs]
++======================================+
+
++======================================+
+| Image path:       img/coins.ascii.pgm
+| Image width:      300
+| Image height:     246
+| Threads count:    8
+| Division method:  block
++======================================+
+> Thread:   0	time:    3[μs]
+> Thread:   1	time:    6[μs]
+> Thread:   2	time:    4[μs]
+> Thread:   3	time:    5[μs]
+> Thread:   4	time:    8[μs]
+> Thread:   5	time:    7[μs]
+> Thread:   6	time:    5[μs]
+> Thread:   7	time:    7[μs]
 +======================================+
 | Total time: 1346[μs]
 +======================================+
 
 +======================================+
-| Image path:       img/casablanca.ascii.pgm
-| Image width:      460
-| Image height:     360
-| Threads count:    8
-| Division method:  block
-+======================================+
-> Thread:   0	time:   26[μs]
-> Thread:   1	time:   20[μs]
-> Thread:   2	time:   26[μs]
-> Thread:   3	time:   36[μs]
-> Thread:   4	time:   23[μs]
-> Thread:   5	time:   22[μs]
-> Thread:   6	time:   22[μs]
-> Thread:   7	time:   27[μs]
-+======================================+
-| Total time: 1574[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/casablanca.ascii.pgm
-| Image width:      460
-| Image height:     360
-| Threads count:    16
-| Division method:  block
-+======================================+
-> Thread:   0	time:   17[μs]
-> Thread:   1	time:   15[μs]
-> Thread:   2	time:   12[μs]
-> Thread:   3	time:   23[μs]
-> Thread:   4	time:   15[μs]
-> Thread:   5	time:   33[μs]
-> Thread:   6	time:   11[μs]
-> Thread:   7	time:   20[μs]
-> Thread:   8	time:   17[μs]
-> Thread:   9	time:   21[μs]
-> Thread:  10	time:   19[μs]
-> Thread:  11	time:   20[μs]
-> Thread:  12	time:   23[μs]
-> Thread:  13	time:   23[μs]
-> Thread:  14	time:   14[μs]
-> Thread:  15	time:   16[μs]
-+======================================+
-| Total time: 3083[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/coins.ascii.pgm
-| Image width:      300
-| Image height:     246
-| Threads count:    1
-| Division method:  block
-+======================================+
-> Thread:   0	time:  140[μs]
-+======================================+
-| Total time: 1095[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/coins.ascii.pgm
-| Image width:      300
-| Image height:     246
-| Threads count:    2
-| Division method:  block
-+======================================+
-> Thread:   0	time:   18[μs]
-> Thread:   1	time:   19[μs]
-+======================================+
-| Total time:  755[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/coins.ascii.pgm
-| Image width:      300
-| Image height:     246
-| Threads count:    4
-| Division method:  block
-+======================================+
-> Thread:   0	time:   37[μs]
-> Thread:   1	time:   32[μs]
-> Thread:   2	time:   32[μs]
-> Thread:   3	time:   42[μs]
-+======================================+
-| Total time: 1238[μs]
-+======================================+
-
-+======================================+
-| Image path:       img/coins.ascii.pgm
-| Image width:      300
-| Image height:     246
-| Threads count:    8
-| Division method:  block
-+======================================+
-> Thread:   0	time:    9[μs]
-> Thread:   1	time:    9[μs]
-> Thread:   2	time:    7[μs]
-> Thread:   3	time:    7[μs]
-> Thread:   4	time:    8[μs]
-> Thread:   5	time:    6[μs]
-> Thread:   6	time:    8[μs]
-> Thread:   7	time:   10[μs]
-+======================================+
-| Total time: 1538[μs]
-+======================================+
-
-+======================================+
 | Image path:       img/coins.ascii.pgm
 | Image width:      300
 | Image height:     246
 | Threads count:    16
 | Division method:  block
 +======================================+
-> Thread:   0	time:   23[μs]
-> Thread:   1	time:   19[μs]
-> Thread:   2	time:   19[μs]
-> Thread:   3	time:   22[μs]
-> Thread:   4	time:   25[μs]
-> Thread:   5	time:   22[μs]
-> Thread:   6	time:   23[μs]
-> Thread:   7	time:   22[μs]
-> Thread:   8	time:   15[μs]
-> Thread:   9	time:   13[μs]
-> Thread:  10	time:    8[μs]
-> Thread:  11	time:    8[μs]
-> Thread:  12	time:   17[μs]
-> Thread:  13	time:   12[μs]
-> Thread:  14	time:   12[μs]
-> Thread:  15	time:   19[μs]
+> Thread:   0	time:    3[μs]
+> Thread:   1	time:    5[μs]
+> Thread:   2	time:    4[μs]
+> Thread:   3	time:    6[μs]
+> Thread:   4	time:    6[μs]
+> Thread:   5	time:    4[μs]
+> Thread:   6	time:    6[μs]
+> Thread:   7	time:    4[μs]
+> Thread:   8	time:    6[μs]
+> Thread:   9	time:    4[μs]
+> Thread:  10	time:    6[μs]
+> Thread:  11	time:    4[μs]
+> Thread:  12	time:    5[μs]
+> Thread:  13	time:    6[μs]
+> Thread:  14	time:    5[μs]
+> Thread:  15	time:    8[μs]
 +======================================+
-| Total time: 2771[μs]
+| Total time: 2351[μs]
 +======================================+
 
 +======================================+
@@ -435,9 +435,9 @@
 | Threads count:    1
 | Division method:  block
 +======================================+
-> Thread:   0	time:  403[μs]
+> Thread:   0	time:  562[μs]
 +======================================+
-| Total time:  726[μs]
+| Total time:  893[μs]
 +======================================+
 
 +======================================+
@@ -447,10 +447,10 @@
 | Threads count:    2
 | Division method:  block
 +======================================+
-> Thread:   0	time:  389[μs]
-> Thread:   1	time:  408[μs]
+> Thread:   0	time:  359[μs]
+> Thread:   1	time:  339[μs]
 +======================================+
-| Total time:  887[μs]
+| Total time:  926[μs]
 +======================================+
 
 +======================================+
@@ -460,12 +460,12 @@
 | Threads count:    4
 | Division method:  block
 +======================================+
-> Thread:   0	time:  300[μs]
-> Thread:   1	time:  289[μs]
-> Thread:   2	time:  310[μs]
-> Thread:   3	time:  298[μs]
+> Thread:   0	time:  436[μs]
+> Thread:   1	time:  421[μs]
+> Thread:   2	time:  411[μs]
+> Thread:   3	time:  393[μs]
 +======================================+
-| Total time: 1046[μs]
+| Total time: 1424[μs]
 +======================================+
 
 +======================================+
@@ -475,16 +475,16 @@
 | Threads count:    8
 | Division method:  block
 +======================================+
-> Thread:   0	time:  222[μs]
-> Thread:   1	time:  201[μs]
-> Thread:   2	time:  271[μs]
-> Thread:   3	time:  237[μs]
-> Thread:   4	time:  240[μs]
-> Thread:   5	time:  227[μs]
-> Thread:   6	time:  265[μs]
-> Thread:   7	time:  200[μs]
+> Thread:   0	time:  260[μs]
+> Thread:   1	time:  250[μs]
+> Thread:   2	time:  269[μs]
+> Thread:   3	time:  267[μs]
+> Thread:   4	time:  387[μs]
+> Thread:   5	time:  348[μs]
+> Thread:   6	time:  285[μs]
+> Thread:   7	time:  291[μs]
 +======================================+
-| Total time: 1417[μs]
+| Total time: 1527[μs]
 +======================================+
 
 +======================================+
@@ -494,23 +494,23 @@
 | Threads count:    16
 | Division method:  block
 +======================================+
-> Thread:   0	time:  103[μs]
-> Thread:   1	time:   86[μs]
-> Thread:   2	time:  103[μs]
-> Thread:   3	time:  127[μs]
-> Thread:   4	time:  140[μs]
-> Thread:   5	time:  120[μs]
-> Thread:   6	time:  119[μs]
-> Thread:   7	time:   54[μs]
-> Thread:   8	time:   56[μs]
-> Thread:   9	time:   89[μs]
-> Thread:  10	time:   97[μs]
-> Thread:  11	time:   96[μs]
-> Thread:  12	time:   77[μs]
-> Thread:  13	time:   55[μs]
-> Thread:  14	time:   49[μs]
-> Thread:  15	time:   56[μs]
+> Thread:   0	time:  145[μs]
+> Thread:   1	time:  121[μs]
+> Thread:   2	time:  150[μs]
+> Thread:   3	time:  149[μs]
+> Thread:   4	time:  155[μs]
+> Thread:   5	time:  162[μs]
+> Thread:   6	time:  153[μs]
+> Thread:   7	time:  194[μs]
+> Thread:   8	time:  114[μs]
+> Thread:   9	time:  143[μs]
+> Thread:  10	time:   68[μs]
+> Thread:  11	time:   70[μs]
+> Thread:  12	time:   66[μs]
+> Thread:  13	time:  130[μs]
+> Thread:  14	time:  172[μs]
+> Thread:  15	time:  111[μs]
 +======================================+
-| Total time: 2489[μs]
+| Total time: 2631[μs]
 +======================================+
 
