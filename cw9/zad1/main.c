@@ -21,7 +21,7 @@ int deliveries = 0;
 int elvesWaiting = 0;
 int elvesQueue[ELVES_WAITING_CNT];
 
-int reindeerBack = 0;
+int reindeerReturned = 0;
 int reindeerWaiting = 0;
 
 pthread_t santaThread;
@@ -70,6 +70,8 @@ void exitHandler()
     pthread_cond_destroy(&santaCond);
     pthread_cond_destroy(&elfWaitCond);
     pthread_cond_destroy(&reindeerWaitCond);
+
+    printf("[# SANTA] Merry Christmas\n");
 }
 
 void signalHandler()
@@ -140,12 +142,12 @@ void handleElves()
 void handleReindeer()
 {
     pthread_mutex_lock(&reindeerMutex);
-    if (reindeerBack == REINDEER_CNT) 
+    if (reindeerReturned == REINDEER_CNT) 
     {
         ++deliveries;
         printf("[# SANTA] Delivering toys %d. time !!!!!\n", deliveries);
         sleep(getRandInt(2, 4));
-        reindeerBack = 0;
+        reindeerReturned = 0;
 
         pthread_mutex_lock(&reindeerWaitMutex);
         reindeerWaiting = 0;
@@ -157,20 +159,21 @@ void handleReindeer()
 
 void* santaFunc(void* arg)
 {
-    while (deliveries < MAX_DELIVERIES)
+    for (;;)
     {
         pthread_mutex_lock(&santaMutex);
         while (elvesWaiting < ELVES_WAITING_CNT && 
-               reindeerBack < REINDEER_CNT)
+               reindeerReturned < REINDEER_CNT)
             pthread_cond_wait(&santaCond, &santaMutex);
         pthread_mutex_unlock(&santaMutex);
 
         printf("[# SANTA] Waking up\n");
-        handleElves();
         handleReindeer();
+        if (deliveries == MAX_DELIVERIES)
+            exit(0);
+        handleElves();
         printf("[# SANTA] Falling asleep\n");
     }
-    exit(0);
 }
 
 void* elfFunc(void* arg)
@@ -220,11 +223,11 @@ void* reindeerFunc(void* arg)
         sleep(getRandInt(5, 10));
 
         pthread_mutex_lock(&reindeerMutex);
-        ++reindeerBack;
-        printf("[@ REINDEER] %d reindeer, %d\n", reindeerBack, id);
+        ++reindeerReturned;
+        printf("[@ REINDEER] %d reindeer, %d\n", reindeerReturned, id);
         reindeerWaiting = 1;
 
-        if (reindeerBack == REINDEER_CNT)
+        if (reindeerReturned == REINDEER_CNT)
         {
             printf("[@ REINDEER] Waking santa up, %d\n", id);
             pthread_mutex_lock(&santaMutex);
