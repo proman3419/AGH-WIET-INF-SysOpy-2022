@@ -1,47 +1,49 @@
 #ifndef COMMON
 #define COMMON
 
-#include <netdb.h>
-#include <poll.h>
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#include <errno.h>
 #include <time.h>
 #include <unistd.h>
-#include <errno.h>
 #include <signal.h>
-#include <stdbool.h>
+#include <netdb.h>
+#include <poll.h>
+#include <pthread.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <arpa/inet.h>
 
-#define MAX_CLIENTS 10
+#define MAX_CLIENTS 16
 #define MAX_MSG_LEN 256
 
-struct Client {
+struct Client
+{
     char* name;
     int fd;
-    bool available;
-    int opponent_idx;
+    int available;
 };
 
-enum GameState {
+enum GameState
+{
     START,
-    WAIT_FOR_OPPONENT,
     WAIT_FOR_MOVE,
+    WAIT_FOR_OPPONENT,
     OPPONENT_MOVE,
     MOVE,
     QUIT
 };
 
-enum CellOccupation {
-    FREE,
+enum CellOccupation
+{
+    NONE,
     O,
     X
 };
 
-struct GameBoard {
+struct GameBoard
+{
     int move;
     enum CellOccupation objects[9];
 };

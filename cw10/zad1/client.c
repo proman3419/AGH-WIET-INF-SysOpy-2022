@@ -1,18 +1,24 @@
 #include "common.h"
 
+char *playerName, *command, *arg;
+char buff[MAX_MSG_LEN+1];
 int serverSock;
 int isFirstClient;
-char buff[MAX_MSG_LEN+1];
-char *name, *command, *arg;
+
 struct GameBoard gameBoard;
 enum GameState gameState = START;
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
+void printPlayerTag()
+{
+    printf("[%s ~ %c] ", playerName, isFirstClient ? 'O' : 'X');
+}
+
 int move(struct GameBoard *gameBoard, int position)
 {
-    if (position < 0 || position > 9 || gameBoard->objects[position] != FREE) return 0;
+    if (position < 0 || position > 9 || gameBoard->objects[position] != NONE) return 0;
 
     gameBoard->objects[position] = gameBoard->move ? O : X;
     gameBoard->move = !gameBoard->move;
@@ -21,7 +27,7 @@ int move(struct GameBoard *gameBoard, int position)
 
 enum CellOccupation checkWin(struct GameBoard *gameBoard)
 {
-    enum CellOccupation column = FREE;
+    enum CellOccupation column = NONE;
 
     for (int x = 0; x < 3; ++x)
     {
@@ -29,42 +35,42 @@ enum CellOccupation checkWin(struct GameBoard *gameBoard)
         enum CellOccupation second = gameBoard->objects[x+3];
         enum CellOccupation third = gameBoard->objects[x+6];
 
-        if (first == second && first == third && first != FREE)
+        if (first == second && first == third && first != NONE)
             column = first;
     }
 
-    if (column != FREE)
+    if (column != NONE)
         return column;
 
-    enum CellOccupation row = FREE;
+    enum CellOccupation row = NONE;
     for (int y = 0; y < 3; ++y)
     {
         enum CellOccupation first = gameBoard->objects[3*y];
         enum CellOccupation second = gameBoard->objects[3*y+1];
         enum CellOccupation third = gameBoard->objects[3*y+2];
-        if (first == second && first == third && first != FREE)
+        if (first == second && first == third && first != NONE)
             row = first;
     }
 
-    if (row != FREE)
+    if (row != NONE)
         return row;
 
-    enum CellOccupation lowerDiag = FREE;
+    enum CellOccupation lowerDiag = NONE;
 
     enum CellOccupation first = gameBoard->objects[0];
     enum CellOccupation second = gameBoard->objects[4];
     enum CellOccupation third = gameBoard->objects[8];
 
-    if (first == second && first == third && first != FREE)
+    if (first == second && first == third && first != NONE)
         lowerDiag = first;
-    if (lowerDiag != FREE)
+    if (lowerDiag != NONE)
         return lowerDiag;
 
-    enum CellOccupation upperDiag = FREE;
+    enum CellOccupation upperDiag = NONE;
     first = gameBoard->objects[2];
     second = gameBoard->objects[4];
     third = gameBoard->objects[6];
-    if (first == second && first == third && first != FREE)
+    if (first == second && first == third && first != NONE)
         upperDiag = first;
 
     return upperDiag;
@@ -72,37 +78,39 @@ enum CellOccupation checkWin(struct GameBoard *gameBoard)
 
 void end()
 {
-    sprintf(buff, "end: :%s", name);
+    sprintf(buff, "end: :%s", playerName);
     send(serverSock, buff, MAX_MSG_LEN, 0);
     exit(0);
 }
 
 void checkState()
 {
-    bool win = false;
+    int win = 0;
     enum CellOccupation winner = checkWin(&gameBoard);
 
-    if (winner != FREE)
+    if (winner != NONE)
     {
-        if ((isFirstClient && winner == O) || (!isFirstClient && winner == X)) printf("You won!\n");
-        else printf("You lost!\n");
+        if ((isFirstClient && winner == O) || (!isFirstClient && winner == X)) printf("+++ VICTORY +++\n");
+        else printf("--- DEFEAT ---\n");
 
-        win = true;
+        win = 1;
     }
 
-    bool draw = true;
+    int draw = 1;
     for (int i = 0; i < 9; i++)
     {
-        if (gameBoard.objects[i] == FREE)
+        if (gameBoard.objects[i] == NONE)
         {
-            draw = false;
+            draw = 0;
             break;
         }
     }
 
-    if (draw && !win) printf("It's a draw!\n");
+    if (draw == 1 && win == 0)
+        printf("=== DRAW ===\n");
 
-    if (win || draw) gameState = QUIT;
+    if (win == 1 || draw == 1)
+        gameState = QUIT;
 }
 
 void parseCommand(char* msg)
@@ -113,32 +121,34 @@ void parseCommand(char* msg)
 
 struct GameBoard createBoard()
 {
-    struct GameBoard gameBoard = {1, {FREE}};
+    struct GameBoard gameBoard = {1, {NONE}};
     return gameBoard;
 }
 
-void draw(){
-    char symbol;
-
+void draw()
+{
+    char repr;
+    printf("+---+---+---+\n");
     for (int y = 0; y < 3; ++y)
     {
         for (int x = 0; x < 3; ++x)
         {
-            if (gameBoard.objects[y*3+x] == FREE)
-                symbol = y * 3 + x + 1 + '0';
+            if (gameBoard.objects[y*3+x] == NONE)
+                repr = y * 3 + x + 1 + '0'; // id of field if empty
             else if (gameBoard.objects[y*3+x] == O)
-                symbol = 'O';
-            else symbol = 'X';
+                repr = 'O';
+            else
+                repr = 'X';
 
-            printf("  %c  ", symbol);
+            printf("| %c ", repr);
         }
-        printf("\n_________________________\n");
+        printf("|\n+---+---+---+\n");
     }
 }
 
 void play()
 {
-    while (true)
+    for (;;)
     {
         if (gameState == START)
         {
@@ -169,7 +179,8 @@ void play()
         }
         else if (gameState == WAIT_FOR_MOVE)
         {
-            printf("Waiting for rivals move\n");
+            printPlayerTag();
+            printf("Waiting for opponent's move\n");
 
             pthread_mutex_lock(&mutex);
             while (gameState != OPPONENT_MOVE && gameState != QUIT)
@@ -191,7 +202,8 @@ void play()
             int pos;
             do
             {
-                printf("Next move (%c): ", isFirstClient ? 'O' : 'X');
+                printPlayerTag();
+                printf("Move: ");
                 scanf("%d", &pos);
                 pos--;
             } while (!move(&gameBoard, pos));
@@ -199,7 +211,7 @@ void play()
             draw();
 
             char buff[MAX_MSG_LEN + 1];
-            sprintf(buff, "move:%d:%s", pos, name);
+            sprintf(buff, "move:%d:%s", pos, playerName);
             send(serverSock, buff, MAX_MSG_LEN, 0);
 
             checkState();
@@ -210,17 +222,18 @@ void play()
     }
 }
 
-void connectLocal(char* path){
+void connectLocal(char* sockPath)
+{
     serverSock = socket(AF_UNIX, SOCK_STREAM, 0);
 
     struct sockaddr_un sock_addr;
     memset(&sock_addr, 0, sizeof(struct sockaddr_un));
     sock_addr.sun_family = AF_UNIX;
-    strcpy(sock_addr.sun_path, path);
+    strcpy(sock_addr.sun_path, sockPath);
 
     if (connect(serverSock, (struct sockaddr *)&sock_addr, sizeof(sock_addr)) == -1)
     {
-        printf("Error while connecting to LOCAL socket (%s)\n", strerror(errno));
+        printf("[ERROR] Occured while connecting to local socket: %s\n", strerror(errno));
         exit(1);
     }
 }
@@ -239,7 +252,7 @@ void connectInet(char* port)
 
     if (connect(serverSock, info->ai_addr, info->ai_addrlen) == -1)
     {
-        printf("Error while connecting to INET socket (%s)\n", strerror(errno));
+        printf("[ERROR] Occured while connecting to inet socket: %s\n", strerror(errno));
         exit(1);
     }
 
@@ -249,7 +262,7 @@ void connectInet(char* port)
 void listenServer()
 {
     int gameThreadRunning = 0;
-    while (1)
+    for (;;)
     {
         recv(serverSock, buff, MAX_MSG_LEN, 0);
         parseCommand(buff);
@@ -276,7 +289,7 @@ void listenServer()
         }
         else if (strcmp(command, "ping") == 0)
         {
-            sprintf(buff, "pong: :%s", name);
+            sprintf(buff, "pong: :%s", playerName);
             send(serverSock, buff, MAX_MSG_LEN, 0);
         }
         pthread_cond_signal(&cond);
@@ -284,41 +297,37 @@ void listenServer()
     }
 }
 
-
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
     if (argc < 4)
     {
-        printf("Wrong number of arguments!\n");
-        exit(1);
+        printf("[ERROR] Required parameters: playerName, connectionMethod, sockPath/port\n");
+        exit(-1);
     }
 
-    name = argv[1];
+    playerName = argv[1];
+    char* connectionMethod = argv[2]; // unix/inet
 
-    // handle SIGINT
     signal(SIGINT, end);
 
-    // connection method - inet/unix
-    if (strcmp(argv[2], "unix") == 0)
+    if (strcmp(connectionMethod, "unix") == 0)
     {
-        char* path = argv[3];
-        connectLocal(path);
+        char* sockPath = argv[3];
+        connectLocal(sockPath);
     }
-
-    else if (strcmp(argv[2], "inet") == 0)
+    else if (strcmp(connectionMethod, "inet") == 0)
     {
         char* port = argv[3];
         connectInet(port);
     }
-
     else
     {
-        printf("Wrong method - choose [inet] or [unix]!\n");
-        exit(1);
+        printf("[ERROR] Invalid connectionMethod, was %s, expected 'unix' or 'inet'\n", connectionMethod);
+        exit(-1);
     }
 
     char msg[MAX_MSG_LEN];
-    sprintf(msg, "add: :%s", name);
+    sprintf(msg, "add: :%s", playerName);
     send(serverSock, msg, MAX_MSG_LEN, 0);
 
     listenServer();

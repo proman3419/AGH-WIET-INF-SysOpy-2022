@@ -5,11 +5,10 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 struct Client *clients[MAX_CLIENTS] = {NULL};
 int clientsCnt = 0;
 
-int getOpponent(int idx)
+int getOpponent(int id)
 {
-    return idx % 2 == 0 ? idx + 1 : idx - 1;
+    return id % 2 == 0 ? id + 1 : id - 1;
 }
-
 
 int addClient(char *name, int fd)
 {
@@ -17,44 +16,42 @@ int addClient(char *name, int fd)
         if (clients[i] != NULL && strcmp(clients[i]->name, name) == 0)
             return -1;
 
-    int idx = -1;
+    int id = -1;
 
-    // another waiting struct Client
     for (int i = 0; i < MAX_CLIENTS; i += 2)
     {
         if (clients[i] != NULL && clients[i+1] == NULL)
         {
-            idx = i + 1;
+            id = i + 1;
             break;
         }
     }
 
-    // no opponent - first free place
-    if (idx == -1)
+    if (id == -1)
     {
         for (int i = 0; i < MAX_CLIENTS; ++i)
         {
             if (clients[i] == NULL)
             {
-                idx = i;
+                id = i;
                 break;
             }
         }
     }
 
-    if (idx != -1)
+    if (id != -1)
     {
         struct Client *newClient = calloc(1, sizeof(struct Client));
         newClient->name = calloc(MAX_MSG_LEN, sizeof(char));
         strcpy(newClient->name, name);
         newClient->fd = fd;
-        newClient->available = true;
+        newClient->available = 1;
 
-        clients[idx] = newClient;
+        clients[id] = newClient;
         clientsCnt++;
     }
 
-    return idx;
+    return id;
 }
 
 
@@ -66,35 +63,34 @@ int findClient(char *name)
     return -1;
 }
 
-void freeClient(int index)
+void freeClient(int id)
 {
-    free(clients[index]->name);
-    free(clients[index]);
-    clients[index] = NULL;
-    clientsCnt--;
-
-    int opponent = getOpponent(index);
-
-    // remove opponent if exists
-    if (clients[getOpponent(index)] != NULL)
+    int opponent = getOpponent(id);
+    if (clients[opponent] != NULL)
     {
-        printf("Removing opponent: %s\n", clients[opponent]->name);
+        printf("Removing %s's opponent - %s\n", clients[id]->name, 
+               clients[opponent]->name);
         free(clients[opponent]->name);
         free(clients[opponent]);
         clients[opponent] = NULL;
         clientsCnt--;
     }
+
+    free(clients[id]->name);
+    free(clients[id]);
+    clients[id] = NULL;
+    clientsCnt--;
 }
 
 void removeClient(char *name)
 {
-    int idx = -1;
+    int id = -1;
     for (int i = 0; i < MAX_CLIENTS; i++)
         if (clients[i] != NULL && strcmp(clients[i]->name, name) == 0)
-            idx = i;
+            id = i;
 
-    printf("Removing client: %s\n", name);
-    freeClient(idx);
+    printf("Removing client %s\n", name);
+    freeClient(id);
 }
 
 
@@ -102,9 +98,9 @@ void removeUnavailableClients()
 {
     for (int i = 0; i < MAX_CLIENTS; ++i)
     {
-        if (clients[i] && ! clients[i]->available)
+        if (clients[i] && clients[i]->available == 0)
         {
-            printf("not available\n");
+            printf("%s is unavailable\n", clients[i]->name);
             removeClient(clients[i]->name);
         }
     }
@@ -112,42 +108,40 @@ void removeUnavailableClients()
 
 void sendPings()
 {
+    printf("Sending pings\n");
     for (int i = 0; i < MAX_CLIENTS; ++i)
     {
         if (clients[i])
         {
             send(clients[i]->fd, "ping: ", MAX_MSG_LEN, 0);
-            clients[i]->available = false;
+            clients[i]->available = 0;
         }
     }
 }
 
 void* ping()
 {
-    while (true)
+    for (;;)
     {
-        printf("PING\n");
         pthread_mutex_lock(&mutex);
         removeUnavailableClients();
         sendPings();
         pthread_mutex_unlock(&mutex);
-
         sleep(10);
     }
 }
 
 int setLocalSocket(char* sockPath)
 {
-    // create socket
     int sockFd = socket(AF_UNIX, SOCK_STREAM, 0);
 
     if (sockFd  == -1)
     {
-        printf("Could not create LOCAL socket\n");
-        exit(1);
+        printf("[ERROR] Couldn't create local socket\n");
+        exit(-1);
     }
     else
-        printf("LOCAL socket created\n");
+        printf("Local socket created\n");
 
     struct sockaddr_un sockAddr;
     memset(&sockAddr, 0, sizeof(struct sockaddr_un));
@@ -157,21 +151,20 @@ int setLocalSocket(char* sockPath)
     // unlink the file so the bind will succeed
     unlink(sockPath);
 
-    // assigns the address to the socket
+    // binds address to socket
     if ((bind(sockFd, (struct sockaddr *) &sockAddr, sizeof(sockAddr))) == -1)
     {
-        printf("Could not bind LOCAL socket\n");
-        exit(1);
+        printf("[ERROR] Couldn't bind local socket\n");
+        exit(-1);
     }
 
-    // listen for connections on a socket
     if ((listen(sockFd, MAX_CLIENTS)) == -1)
     {
-        printf("Listen on LOCAL socket failed\n");
-        exit(1);
+        printf("[ERROR] Listening on local socket failed\n");
+        exit(-1);
     }
 
-    printf("LOCAL socket fd: %d\n", sockFd);
+    printf("Local socket fd: %d\n", sockFd);
 
     return sockFd;
 }
@@ -183,33 +176,31 @@ int setNetworkSocket(char *port)
 
     if (sockFd  == -1)
     {
-        printf("Could not create INET socket\n");
-        exit(1);
+        printf("[ERROR] Couldn't create inet socket\n");
+        exit(-1);
     }
     else
-        printf("INET socket created\n");
+        printf("Inet socket created\n");
 
-    // set port and IP
     struct sockaddr_in sockAddr;
     sockAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     sockAddr.sin_family = AF_INET;
     sockAddr.sin_port = htons(atoi(port));
 
-    // assigns the address to the socket
+    // binds address to socket
     if ((bind(sockFd, (struct sockaddr *) &sockAddr, sizeof(sockAddr))) == -1)
     {
-        printf("Could not bind INET socket\n");
-        exit(1);
+        printf("[ERROR] Couldn't bind inet socket\n");
+        exit(-1);
     }
 
-    // listen_for_msg for connections on a socket
     if ((listen(sockFd, MAX_CLIENTS)) == -1)
     {
-        printf("Listen on INET socket failed\n");
-        exit(1);
+        printf("[ERROR] Listening on inet socket failed\n");
+        exit(-1);
     }
 
-    printf("INET socket fd: %d\n", sockFd);
+    printf("Inet socket fd: %d\n", sockFd);
 
     return sockFd;
 }
@@ -249,12 +240,12 @@ int checkMessages(int localSock, int networkSock)
     return retval;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
-    if (argc != 3)
+    if (argc < 3)
     {
-        printf("Wrong number of arguments!\n");
-        exit(1);
+        printf("[ERROR] Required parameters: port, sockPath\n");
+        exit(-1);
     }
     srand(time(NULL));
 
@@ -266,13 +257,13 @@ int main(int argc, char* argv[])
 
     pthread_t t;
     pthread_create(&t, NULL, &ping, NULL);
-    while (true)
+    for (;;)
     {
         int clientFd = checkMessages(localSock, networkSock);
         char buffer[MAX_MSG_LEN+1];
         recv(clientFd, buffer, MAX_MSG_LEN, 0);
 
-        printf("%s\n", buffer);
+        printf("Received: '%s'\n", buffer);
         char *command = strtok(buffer, ":");
         char *arg = strtok(NULL, ":");
         char *name = strtok(NULL, ":");
@@ -280,15 +271,15 @@ int main(int argc, char* argv[])
         pthread_mutex_lock(&mutex);
         if (strcmp(command, "add") == 0)
         {
-            int index = addClient(name, clientFd);
+            int id = addClient(name, clientFd);
 
-            if (index == -1)
+            if (id == -1)
             {
                 send(clientFd, "add:name_taken", MAX_MSG_LEN, 0);
                 close(clientFd);
             }
 
-            else if (index % 2 == 0)
+            else if (id % 2 == 0)
                 send(clientFd, "add:no_enemy", MAX_MSG_LEN, 0);
 
             else
@@ -298,13 +289,13 @@ int main(int argc, char* argv[])
 
                 if (randVal % 2 == 0)
                 {
-                    first = index;
-                    second = getOpponent(index);
+                    first = id;
+                    second = getOpponent(id);
                 }
                 else
                 {
-                    second = index;
-                    first = getOpponent(index);
+                    second = id;
+                    first = getOpponent(id);
                 }
 
                 send(clients[first]->fd, "add:O",
