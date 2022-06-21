@@ -18,11 +18,17 @@
 #define MAX_CLIENTS 16
 #define MAX_MSG_LEN 256
 
-struct Client
+enum CellOccupation
 {
-    char* name;
-    int fd;
-    int available;
+    NONE,
+    O,
+    X
+};
+
+struct GameBoard
+{
+    int turn;
+    enum CellOccupation cells[9];
 };
 
 enum GameState
@@ -35,17 +41,11 @@ enum GameState
     QUIT
 };
 
-enum CellOccupation
+struct Client
 {
-    NONE,
-    O,
-    X
-};
-
-struct GameBoard
-{
-    int move;
-    enum CellOccupation objects[9];
+    char* name;
+    int fd;
+    int available;
 };
 
 #endif

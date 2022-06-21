@@ -1,135 +1,9 @@
 #include "common.h"
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
 struct Client *clients[MAX_CLIENTS] = {NULL};
 int clientsCnt = 0;
 
-int getOpponent(int id)
-{
-    return id % 2 == 0 ? id + 1 : id - 1;
-}
-
-int addClient(char *name, int fd)
-{
-    for (int i = 0; i < MAX_CLIENTS; ++i)
-        if (clients[i] != NULL && strcmp(clients[i]->name, name) == 0)
-            return -1;
-
-    int id = -1;
-
-    for (int i = 0; i < MAX_CLIENTS; i += 2)
-    {
-        if (clients[i] != NULL && clients[i+1] == NULL)
-        {
-            id = i + 1;
-            break;
-        }
-    }
-
-    if (id == -1)
-    {
-        for (int i = 0; i < MAX_CLIENTS; ++i)
-        {
-            if (clients[i] == NULL)
-            {
-                id = i;
-                break;
-            }
-        }
-    }
-
-    if (id != -1)
-    {
-        struct Client *newClient = calloc(1, sizeof(struct Client));
-        newClient->name = calloc(MAX_MSG_LEN, sizeof(char));
-        strcpy(newClient->name, name);
-        newClient->fd = fd;
-        newClient->available = 1;
-
-        clients[id] = newClient;
-        clientsCnt++;
-    }
-
-    return id;
-}
-
-
-int findClient(char *name)
-{
-    for (int i = 0; i < MAX_CLIENTS; ++i)
-        if (clients[i] != NULL && strcmp(clients[i]->name, name) == 0)
-            return i;
-    return -1;
-}
-
-void freeClient(int id)
-{
-    int opponent = getOpponent(id);
-    if (clients[opponent] != NULL)
-    {
-        printf("Removing %s's opponent - %s\n", clients[id]->name, 
-               clients[opponent]->name);
-        free(clients[opponent]->name);
-        free(clients[opponent]);
-        clients[opponent] = NULL;
-        clientsCnt--;
-    }
-
-    free(clients[id]->name);
-    free(clients[id]);
-    clients[id] = NULL;
-    clientsCnt--;
-}
-
-void removeClient(char *name)
-{
-    int id = -1;
-    for (int i = 0; i < MAX_CLIENTS; i++)
-        if (clients[i] != NULL && strcmp(clients[i]->name, name) == 0)
-            id = i;
-
-    printf("Removing client %s\n", name);
-    freeClient(id);
-}
-
-
-void removeUnavailableClients()
-{
-    for (int i = 0; i < MAX_CLIENTS; ++i)
-    {
-        if (clients[i] && clients[i]->available == 0)
-        {
-            printf("%s is unavailable\n", clients[i]->name);
-            removeClient(clients[i]->name);
-        }
-    }
-}
-
-void sendPings()
-{
-    printf("Sending pings\n");
-    for (int i = 0; i < MAX_CLIENTS; ++i)
-    {
-        if (clients[i])
-        {
-            send(clients[i]->fd, "ping: ", MAX_MSG_LEN, 0);
-            clients[i]->available = 0;
-        }
-    }
-}
-
-void* ping()
-{
-    for (;;)
-    {
-        pthread_mutex_lock(&mutex);
-        removeUnavailableClients();
-        sendPings();
-        pthread_mutex_unlock(&mutex);
-        sleep(10);
-    }
-}
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int setLocalSocket(char* sockPath)
 {
@@ -223,21 +97,144 @@ int checkMessages(int localSock, int networkSock)
     pthread_mutex_unlock(&mutex);
 
     poll(fds, clientsCnt + 2, -1);
-    int retval;
-
+    int res = 0;
     for (int i = 0; i < clientsCnt + 2; ++i)
     {
         if (fds[i].revents & POLLIN)
         {
-            retval = fds[i].fd;
+            res = fds[i].fd;
             break;
         }
     }
-    if (retval == localSock || retval == networkSock)
-        retval = accept(retval, NULL, NULL);
+    if (res == localSock || res == networkSock)
+        res = accept(res, NULL, NULL);
     free(fds);
 
-    return retval;
+    return res;
+}
+
+int getOpponent(int id)
+{
+    return id % 2 == 0 ? id + 1 : id - 1;
+}
+
+int addClient(char *name, int fd)
+{
+    for (int i = 0; i < MAX_CLIENTS; ++i)
+        if (clients[i] != NULL && strcmp(clients[i]->name, name) == 0)
+            return -1;
+
+    int id = -1;
+
+    for (int i = 0; i < MAX_CLIENTS; i += 2)
+    {
+        if (clients[i] != NULL && clients[i+1] == NULL)
+        {
+            id = i + 1;
+            break;
+        }
+    }
+
+    if (id == -1)
+    {
+        for (int i = 0; i < MAX_CLIENTS; ++i)
+        {
+            if (clients[i] == NULL)
+            {
+                id = i;
+                break;
+            }
+        }
+    }
+
+    if (id != -1)
+    {
+        struct Client *newClient = calloc(1, sizeof(struct Client));
+        newClient->name = calloc(MAX_MSG_LEN, sizeof(char));
+        strcpy(newClient->name, name);
+        newClient->fd = fd;
+        newClient->available = 1;
+
+        clients[id] = newClient;
+        clientsCnt++;
+    }
+
+    return id;
+}
+
+void freeClient(int id)
+{
+    int opponent = getOpponent(id);
+    if (clients[opponent] != NULL)
+    {
+        printf("Removing %s's opponent - %s\n", clients[id]->name, 
+               clients[opponent]->name);
+        free(clients[opponent]->name);
+        free(clients[opponent]);
+        clients[opponent] = NULL;
+        clientsCnt--;
+    }
+
+    free(clients[id]->name);
+    free(clients[id]);
+    clients[id] = NULL;
+    clientsCnt--;
+}
+
+void removeClient(char *name)
+{
+    int id = -1;
+    for (int i = 0; i < MAX_CLIENTS; i++)
+        if (clients[i] != NULL && strcmp(clients[i]->name, name) == 0)
+            id = i;
+
+    printf("Removing client %s\n", name);
+    freeClient(id);
+}
+
+void removeUnavailableClients()
+{
+    for (int i = 0; i < MAX_CLIENTS; ++i)
+    {
+        if (clients[i] && clients[i]->available == 0)
+        {
+            printf("%s is unavailable\n", clients[i]->name);
+            removeClient(clients[i]->name);
+        }
+    }
+}
+
+int findClient(char *name)
+{
+    for (int i = 0; i < MAX_CLIENTS; ++i)
+        if (clients[i] != NULL && strcmp(clients[i]->name, name) == 0)
+            return i;
+    return -1;
+}
+
+void sendPings()
+{
+    printf("Sending pings\n");
+    for (int i = 0; i < MAX_CLIENTS; ++i)
+    {
+        if (clients[i])
+        {
+            send(clients[i]->fd, "ping| ", MAX_MSG_LEN, 0);
+            clients[i]->available = 0;
+        }
+    }
+}
+
+void* pingRoutine()
+{
+    for (;;)
+    {
+        pthread_mutex_lock(&mutex);
+        removeUnavailableClients();
+        sendPings();
+        pthread_mutex_unlock(&mutex);
+        sleep(5);
+    }
 }
 
 int main(int argc, char** argv)
@@ -256,7 +253,9 @@ int main(int argc, char** argv)
     int networkSock = setNetworkSocket(port);
 
     pthread_t t;
-    pthread_create(&t, NULL, &ping, NULL);
+    pthread_create(&t, NULL, &pingRoutine, NULL);
+
+    char *command, *arg, *name;
     for (;;)
     {
         int clientFd = checkMessages(localSock, networkSock);
@@ -264,9 +263,10 @@ int main(int argc, char** argv)
         recv(clientFd, buffer, MAX_MSG_LEN, 0);
 
         printf("Received: '%s'\n", buffer);
-        char *command = strtok(buffer, ":");
-        char *arg = strtok(NULL, ":");
-        char *name = strtok(NULL, ":");
+
+        command = strtok(buffer, "|");
+        arg = strtok(NULL, "|");
+        name = strtok(NULL, "|");
 
         pthread_mutex_lock(&mutex);
         if (strcmp(command, "add") == 0)
@@ -275,33 +275,21 @@ int main(int argc, char** argv)
 
             if (id == -1)
             {
-                send(clientFd, "add:name_taken", MAX_MSG_LEN, 0);
+                send(clientFd, "add|name_exists", MAX_MSG_LEN, 0);
                 close(clientFd);
             }
-
             else if (id % 2 == 0)
-                send(clientFd, "add:no_enemy", MAX_MSG_LEN, 0);
-
+                send(clientFd, "add|no_opponent", MAX_MSG_LEN, 0);
             else
             {
                 int randVal = rand() % 100;
                 int first, second;
 
-                if (randVal % 2 == 0)
-                {
-                    first = id;
-                    second = getOpponent(id);
-                }
-                else
-                {
-                    second = id;
-                    first = getOpponent(id);
-                }
+                first = randVal % 2 == 0 ? id : getOpponent(id);
+                second = randVal % 2 == 0 ? getOpponent(id) : id;
 
-                send(clients[first]->fd, "add:O",
-                     MAX_MSG_LEN, 0);
-                send(clients[second]->fd, "add:X",
-                     MAX_MSG_LEN, 0);
+                send(clients[first]->fd, "add|O", MAX_MSG_LEN, 0);
+                send(clients[second]->fd, "add|X", MAX_MSG_LEN, 0);
             }
         }
 
@@ -310,11 +298,12 @@ int main(int argc, char** argv)
             int move = atoi(arg);
             int player = findClient(name);
 
-            sprintf(buffer, "move:%d", move);
+            sprintf(buffer, "move|%d", move);
             send(clients[getOpponent(player)]->fd, buffer, MAX_MSG_LEN,
                  0);
         }
-        if (strcmp(command, "end") == 0)
+
+        if (strcmp(command, "quit") == 0)
             removeClient(name);
 
         if (strcmp(command, "pong") == 0)

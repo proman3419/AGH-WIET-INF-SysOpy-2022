@@ -16,38 +16,51 @@ void printPlayerTag()
     printf("[%s ~ %c] ", playerName, isFirstClient ? 'O' : 'X');
 }
 
+void quit()
+{
+    sprintf(buff, "quit| |%s", playerName);
+    send(serverSock, buff, MAX_MSG_LEN, 0);
+    exit(0);
+}
+
+struct GameBoard createBoard()
+{
+    struct GameBoard gameBoard = {1, {NONE}};
+    return gameBoard;
+}
+
 int move(struct GameBoard *gameBoard, int position)
 {
-    if (position < 0 || position > 9 || gameBoard->objects[position] != NONE) return 0;
+    if (position < 0 || position > 9 || gameBoard->cells[position] != NONE) return 0;
 
-    gameBoard->objects[position] = gameBoard->move ? O : X;
-    gameBoard->move = !gameBoard->move;
+    gameBoard->cells[position] = gameBoard->turn ? O : X;
+    gameBoard->turn = !gameBoard->turn;
     return 1;
 }
 
 enum CellOccupation checkWin(struct GameBoard *gameBoard)
 {
-    enum CellOccupation column = NONE;
+    enum CellOccupation col = NONE;
 
     for (int x = 0; x < 3; ++x)
     {
-        enum CellOccupation first = gameBoard->objects[x];
-        enum CellOccupation second = gameBoard->objects[x+3];
-        enum CellOccupation third = gameBoard->objects[x+6];
+        enum CellOccupation first = gameBoard->cells[x];
+        enum CellOccupation second = gameBoard->cells[x+3];
+        enum CellOccupation third = gameBoard->cells[x+6];
 
         if (first == second && first == third && first != NONE)
-            column = first;
+            col = first;
     }
 
-    if (column != NONE)
-        return column;
+    if (col != NONE)
+        return col;
 
     enum CellOccupation row = NONE;
     for (int y = 0; y < 3; ++y)
     {
-        enum CellOccupation first = gameBoard->objects[3*y];
-        enum CellOccupation second = gameBoard->objects[3*y+1];
-        enum CellOccupation third = gameBoard->objects[3*y+2];
+        enum CellOccupation first = gameBoard->cells[3*y];
+        enum CellOccupation second = gameBoard->cells[3*y+1];
+        enum CellOccupation third = gameBoard->cells[3*y+2];
         if (first == second && first == third && first != NONE)
             row = first;
     }
@@ -57,9 +70,9 @@ enum CellOccupation checkWin(struct GameBoard *gameBoard)
 
     enum CellOccupation lowerDiag = NONE;
 
-    enum CellOccupation first = gameBoard->objects[0];
-    enum CellOccupation second = gameBoard->objects[4];
-    enum CellOccupation third = gameBoard->objects[8];
+    enum CellOccupation first = gameBoard->cells[0];
+    enum CellOccupation second = gameBoard->cells[4];
+    enum CellOccupation third = gameBoard->cells[8];
 
     if (first == second && first == third && first != NONE)
         lowerDiag = first;
@@ -67,20 +80,13 @@ enum CellOccupation checkWin(struct GameBoard *gameBoard)
         return lowerDiag;
 
     enum CellOccupation upperDiag = NONE;
-    first = gameBoard->objects[2];
-    second = gameBoard->objects[4];
-    third = gameBoard->objects[6];
+    first = gameBoard->cells[2];
+    second = gameBoard->cells[4];
+    third = gameBoard->cells[6];
     if (first == second && first == third && first != NONE)
         upperDiag = first;
 
     return upperDiag;
-}
-
-void end()
-{
-    sprintf(buff, "end: :%s", playerName);
-    send(serverSock, buff, MAX_MSG_LEN, 0);
-    exit(0);
 }
 
 void checkState()
@@ -99,7 +105,7 @@ void checkState()
     int draw = 1;
     for (int i = 0; i < 9; i++)
     {
-        if (gameBoard.objects[i] == NONE)
+        if (gameBoard.cells[i] == NONE)
         {
             draw = 0;
             break;
@@ -115,14 +121,8 @@ void checkState()
 
 void parseCommand(char* msg)
 {
-    command = strtok(msg, ":");
-    arg = strtok(NULL, ":");
-}
-
-struct GameBoard createBoard()
-{
-    struct GameBoard gameBoard = {1, {NONE}};
-    return gameBoard;
+    command = strtok(msg, "|");
+    arg = strtok(NULL, "|");
 }
 
 void draw()
@@ -133,9 +133,9 @@ void draw()
     {
         for (int x = 0; x < 3; ++x)
         {
-            if (gameBoard.objects[y*3+x] == NONE)
+            if (gameBoard.cells[y*3+x] == NONE)
                 repr = y * 3 + x + 1 + '0'; // id of field if empty
-            else if (gameBoard.objects[y*3+x] == O)
+            else if (gameBoard.cells[y*3+x] == O)
                 repr = 'O';
             else
                 repr = 'X';
@@ -148,77 +148,79 @@ void draw()
 
 void play()
 {
+    int pos = 0;
     for (;;)
     {
-        if (gameState == START)
+        switch (gameState)
         {
-            if (strcmp(arg, "name_taken") == 0)
-                exit(1);
-            else if (strcmp(arg, "no_enemy") == 0)
-                gameState = WAIT_FOR_OPPONENT;
-            else
-            {
+            case START:
+                if (strcmp(arg, "name_exists") == 0)
+                    exit(1);
+                else if (strcmp(arg, "no_opponent") == 0)
+                    gameState = WAIT_FOR_OPPONENT;
+                else
+                {
+                    gameBoard = createBoard();
+                    isFirstClient = arg[0] == 'O';
+                    gameState = isFirstClient ? MOVE : WAIT_FOR_MOVE;
+                }
+                break;
+
+            case WAIT_FOR_MOVE:
+                printPlayerTag();
+                printf("Waiting for opponent's move\n");
+
+                pthread_mutex_lock(&mutex);
+                while (gameState != OPPONENT_MOVE && gameState != QUIT)
+                    pthread_cond_wait(&cond, &mutex);
+                pthread_mutex_unlock(&mutex);
+                break;
+
+            case WAIT_FOR_OPPONENT:
+                pthread_mutex_lock(&mutex);
+
+                while (gameState != START && gameState != QUIT)
+                    pthread_cond_wait(&cond, &mutex);
+
+                pthread_mutex_unlock(&mutex);
+
                 gameBoard = createBoard();
                 isFirstClient = arg[0] == 'O';
                 gameState = isFirstClient ? MOVE : WAIT_FOR_MOVE;
-            }
+                break;
+
+            case OPPONENT_MOVE:
+                pos = atoi(arg);
+                move(&gameBoard, pos);
+                checkState();
+                if (gameState != QUIT)
+                    gameState = MOVE;
+                break;
+
+            case MOVE:
+                draw();
+                do
+                {
+                    printPlayerTag();
+                    printf("Move: ");
+                    scanf("%d", &pos);
+                    pos--;
+                } while (!move(&gameBoard, pos));
+                draw();
+
+                char buff[MAX_MSG_LEN + 1];
+                sprintf(buff, "move|%d|%s", pos, playerName);
+                send(serverSock, buff, MAX_MSG_LEN, 0);
+
+                checkState();
+                if (gameState != QUIT)
+                    gameState = WAIT_FOR_MOVE;
+                break;
+
+            case QUIT:
+                quit();
+                break;
         }
-
-        else if (gameState == WAIT_FOR_OPPONENT)
-        {
-            pthread_mutex_lock(&mutex);
-
-            while (gameState != START && gameState != QUIT)
-                pthread_cond_wait(&cond, &mutex);
-
-            pthread_mutex_unlock(&mutex);
-
-            gameBoard = createBoard();
-            isFirstClient = arg[0] == 'O';
-            gameState = isFirstClient ? MOVE : WAIT_FOR_MOVE;
-        }
-        else if (gameState == WAIT_FOR_MOVE)
-        {
-            printPlayerTag();
-            printf("Waiting for opponent's move\n");
-
-            pthread_mutex_lock(&mutex);
-            while (gameState != OPPONENT_MOVE && gameState != QUIT)
-                pthread_cond_wait(&cond, &mutex);
-            pthread_mutex_unlock(&mutex);
-        }
-        else if (gameState == OPPONENT_MOVE)
-        {
-            int pos = atoi(arg);
-            move(&gameBoard, pos);
-            checkState();
-            if (gameState != QUIT)
-                gameState = MOVE;
-        }
-        else if (gameState == MOVE)
-        {
-            draw();
-
-            int pos;
-            do
-            {
-                printPlayerTag();
-                printf("Move: ");
-                scanf("%d", &pos);
-                pos--;
-            } while (!move(&gameBoard, pos));
-
-            draw();
-
-            char buff[MAX_MSG_LEN + 1];
-            sprintf(buff, "move:%d:%s", pos, playerName);
-            send(serverSock, buff, MAX_MSG_LEN, 0);
-
-            checkState();
-            if (gameState != QUIT)
-                gameState = WAIT_FOR_MOVE;
-        }
-        else if (gameState == QUIT) end();
     }
 }
 
@@ -274,7 +276,7 @@ void listenServer()
             if (!gameThreadRunning)
             {
                 pthread_t t;
-                pthread_create(&t, NULL, (void *(*)(void *))play, NULL);
+                pthread_create(&t, NULL, (void*(*)(void*))play, NULL);
                 gameThreadRunning = 1;
             }
         }
@@ -282,14 +284,14 @@ void listenServer()
         {
             gameState = OPPONENT_MOVE;
         }
-        else if (strcmp(command, "end") == 0)
+        else if (strcmp(command, "quit") == 0)
         {
             gameState = QUIT;
             exit(0);
         }
         else if (strcmp(command, "ping") == 0)
         {
-            sprintf(buff, "pong: :%s", playerName);
+            sprintf(buff, "pong| |%s", playerName);
             send(serverSock, buff, MAX_MSG_LEN, 0);
         }
         pthread_cond_signal(&cond);
@@ -308,7 +310,7 @@ int main(int argc, char** argv)
     playerName = argv[1];
     char* connectionMethod = argv[2]; // unix/inet
 
-    signal(SIGINT, end);
+    signal(SIGINT, quit);
 
     if (strcmp(connectionMethod, "unix") == 0)
     {
@@ -327,7 +329,7 @@ int main(int argc, char** argv)
     }
 
     char msg[MAX_MSG_LEN];
-    sprintf(msg, "add: :%s", playerName);
+    sprintf(msg, "add| |%s", playerName);
     send(serverSock, msg, MAX_MSG_LEN, 0);
 
     listenServer();
