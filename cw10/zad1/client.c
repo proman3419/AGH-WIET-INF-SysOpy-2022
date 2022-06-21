@@ -96,9 +96,10 @@ void checkState()
 
     if (winner != NONE)
     {
-        if ((isFirstClient && winner == O) || (!isFirstClient && winner == X)) printf("+++ VICTORY +++\n");
-        else printf("--- DEFEAT ---\n");
-
+        if ((isFirstClient && winner == O) || (!isFirstClient && winner == X))
+            printf("+++ VICTORY +++\n");
+        else
+            printf("--- DEFEAT ---\n");
         win = 1;
     }
 
@@ -233,7 +234,7 @@ void connectLocal(char* sockPath)
     sock_addr.sun_family = AF_UNIX;
     strcpy(sock_addr.sun_path, sockPath);
 
-    if (connect(serverSock, (struct sockaddr *)&sock_addr, sizeof(sock_addr)) == -1)
+    if (connect(serverSock, (struct sockaddr*)&sock_addr, sizeof(sock_addr)) == -1)
     {
         printf("[ERROR] Occured while connecting to local socket: %s\n", strerror(errno));
         exit(1);
@@ -281,9 +282,7 @@ void listenServer()
             }
         }
         else if (strcmp(command, "move") == 0)
-        {
             gameState = OPPONENT_MOVE;
-        }
         else if (strcmp(command, "quit") == 0)
         {
             gameState = QUIT;

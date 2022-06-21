@@ -93,7 +93,6 @@ int checkMessages(int localSock, int networkSock)
         fds[i+2].fd = clients[i]->fd;
         fds[i+2].events = POLLIN;
     }
-
     pthread_mutex_unlock(&mutex);
 
     poll(fds, clientsCnt + 2, -1);
@@ -297,8 +296,8 @@ int main(int argc, char** argv)
         {
             int move = atoi(arg);
             int player = findClient(name);
-
             sprintf(buffer, "move|%d", move);
+            
             send(clients[getOpponent(player)]->fd, buffer, MAX_MSG_LEN,
                  0);
         }
